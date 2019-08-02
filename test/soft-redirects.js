@@ -18,11 +18,11 @@ describe('Soft Redirects', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900,
           secret: 'test'
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           park: [
             {
               parkedId: 'child',
@@ -35,7 +35,7 @@ describe('Soft Redirects', function() {
         }
       },
       afterInit: function(callback) {
-        assert(genex.modules['apostrophe-soft-redirects']);
+        assert(genex.modules['genesys-soft-redirects']);
         genex.argv._ = [];
         return callback(null);
       },
@@ -102,11 +102,11 @@ describe('Soft Redirects - with `statusCode` option', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900,
           secret: 'test'
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           park: [
             {
               parkedId: 'child',
@@ -117,13 +117,13 @@ describe('Soft Redirects - with `statusCode` option', function() {
             }
           ]
         },
-        'apostrophe-soft-redirects': {
+        'genesys-soft-redirects': {
           statusCode: 301
         }
       },
       afterInit: function(callback) {
-        assert(genex.modules['apostrophe-soft-redirects']);
-        assert.equal(genex.modules['apostrophe-soft-redirects'].options.statusCode, 301);
+        assert(genex.modules['genesys-soft-redirects']);
+        assert.equal(genex.modules['genesys-soft-redirects'].options.statusCode, 301);
         genex.argv._ = [];
         return callback(null);
       },

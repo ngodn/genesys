@@ -19,10 +19,10 @@ describe('Email', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900
         },
-        'apostrophe-email': {
+        'genesys-email': {
           nodemailer: {
             streamTransport: true,
             buffer: true,
@@ -32,7 +32,7 @@ describe('Email', function() {
         'email-test': {}
       },
       afterInit: function(callback) {
-        assert(genex.modules['apostrophe-email']);
+        assert(genex.modules['genesys-email']);
         // In tests this will be the name of the test file,
         // so override that in order to get apostrophe to
         // listen normally and not try to run a task. -Tom

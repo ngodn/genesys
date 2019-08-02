@@ -1,4 +1,4 @@
-{%- import "apostrophe-ui:components/fields.html" as fields -%}
+{%- import "genesys-ui:components/fields.html" as fields -%}
 {% for piece in data.pieces %}
   <tr data-piece="{{ piece._id }}">
     <td>{{fields.checkbox(data.options.name + '-select')}}</td>

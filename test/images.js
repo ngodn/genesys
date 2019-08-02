@@ -7,7 +7,7 @@ var genex;
 
 var mockImages = [
   {
-    type: 'apostrophe-image',
+    type: 'genesys-image',
     slug: 'image-1',
     published: true,
     attachment: {
@@ -17,7 +17,7 @@ var mockImages = [
     }
   },
   {
-    type: 'apostrophe-image',
+    type: 'genesys-image',
     slug: 'image-2',
     published: true,
     attachment: {
@@ -27,7 +27,7 @@ var mockImages = [
     }
   },
   {
-    type: 'apostrophe-image',
+    type: 'genesys-image',
     slug: 'image-3',
     published: true,
     attachment: {
@@ -37,7 +37,7 @@ var mockImages = [
     }
   },
   {
-    type: 'apostrophe-image',
+    type: 'genesys-image',
     slug: 'image-4',
     published: true,
     attachment: {
@@ -62,7 +62,7 @@ describe('Images', function() {
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900
         }
       },
@@ -85,7 +85,7 @@ describe('Images', function() {
   it('should clean up any existing images for testing', function(done) {
     // Newer mongo returns a promise from remove even if there's a callback,
     // which in turn confuses mocha if we use a return statement here. So don't. -Tom
-    genex.docs.db.remove({ type: 'apostrophe-image' }, function(err) {
+    genex.docs.db.remove({ type: 'genesys-image' }, function(err) {
       assert(!err);
       done();
     });

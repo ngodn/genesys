@@ -23,12 +23,12 @@ describe('Pieces', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
         'things': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'thing',
           label: 'Thing',
           addFields: {
@@ -38,7 +38,7 @@ describe('Pieces', function() {
           }
         },
         'people': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'person',
           label: 'Person',
           addFields: {

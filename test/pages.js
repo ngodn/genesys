@@ -22,11 +22,11 @@ describe('Pages', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           park: [],
           types: [
             {
@@ -546,14 +546,14 @@ describe('Pages with trashInSchema', function() {
       shortName: 'test2',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7901
         },
-        'apostrophe-docs': {
+        'genesys-docs': {
           trashInSchema: true
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           park: [],
           types: [
             {

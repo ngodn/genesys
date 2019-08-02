@@ -1,6 +1,6 @@
 {
   "name": "genesys",
-  "version": "2.93.1",
+  "version": "2.93.2",
   "description": "The Genesys Content Management System by Esri Indonesia",
   "main": "index.js",
   "scripts": {

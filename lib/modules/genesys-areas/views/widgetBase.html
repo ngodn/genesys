@@ -1,7 +1,7 @@
 {# Need to add something to the outer wrapper for one widget type? #}
 {# Set the `wrapperTemplate` option to `wrapper`, supply a #}
 {# `wrapper.html` template in your widget module that extends #}
-{# `apostrophe-areas:widget.html`, and override the blocks below. #}
+{# `genesys-areas:widget.html`, and override the blocks below. #}
 
 <div 
   class="genex-area-widget-wrapper {% block extraWrapperClasses %}{% endblock %} {{ data.manager.getWidgetWrapperClasses(data.widget) | join(' ') }}"

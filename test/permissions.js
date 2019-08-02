@@ -19,7 +19,7 @@ describe('Permissions', function() {
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         }

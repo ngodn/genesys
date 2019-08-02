@@ -1,4 +1,4 @@
-// Implicit subclass of apostrophe-module
+// Implicit subclass of genesys-module
 module.exports = {
   construct: function(self, options) {
     // Set property

@@ -1,9 +1,9 @@
-{%- extends "apostrophe-modal:base.html" -%}
-{%- import "apostrophe-modal:macros.html" as modals -%}
+{%- extends "genesys-modal:base.html" -%}
+{%- import "genesys-modal:macros.html" as modals -%}
 {%- import "piecesMacros.html" as pieces with context -%}
-{%- import 'apostrophe-ui:components/buttons.html' as buttons -%}
-{%- import 'apostrophe-schemas:macros.html' as schemas -%}
-{%- import 'apostrophe-modal:batch.html' as batch -%}
+{%- import 'genesys-ui:components/buttons.html' as buttons -%}
+{%- import 'genesys-schemas:macros.html' as schemas -%}
+{%- import 'genesys-modal:batch.html' as batch -%}
 
 {%- block modalClass -%}
   {{ (data.options.name + '-manager') | css }} genex-ui-modal-no-sidebar genex-manager

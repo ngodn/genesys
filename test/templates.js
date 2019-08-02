@@ -17,7 +17,7 @@ describe('Templates', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
@@ -33,7 +33,7 @@ describe('Templates', function() {
         'templates-options-test': {
           ignoreNoCodeWarning: true
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           park: [
             {
               title: 'With Layout',

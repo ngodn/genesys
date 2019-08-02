@@ -20,12 +20,12 @@ describe('Search', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
         'events': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'event',
           label: 'Event'
         }

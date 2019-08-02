@@ -53,7 +53,7 @@ describe('Attachment', function() {
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900
         }
       },
@@ -224,7 +224,7 @@ describe('Attachment', function() {
       assert(url === '/uploads/attachments/test-test.pdf');
     });
 
-    it('should save and track docIds properly as part of an apostrophe-image', function() {
+    it('should save and track docIds properly as part of an genesys-image', function() {
       var image = genex.images.newInstance();
       var req = genex.tasks.getReq();
       return genex.attachments.insert(genex.tasks.getReq(), {

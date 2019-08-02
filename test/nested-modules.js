@@ -20,7 +20,7 @@ describe('Nested Modules', function() {
       shortName: 'test',
       nestedModuleSubdirs: true,
       modules: {
-        'apostrophe-test-module': {}
+        'genesys-test-module': {}
       },
       afterInit: function(callback) {
         // In tests this will be the name of the test file,
@@ -36,9 +36,9 @@ describe('Nested Modules', function() {
     });
   });
 
-  it('should have both apostrophe-test-module and nested-module-1', function() {
-    assert(genex.modules['apostrophe-test-module']);
-    assert(genex.modules['apostrophe-test-module'].color === 'red');
+  it('should have both genesys-test-module and nested-module-1', function() {
+    assert(genex.modules['genesys-test-module']);
+    assert(genex.modules['genesys-test-module'].color === 'red');
     // Option from modules.js
     assert(genex.modules['nested-module-1'].options.color === 'blue');
     // Option from index.js

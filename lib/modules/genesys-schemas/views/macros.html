@@ -1,4 +1,4 @@
-{%- import "apostrophe-ui:components/fields.html" as commonFields with context -%}
+{%- import "genesys-ui:components/fields.html" as commonFields with context -%}
 {%- import "fieldset.html" as fieldset with context -%}
 
 {%- macro fields(fields, options = {}) -%}
@@ -223,7 +223,7 @@
   {{ fieldset(field, joinBody) }}
 {%- endmacro -%}
 
-{# ajax populates joins, see apostrophe-docs/views/chooser.html #}
+{# ajax populates joins, see genesys-docs/views/chooser.html #}
 {%- macro joinBody(field) -%}
   <div data-chooser data-read-only="{{ field.readOnly }}">{# ajax populates me #}</div>
 {%- endmacro -%}
