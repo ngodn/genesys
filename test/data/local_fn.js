@@ -1,4 +1,4 @@
-module.exports = function(apos) {
+module.exports = function(genex) {
   return {
     overrideTest: 'foo'
   };

@@ -4,38 +4,38 @@ var _ = require('@sailshq/lodash');
 var request = require('request');
 var async = require('async');
 
-var apos;
+var genex;
 
 describe('Tags', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
-  it('should be a property of the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should be a property of the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900,
           csrf: {
             // We're not here to test CSRF, so make the test simpler
-            exceptions: [ '/modules/apostrophe-tags/autocomplete' ]
+            exceptions: [ '/modules/genesys-tags/autocomplete' ]
           }
         },
         'events': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'event'
         }
       },
       afterInit: function(callback) {
-        assert(apos.tags);
-        apos.argv._ = [];
+        assert(genex.tags);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -71,7 +71,7 @@ describe('Tags', function() {
     ];
 
     return async.eachSeries(testDocs, function(doc, callback) {
-      apos.docs.insert(apos.tasks.getReq(), doc, callback);
+      genex.docs.insert(genex.tasks.getReq(), doc, callback);
     }, function(err) {
       assert(!err);
       done();
@@ -79,7 +79,7 @@ describe('Tags', function() {
   });
 
   it('should have a listTags method that returns a list of tags', function(done) {
-    return apos.tags.listTags(apos.tasks.getReq(), {}, function(err, tags) {
+    return genex.tags.listTags(genex.tasks.getReq(), {}, function(err, tags) {
       assert(!err);
       assert(tags);
       assert(Array.isArray(tags));
@@ -88,7 +88,7 @@ describe('Tags', function() {
   });
 
   it('should have a prefix option on the get method that filters the tags', function(done) {
-    return apos.tags.listTags(apos.tasks.getReq(), { prefix: 'tag' }, function(err, tags) {
+    return genex.tags.listTags(genex.tasks.getReq(), { prefix: 'tag' }, function(err, tags) {
       assert(!err);
       assert(_.contains(tags, 'tag1', 'tag2', 'tag3', 'tag4'));
       assert(!_.contains(tags, 'agressive'));
@@ -97,7 +97,7 @@ describe('Tags', function() {
   });
 
   it('should have a contains option on the get method that filters the tags', function(done) {
-    return apos.tags.listTags(apos.tasks.getReq(), { contains: 'ag' }, function(err, tags) {
+    return genex.tags.listTags(genex.tasks.getReq(), { contains: 'ag' }, function(err, tags) {
       assert(!err);
       assert(_.contains(tags, 'agressive', 'tag1', 'tag2', 'tag3', 'tag4'));
       done();
@@ -105,7 +105,7 @@ describe('Tags', function() {
   });
 
   it('should return an empty array if a prefix or contains option does not match', function(done) {
-    return apos.tags.listTags(apos.tasks.getReq(), { contains: '9046gobbledygook1678' }, function(err, tags) {
+    return genex.tags.listTags(genex.tasks.getReq(), { contains: '9046gobbledygook1678' }, function(err, tags) {
       assert(!err);
       assert(tags.length === 0);
       done();
@@ -114,7 +114,7 @@ describe('Tags', function() {
 
   it('should provide an api route for autocomplete', function(done) {
     return request({
-      url: 'http://localhost:7900/modules/apostrophe-tags/autocomplete',
+      url: 'http://localhost:7900/modules/genesys-tags/autocomplete',
       method: 'POST',
       form: { term: 'ag' }
     }, function(err, response, body) {
@@ -134,7 +134,7 @@ describe('Tags', function() {
 
   it('should provide an api route for autocomplete', function(done) {
     return request({
-      url: 'http://localhost:7900/modules/apostrophe-tags/autocomplete',
+      url: 'http://localhost:7900/modules/genesys-tags/autocomplete',
       method: 'POST',
       form: { term: 'ag', prefix: true }
     }, function(err, response, body) {

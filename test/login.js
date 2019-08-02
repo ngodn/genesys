@@ -2,34 +2,34 @@ var t = require('../test-lib/test.js');
 var assert = require('assert');
 var request = require('request');
 
-var apos;
+var genex;
 
 describe('Login', function() {
 
   this.timeout(20000);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
   it('should initialize', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7901,
           csrf: false
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-login']);
-        apos.argv._ = [];
-        assert(apos.users.safe.remove);
-        return apos.users.safe.remove({}, callback);
+        assert(genex.modules['genesys-login']);
+        genex.argv._ = [];
+        assert(genex.users.safe.remove);
+        return genex.users.safe.remove({}, callback);
         // return callback(null);
       },
       afterListen: function(err) {
@@ -43,8 +43,8 @@ describe('Login', function() {
   });
 
   it('should be able to insert test user', function(done) {
-    assert(apos.users.newInstance);
-    var user = apos.users.newInstance();
+    assert(genex.users.newInstance);
+    var user = genex.users.newInstance();
     assert(user);
 
     user.firstName = 'Harry';
@@ -54,9 +54,9 @@ describe('Login', function() {
     user.password = 'crookshanks';
     user.email = 'hputter@aol.com';
 
-    assert(user.type === 'apostrophe-user');
-    assert(apos.users.insert);
-    apos.users.insert(apos.tasks.getReq(), user, function(err) {
+    assert(user.type === 'genesys-user');
+    assert(genex.users.insert);
+    genex.users.insert(genex.tasks.getReq(), user, function(err) {
       assert(!err);
       done();
     });

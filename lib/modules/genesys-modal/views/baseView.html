@@ -1,0 +1,24 @@
+{# for use when repurposing a modal as a view inside another modal #}
+
+<div>
+  <div class="genex-ui-view-header">
+    <span class="genex-ui-view-title">
+      {% block label %}{{ __("Give Me a Label!") }}{% endblock %}
+    </span>
+    {# The parent modal controls the lifecycle #}
+    {#{% block controls %}{% endblock %}#}
+  </div>
+  <div class="genex-ui-view-instructions">
+    {% block instructions %}{% endblock %}
+  </div>
+  <div class="genex-ui-view-filters">
+    {% block filters %}{% endblock %}
+  </div>
+  <div class="genex-ui-view-body">
+    {% block body %}{{ __("I am a Modal!") }}{% endblock %}
+
+  </div>
+  <div class="genex-ui-view-footer">
+    {% block footer %} {% endblock %}
+  </div>
+</div>

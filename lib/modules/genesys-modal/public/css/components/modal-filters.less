@@ -1,0 +1,91 @@
+.genex-ui .genex-modal-filter--padded {
+	background-color: @genex-light;
+	padding: 10px;
+	.genex-rounded;
+}
+
+.genex-ui.genex-modal .genex-modal-header .genex-modal-filters,
+.genex-ui.genex-modal .genex-modal-body .genex-modal-filters
+{
+	margin-top: @genex-margin-2;
+	.genex-pill
+	{
+    margin-top: @genex-margin-2;
+	}
+
+  .genex-modal-filter {
+  font-size: 14px;
+  margin-right: 40px;
+
+    .genex-field-input-select-wrapper
+    {
+      display: inline-flex;
+      border-radius: 4px;
+
+      select
+      {
+        margin-left: 10px;
+        padding: 10px 30px 10px 15px;
+        .genex-rounded;
+      }
+      &::after
+      {
+        right: 10px;
+      }
+    }
+    label.genex-modal-filter-selection
+    {
+      margin-left: 4px;
+    }
+  }
+
+	.genex-modal-filters-toggles
+	{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+		.genex-pill
+		{
+			margin-right: @genex-margin-2;
+			margin-bottom: @genex-margin-1;
+		}
+	}
+
+	.genex-modal-filters-wrapper {
+		display: flex;
+	}
+
+	.genex-modal-filters-wrapper--right {
+		width: 30%;
+		justify-content: flex-end;
+	}
+
+	.genex-modal-filters-search
+	{
+		width: 100%;
+		max-width: 314px;
+		input
+		{
+			position: relative;
+			.genex-rounded;
+			padding: (@genex-padding-1 + 1.5px) @genex-padding-2;
+			font-size: 13px;
+			line-height: 13px;
+			@media @genex-breakpoint-desktop-xl
+			{
+				font-size: 14px;
+				line-height: 14px;
+			}
+		}
+	}
+}
+
+.genex-ui.genex-modal .genex-modal-body .genex-modal-filters .genex-modal-filters-toggles
+{
+	.genex-pill
+	{
+		margin-right: 0;
+		margin-left: @genex-margin-2;
+	}
+}

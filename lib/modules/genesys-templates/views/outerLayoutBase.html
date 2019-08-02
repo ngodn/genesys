@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="{% block locale %}en{% endblock %}" {% block extraHtml %}{% endblock %}>
+  <head>
+    {% block startHead %}
+    {% endblock %}
+    {{ genex.templates.prepended('head') }}
+    <title>{% block title %}{% endblock %}</title>
+    {{ genex.assets.stylesheets(data.when) }}
+    {% block standardHead %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% endblock %}
+    {{ genex.templates.appended('head') }}
+    {% block extraHead %}
+    {% endblock %}
+  </head>
+  <body class="{{ data.aposBodyClasses }} {% block bodyClass %}{% endblock %}"{{ data.aposBodyDataAttributes | safe }}>
+    {{ genex.templates.prepended('body') }}
+    {% block apostropheMenu %}
+      {{ genex.adminBar.output() }}
+    {% endblock %}
+
+    {% block apostropheContextMenu %}
+      {% if data.user %}
+        <div class="genex-ui">
+          <div class="genex-context-menu-container">
+            {{ genex.templates.prepended('contextMenu') }}
+            {{ genex.pages.menu({ contextMenu: data.contextMenu, page: data.page, bottom: true })}}
+            {{ genex.pages.publishMenu({ publishMenu: data.publishMenu, page: data.page, piece: data.piece, bottom: true }) }}
+            {{ genex.templates.appended('contextMenu') }}
+          </div>
+        </div>
+      {% endif %}
+    {% endblock %}
+    <div class="genex-refreshable" data-genex-refreshable>
+      {% block beforeMain %}{% endblock %}
+      {% block mainAnchor %}<a name="main"></a>{% endblock %}
+      {{ genex.templates.prepended('main') }}
+      {% block main %}{% endblock %}
+      {{ genex.templates.appended('main') }}
+      {% block afterMain %}{% endblock %}
+    </div>
+    {{ genex.assets.scripts(data.when) }}
+    {% block jsCalls %}
+      <script type="text/javascript">
+        {{ data.js.globalCalls }}
+        {{ data.js.reqCalls }}
+      </script>
+    {% endblock %}
+    {{ genex.templates.appended('body') }}
+    {% block extraBody %}{% endblock %}
+  </body>
+</html>

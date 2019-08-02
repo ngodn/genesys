@@ -1,33 +1,33 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
 
-var apos;
+var genex;
 
 describe('Video Field', function() {
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   this.timeout(t.timeout);
 
-  it('should be a property of the apos object', function(done) {
+  it('should be a property of the genex object', function(done) {
 
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900
         }
       },
       afterInit: function(callback) {
-        assert(apos.videoFields);
+        assert(genex.videoFields);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -38,7 +38,7 @@ describe('Video Field', function() {
   });
 
   it('schema field should accept a valid video', function(done) {
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var object = {
       url: 'https://www.youtube.com/watch?v=mrVSt0pbo1g&t=38s',
       title: 'Simpsons: The PTA Has Disbanded!',
@@ -51,7 +51,7 @@ describe('Video Field', function() {
       }
     ];
     var output = {};
-    apos.schemas.convert(
+    genex.schemas.convert(
       req,
       schema,
       'form',
@@ -68,7 +68,7 @@ describe('Video Field', function() {
   });
 
   it('schema field should not panic if video is absent', function(done) {
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var schema = [
       {
         name: 'video',
@@ -76,7 +76,7 @@ describe('Video Field', function() {
       }
     ];
     var output = {};
-    apos.schemas.convert(
+    genex.schemas.convert(
       req,
       schema,
       'form',
@@ -91,7 +91,7 @@ describe('Video Field', function() {
   });
 
   it('schema field should complain if video is absent and required', function(done) {
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var schema = [
       {
         name: 'video',
@@ -100,7 +100,7 @@ describe('Video Field', function() {
       }
     ];
     var output = {};
-    apos.schemas.convert(
+    genex.schemas.convert(
       req,
       schema,
       'form',

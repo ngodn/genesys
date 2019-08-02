@@ -1,0 +1,27 @@
+.genex-context-menu-container
+{
+  position: fixed;
+  bottom: @genex-padding-2;
+  left: @genex-padding-2;
+  @media @genex-breakpoint-desktop-xl
+  {
+    bottom: @genex-padding-4;
+    left: @genex-padding-4;
+  }
+  z-index: @genex-z-index-7;
+
+  .genex-context-menu
+  {
+    .genex-inline-block(top);
+
+    &:nth-of-type(2)
+    {
+      margin-left: 0.5em;
+    }
+  }
+  &.genex-content-menu-active {
+    // Prevents conflicts with the content (add widget) menu,
+    // also note we need this to pass functional tests
+    display: none;
+  }
+}

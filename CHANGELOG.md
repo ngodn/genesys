@@ -25,7 +25,7 @@ This new method does require that the release tasks script have access to the pr
 
 Again, see the [ApostropheCMS Heroku HOWTO](https://docs.apostrophecms.org/apostrophe/tutorials/howtos/deploying-apostrophe-in-the-cloud-with-heroku) for details. There is more to successful Heroku deployment than just static assert bundling, most importantly you need to use S3 for media storage.
 
-* In the lean library (`apos.utils.post`), use the csrf-fallback value for the csrf token if there is no csrf cookie name, same as the regular jquery library would. This achieves compatibility with the `disableAnonSessions: true` option of `apostrophe-express`.
+* In the lean library (`genex.utils.post`), use the csrf-fallback value for the csrf token if there is no csrf cookie name, same as the regular jquery library would. This achieves compatibility with the `disableAnonSessions: true` option of `apostrophe-express`.
 
 * When copying the permissions of a parent page to subpages, you now have the option to append them rather than replacing all existing permissions. Thanks to Siddharth Joshi.
 
@@ -50,7 +50,7 @@ Regression tests passing.
 * Bug fix: an open redirect vulnerability has been fixed. It was possible to convince Apostrophe to redirect to a third-party website by appending an escaped URL with a trailing slash added at the end. Apostrophe's trailing-slash remover would then cause a redirect to the un-escaped version of the slug part of the URL. The fix removes all multiple-slash sequences from the slug part of the URL. Thanks to Bharath for reporting this issue.
 * Bug fix: attempting to save a doc with a `required` `array` field without ever opening the array editor formerly caused strange behavior. You now get a standard indication that the field is required.
 * Feature: the method that supplies the choices for a dynamic `select` element may be a simple synchronous function, if desired. Formerly returning a promise (or using an async function) was mandatory.
-* Feature: `apos.utils.post` will now accept a `FormData` object as the `data` prameter. In this situation JSON encoding is not used. This may be used to easily submit file uploads with Apostrophe's CSRF protection and is supported at least back to IE11.
+* Feature: `genex.utils.post` will now accept a `FormData` object as the `data` prameter. In this situation JSON encoding is not used. This may be used to easily submit file uploads with Apostrophe's CSRF protection and is supported at least back to IE11.
 
 ## 2.91.1 (2019-06-05)
 
@@ -58,11 +58,11 @@ Unit tests passing.
 
 Regression tests passing.
 
-* Bug fix: the `apos.utils.post` method introduced in version 2.90.0 now correctly submits the CSRF header.
+* Bug fix: the `genex.utils.post` method introduced in version 2.90.0 now correctly submits the CSRF header.
 
 ## 2.91.0 (2019-06-05)
 
-* Feature: it is much easier to write sites with **no jQuery, lodash, etc.** on the front end. The `apostrophe-lean-frontend` module has been deprecated and its functionality has been merged into the core. All of the functionality of the `apos.lean` object is now available on the `apos.utils` object at all times. And if you set the `lean: true` option for the `apostrophe-assets` module, **only lean JavaScript is pushed** when logged out (assets pushed with `when: 'lean'`, including the lean methods of `apos.utils`). This creates a migration path to a leaner frontend: developers can write NPM modules that rely only the lean `apos.utils` methods without worrying about whether they are present or not. Note that this is also the official frontend library for the forthcoming Apostrophe 3.x (Of course, as always, you can choose to push more code, use webpack, etc.)
+* Feature: it is much easier to write sites with **no jQuery, lodash, etc.** on the front end. The `apostrophe-lean-frontend` module has been deprecated and its functionality has been merged into the core. All of the functionality of the `genex.lean` object is now available on the `genex.utils` object at all times. And if you set the `lean: true` option for the `apostrophe-assets` module, **only lean JavaScript is pushed** when logged out (assets pushed with `when: 'lean'`, including the lean methods of `genex.utils`). This creates a migration path to a leaner frontend: developers can write NPM modules that rely only the lean `genex.utils` methods without worrying about whether they are present or not. Note that this is also the official frontend library for the forthcoming Apostrophe 3.x (Of course, as always, you can choose to push more code, use webpack, etc.)
 * Bug fix: a regression introduced in 2.90.0 caused all uses of "Copy Page" to copy the home page. This is fixed.
 * Bug fix: copying a page with custom fields now copies those fields properly.
 * Bug fix: "Copy Page" now correctly copies parked page fields to the new, unparked page and then allows them to be edited for the new page.
@@ -82,7 +82,7 @@ Regression tests passing.
 * New feature: the `viewsFolderFallback` option to `apostrophe-templates` may now be an array. Thanks to Amin Shazrin.
 * New feature: help has been added to the video widget explaining that what is needed is a URL to a YouTube or other oEmbed-friendly video.
 * New feature: you may now specify `htmlHelp` as a schema field option if you want to include simple markup, like links. The existing `help` option expects plaintext and escapes accordingly.
-* New feature: the `req` objects returned by `apos.tasks.getReq` and `apos.tasks.getAnonReq` now include a `session` object for broader compatibility with methods that expect a proper `req`. It is a plain object and does not remember anything beyond the lifetime of the `req`.
+* New feature: the `req` objects returned by `genex.tasks.getReq` and `genex.tasks.getAnonReq` now include a `session` object for broader compatibility with methods that expect a proper `req`. It is a plain object and does not remember anything beyond the lifetime of the `req`.
 * Bug fix: copying the "Home" page works properly.
 * Bug fix: the Apostrophe migrations progress meter no longer crashes if the operation reports more steps than the expected total.
 * Bug fix: watch all inlined stylesheets for changes, not just those implicitly inlined due to the use of the `css` extension when pushing them.
@@ -96,7 +96,7 @@ Unit tests passing.
 
 Regression tests passing.
 
-* `getSchemaOptions` method no longer throws inappropriate errors when the alternate form of `apos.area` or `apos.singleton` is used. Bug introduced in 2.89.0.
+* `getSchemaOptions` method no longer throws inappropriate errors when the alternate form of `genex.area` or `genex.singleton` is used. Bug introduced in 2.89.0.
 * The CSRF cookie is once again always reset on each request, to ensure no discrepancy between the session (and session cookie) lifespan and the CSRF cookie lifespan. This does not force sessions to exist unnecessarily, it just ensures CSRF errors do not mysteriously begin to appear in long-idle sessions, or when making cross-domain locale switches via the editing interface in apostrophe-workflow.
 * Edits to raw .css files once again trigger less-middleware to recognize a change has occurred and avoid sending a stale cached file in development. When `.css` (rather than `.less`) assets are pushed inline, which is necessary to match the behavior we formerly received from clean-css and avoid crashes on CSS that the LESS parser cannot handle, we now monitor them for changes ourselves and "touch" the master LESS file to help the `less-middleware` module figure out that they have been changed.
 
@@ -115,7 +115,7 @@ Regression tests passing.
   * `self.renderRoute`, which accepts a `next` function that can be passed either an error that will be mapped to an appropriate HTTP status code, or `(null, { template: 'templateName', data: { ... props for the template ... })`. The named template is rendered with `self.render`, and any exceptions thrown are caught properly and logged as errors without a process crash — unlike what frequently happened before in such routes.
   * `self.htmlRoute`, similar to renderRoute but it does not render the markup for you; instead you pass markup as the second argument to `next()`. Useful if you are rendering by some means other than `self.render`.
 * For template errors, a great deal of redundant error logging has been removed.
-* Introduced `apos.utils.warnDevOnce`, refactored some existing warnings to use it, and added a call for CSRF errors to help developers understand what these mean.
+* Introduced `genex.utils.warnDevOnce`, refactored some existing warnings to use it, and added a call for CSRF errors to help developers understand what these mean.
 * New trace feature to help debug crashes in Apostrophe's startup process. Try: `APOS_TRACE_STARTUP=1 node app`
 
 Thanks to Michelin for making this work possible via [Apostrophe Enterprise Support](https://apostrophecms.org/support/enterprise-support). Your organization can also take advantage of the opportunity to fund development of the features you would like to see as well as receiving fast, personal support from Apostrophe's core development team.
@@ -154,7 +154,7 @@ When you do this, anonymous visitors receive only basic CSRF protection based on
 
 For performance reasons the largest sites will likely find this to be a valuable option.
 
-* `apos.global.findGlobal` now officially supports returning a promise. This was an unofficial side effect in earlier releases that ceased to work in recent releases.
+* `genex.global.findGlobal` now officially supports returning a promise. This was an unofficial side effect in earlier releases that ceased to work in recent releases.
 
 * Updated the version of `moment` that ships on the front end to the latest minor release.
 
@@ -532,8 +532,8 @@ Unit tests passing.
 
 Regression tests passing.
 
-* Removed unneeded call to `self.apos.utils.readOnlySession` in `apos.notify`, preventing crashes when this is invoked from a command line task. This fixes `apostrophe-favicons`.
-* Also updated `self.apos.utils.readOnlySession` so it will gracefully ignore calls made with no session in `req` (typically command line tasks).
+* Removed unneeded call to `self.genex.utils.readOnlySession` in `genex.notify`, preventing crashes when this is invoked from a command line task. This fixes `apostrophe-favicons`.
+* Also updated `self.genex.utils.readOnlySession` so it will gracefully ignore calls made with no session in `req` (typically command line tasks).
 * Eliminated uses of `async/await` in core unit tests. This module still supports Node 6.x, so we use promises directly, not via async/await, in core code; of course you can still `await` most of our APIs in your own projects, because `await` works with anything that returns a promise.
 * Fixed a bug that prevented page permissions from propagating properly when "Apply to Subpages" is checked in "Page Settings." Thanks to Mayank Bansal. Unit tests were also added to prevent a regression in the future.
 * A bug that prevented the home page type from being changed via the UI in certain situations has been fixed.
@@ -548,8 +548,8 @@ Regression tests passing.
 * Developer warnings for bad `showFields` configuration now apply to all field types that support `showFields`.
 * Schemas are now validated for nested `array` and `object` schemas, giving developers more information to help them fix their code.
 * The `poll-notifications` API now runs as middleware that is scheduled as early as `req.user` becomes available, avoiding the overhead of loading `req.data.global` in this frequently polled API.
-* The `poll-notifications` API does not crash if the `apos` object has been destroyed. This is not an issue for typical sites. However, this fix removes scary error messages displayed by the very useful [apostrophe-monitor](https://github.com/apostrophecms/apostrophe-monitor) module, which is similar to `nodemon` but specialized to Apostrophe for much faster restarts.
-* Although technically released in the `moog-require` module, not here, a recent fix in that module bears mentioning because it prevents both `apostrophe-monitor` and `apostrophe-multisite` from misbehaving when the options objects of modules are modified. Specifically, the modifications are now reliably distinct for each `apos` object.
+* The `poll-notifications` API does not crash if the `genex` object has been destroyed. This is not an issue for typical sites. However, this fix removes scary error messages displayed by the very useful [apostrophe-monitor](https://github.com/apostrophecms/apostrophe-monitor) module, which is similar to `nodemon` but specialized to Apostrophe for much faster restarts.
+* Although technically released in the `moog-require` module, not here, a recent fix in that module bears mentioning because it prevents both `apostrophe-monitor` and `apostrophe-multisite` from misbehaving when the options objects of modules are modified. Specifically, the modifications are now reliably distinct for each `genex` object.
 *
 * The logic that removes certain typically unwanted buttons from CKEditor is now conditional and does not remove them when they are explicitly requested in the toolbar. Thanks to Fredrik Ekelund.
 * Placeholder markup when a pieces widget is empty. Although not often used directly, this template is often copied as a starting point.
@@ -577,7 +577,7 @@ Regression tests passing.
 
 * An "Undo" button has been added for the "Remove Widget" feature. Although such changes can be undone via "Page Versions," that feature is advanced and somewhat hard to find, whereas this simple "Undo" button is immediately helpful to most users.
 * Apostrophe now displays warnings for several common developer errors. Previously it was difficult to understand why a module didn't work if `extend` was missing for certain common cases, like a `-widgets` or `-pieces-pages` subclass module. We will expand these warnings over time; options are provided to disable them if they do not apply to your situation.
-* The server side notification persistence feature introduced in version 2.74.0 led to an intermittent bug: the "long polling" used to deliver notifications quickly interacted badly with the "resave" behavior of Express sessions, resulting in frequent loss of other session changes, such as draft/live mode switching. This has been fixed. Since we cannot disable `resave` with the standard session store in Apostrophe 2.x, an `apos.utils.readOnlySession(req)` method was added, and the route that "long polls" for new notifications now uses it to disable any modification to the session for the duration of the request.
+* The server side notification persistence feature introduced in version 2.74.0 led to an intermittent bug: the "long polling" used to deliver notifications quickly interacted badly with the "resave" behavior of Express sessions, resulting in frequent loss of other session changes, such as draft/live mode switching. This has been fixed. Since we cannot disable `resave` with the standard session store in Apostrophe 2.x, an `genex.utils.readOnlySession(req)` method was added, and the route that "long polls" for new notifications now uses it to disable any modification to the session for the duration of the request.
 * `limitByAll`, `limitByTag` and `limitById` options for `apostrophe-pieces-widgets`. When set the user is not prompted to choose their own maximum.
 * Fixed conditions in which editing the first or last name of a new `apostrophe-user` did not affect their `slug` in the expected way.
 * Fixed bug: if trashInSchema is in effect, subpages should not have their trash status overridden to match the new parent when their ancestor is moved. This is important when using "Reorganize" with workflow. Additional improvements to better integrate "Reorganize" into the workflow module are separately forthcoming.
@@ -592,15 +592,15 @@ Unit tests passing.
 
 Manual regression tests passing.
 
-* Server-side code may now call `apos.notify(req, 'This is a message')` to send a message to the logged-in user associated with `req`. That message will pop up on the browser and will remain visible until they dismiss it. If the user is not logged in right now, they will see it when they do log in.
+* Server-side code may now call `genex.notify(req, 'This is a message')` to send a message to the logged-in user associated with `req`. That message will pop up on the browser and will remain visible until they dismiss it. If the user is not logged in right now, they will see it when they do log in.
 
 You may use `%s` to interpolate additional string arguments, and you may pass an `options` object with `dismiss: true` for a self-dismissing notification. You may also set the `type` option to `error`, `warn` or `success` for different visual treatments. For example:
 
 ```
-apos.notify(req, 'Sorry, you did not win a shiny new %s!', req.piece.title, { type: 'error' });
+genex.notify(req, 'Sorry, you did not win a shiny new %s!', req.piece.title, { type: 'error' });
 ```
 
-The API is identical to that for `apos.notify` on the browser side, except that `req` must be passed as the first argument. Also the method returns a promise, which resolves when the notification has reached the database. You may also optionally pass a final callback for the same purpose. This is useful when sending a notification just before a task exits the process. The rest of the time you won't need to worry about it.
+The API is identical to that for `genex.notify` on the browser side, except that `req` must be passed as the first argument. Also the method returns a promise, which resolves when the notification has reached the database. You may also optionally pass a final callback for the same purpose. This is useful when sending a notification just before a task exits the process. The rest of the time you won't need to worry about it.
 
 * In `2.73.0`, an optional second argument, `locale`, was added to the `date` Nunjucks filter. As it turns out this was done in a way that could have a knock-on effect on later uses of `date` that did not specify a locale. This has been fixed and unit tests have been added. Thanks to Fredrik Ekelund.
 
@@ -622,7 +622,7 @@ Regression tests passing.
 * The `date` Nunjucks filter now accepts `locale` as a second argument. If `locale` is not present and `req.locale` is set, that locale is used, rather than the default system locale. Thanks to Tim Otlik.
 * Removed nuisance warnings about tolerant sanitization.
 * When using the `passwordReset: true` feature of `apostrophe-login`, you may also set the `passwordResetSubject` option to a custom subject line for the password reset email message.
-* The mechanism that sends the password reset request confirmation email has been factored out to the `apos.login.sendPasswordResetEmail(req, user)` method, so you can trigger it for your own reasons. This method returns a promise; when that promise resolves the password reset email has been successfully handed off for delivery. Note that the promise will be rejected if the user object has no `email` property.
+* The mechanism that sends the password reset request confirmation email has been factored out to the `genex.login.sendPasswordResetEmail(req, user)` method, so you can trigger it for your own reasons. This method returns a promise; when that promise resolves the password reset email has been successfully handed off for delivery. Note that the promise will be rejected if the user object has no `email` property.
 
 ## 2.72.3 (2018-12-03)
 
@@ -654,7 +654,7 @@ Regression tests passing.
 * `apostrophe-attachments:list` task lists the URLs of all valid attachments, including all crops in all sizes.
 * `array` fields may be used in the `relationship` of a join. Thanks to Anthony Tarlao.
 * Added missing callback to asset bundle cleanup for cloud deployments, ensuring that the lock is eventually released and the old bundles are eventually removed.
-* Fixed documentation for `apos.jobs` methods re: the `labels` option.
+* Fixed documentation for `genex.jobs` methods re: the `labels` option.
 
 ## 2.72.1 (2018-11-07)
 
@@ -785,9 +785,9 @@ Regression tests passing.
 * In-context editing support for areas and singletons that are schema fields of arrays. Leaves other, noncontextual data alone. Creating and editing entire array items contextually is outside the scope of this change; use an area rather than an array for that. Directly nested arrays are not supported, but you may use an area in an array in a widget in an array, etc.
 * `.jpeg` files were slipping through with that extension. All new uploads will be correctly converted to `.jpg` and go through the proper sizing process.
 * The `enableShowFields` option was missing some of its logic for fields of type `checkboxes`. Thanks to Anthony Tarlao.
-* A `_title` property is now included in attachments returned by `apos.images.all` and `apos.images.first`.
+* A `_title` property is now included in attachments returned by `genex.images.all` and `genex.images.first`.
 * When apostrophe cannot fix a unique key error, it is helpful to be able to see the last error, as well as the original one. This helps you figure it out if both a unique slug error and an unrelated unique key error are part of the puzzle. We still throw the original error, but we also attach the last error as a property of it, so you can see both.
-* The `apos.areas.fromPlaintext` method now takes an `options` parameter. You may set the `el` property to an element name, in which case the markup is wrapped in that HTML element. `options` may be omitted.
+* The `genex.areas.fromPlaintext` method now takes an `options` parameter. You may set the `el` property to an element name, in which case the markup is wrapped in that HTML element. `options` may be omitted.
 
 ## 2.68.1 (2018-09-27)
 
@@ -845,8 +845,8 @@ These options make it easy to prevent users from creating unintended scenarios, 
 ## 2.66.0 (2018-09-07)
 
 * Updated to CKEditor version 4.10.0. The CKEditor build now includes the CKEditor "widgets" feature (not to be confused with Apostrophe widgets). These are essential for modules like the forthcoming `apostrophe-rich-text-merge-tags`.
-* `apos.areas.richText` and `apos.areas.plaintext` no longer produce duplicate text. To achieve this, the `apos.docs.walk` method no longer walks through the `_originalWidgets` property. This property is only used to preserve the previous versions of widgets that the user lacks permission to edit due to schema field permissions. Exploration of this property by `apos.docs.walk` led to the observed bug.
-* The browser-side implementation of `apos.utils.escapeHtml` now works properly.
+* `genex.areas.richText` and `genex.areas.plaintext` no longer produce duplicate text. To achieve this, the `genex.docs.walk` method no longer walks through the `_originalWidgets` property. This property is only used to preserve the previous versions of widgets that the user lacks permission to edit due to schema field permissions. Exploration of this property by `genex.docs.walk` led to the observed bug.
+* The browser-side implementation of `genex.utils.escapeHtml` now works properly.
 
 ## 2.65.0 (2018-09-04)
 
@@ -870,11 +870,11 @@ Regression tests passing.
 
 * Improved Apostrophe's ability to redisplay the appropriate widget, array element, and field and call the user's attention to it when a schema field error is not detected until server-side validation takes place. This addresses problems that come up when fields become `required` at a later time, and/or data was originally created with an earlier release of Apostrophe that did not enforce `required` in all situations. Browser-side validation is still preferred for ease of use but server-side validation no longer creates situations the user cannot easily resolve.
 
-* Introduced the `apos.global.whileBusy` method. This method accepts a function to be run *while no one is permitted to access the site.* The provided function may return a promise, and that promise resolves before the site becomes accessible again. In the presence of `apostrophe-workflow` it is possible to mark only one locale as busy.
+* Introduced the `genex.global.whileBusy` method. This method accepts a function to be run *while no one is permitted to access the site.* The provided function may return a promise, and that promise resolves before the site becomes accessible again. In the presence of `apostrophe-workflow` it is possible to mark only one locale as busy.
 
-* By default, the `apos.locks.lock` method waits until the lock is available before proceeding. However there is now a `wait` option which can be set to `false` to avoid waiting at all, or to any number of milliseconds. If the method fails because of `wait`, the error is the string `locked`.
+* By default, the `genex.locks.lock` method waits until the lock is available before proceeding. However there is now a `wait` option which can be set to `false` to avoid waiting at all, or to any number of milliseconds. If the method fails because of `wait`, the error is the string `locked`.
 
-* The `apos.locks.lock` method also now accepts a `waitForSelf` option. By default, if the same process invokes `apos.locks.lock` for the same lock in two requests simultaneously, one of the two will receive an error. With `waitForSelf`, the second invocation will wait for the first to resolve and then obtain the lock.
+* The `genex.locks.lock` method also now accepts a `waitForSelf` option. By default, if the same process invokes `genex.locks.lock` for the same lock in two requests simultaneously, one of the two will receive an error. With `waitForSelf`, the second invocation will wait for the first to resolve and then obtain the lock.
 
 ## 2.64.0 (2018-08-29)
 
@@ -887,7 +887,7 @@ Regression tests passing.
 1. Include an element like this in your `notFound.html` template:
 
 ```
-<div data-apos-notfound-search-results></div>
+<div data-genex-notfound-search-results></div>
 ```
 
 2. Set the `suggestions` option to `true` for the `apostrophe-search` module.
@@ -919,8 +919,8 @@ Thanks to falkodev.
 * A useful error message appears if you try to use a `mongodb+srv` URL. These are meant for newer versions of the MongoDB driver. You **can** use them, but you must install the [apostrophe-db-mongo-3-driver](https://npmjs.com/package/apostrophe-db-mongo-3-driver) module first. The error message now explains this, addressing a common question on stackoverflow.
 * Basic styles added for the most common rich text markup tags when within the bounds of an Apostrophe modal. Thanks to Lars Houmark.
 * Fixed UI overlap issue when joining with `apostrophe-page`.
-* `apos.images.all`, `apos.images.first`, etc. now include `_description`, `_credit` and `_creditUrl` when they can be inferred from an `apostrophe-image` containing the attachment.
-* `apos.images.srcset` helper improved. It is now smart enough to limit the image sizes it offers based on what it knows about the size of the original. Thanks to Fredrik Ekelund.
+* `genex.images.all`, `genex.images.first`, etc. now include `_description`, `_credit` and `_creditUrl` when they can be inferred from an `apostrophe-image` containing the attachment.
+* `genex.images.srcset` helper improved. It is now smart enough to limit the image sizes it offers based on what it knows about the size of the original. Thanks to Fredrik Ekelund.
 * Fixes to CSS asset URL generation to pass validation.
 * Performance: eliminated use of `$or` MongoDB queries with regard to pages in the trash. MongoDB tests demonstrate that `$ne: true` is faster than `$or` for our purposes.
 
@@ -967,17 +967,17 @@ that fits within the aspect ratio of the widget in question, if any (`background
 is used). If you have overridden `widget.html` for `apostrophe-images-widgets`, you will want
 to refer to the latest version of `widgetBase.html` for the technique we used here to ensure
 SVG files do not break the slideshow’s overall height.
-* New `apos.templates.prepend` and `apos.templates.append` methods. Call
-`apos.templates.prepend('head', function(req) { ... })` to register a function to be called just after
+* New `genex.templates.prepend` and `genex.templates.append` methods. Call
+`genex.templates.prepend('head', function(req) { ... })` to register a function to be called just after
 the head tag is opened each time a page is rendered. The output of your function is inserted into
 the markup. The standard named locations are `head`, `body`, `contextMenu` and `main`. This is
 convenient when writing modules that add new features to Apostrophe. For project level work also see the
 named Nunjucks blocks already provided in `outerLayoutBase.html`.
-* `apos.singleton` now accepts an `areaOptions` option, which can receive any option that can be
-passed to `apos.area`. Thanks to Manoj Krishnan.
+* `genex.singleton` now accepts an `areaOptions` option, which can receive any option that can be
+passed to `genex.area`. Thanks to Manoj Krishnan.
 * Apostrophe’s “projector” jQuery plugin now respects the `outerHeight` of the tallest slideshow item,
 not just the inner height.
-* `apos.area` now accepts an `addLabel` option for each widget type in the area. Thanks to
+* `genex.area` now accepts an `addLabel` option for each widget type in the area. Thanks to
 Fredrik Ekelund.
 * UI improvements to versioning. Thanks to Lars Houmark.
 * Button to revert to the current version has been replaced with a label indicating it is current,
@@ -1024,7 +1024,7 @@ Unit tests passing.
 
 Regression tests passing.
 
-* Shallowly clone the required definition in defineRelatedType to prevent yet more crosstalk between instances of apos when `apostrophe-multisite` is used. No other changes.
+* Shallowly clone the required definition in defineRelatedType to prevent yet more crosstalk between instances of genex when `apostrophe-multisite` is used. No other changes.
 
 ## 2.60.3 (2018-07-13)
 
@@ -1033,7 +1033,7 @@ Unit tests passing.
 Regression tests passing.
 
 * Improved support for nested areas and widgets. Apostrophe now pushes the correct doc id and dot path all the way to the page in various situations where this could previously have led to errors at save time.
-* The new `apos.locks.withLock(lockName, fn)` method can be used to execute a function while the process has the named lock. This ensures that other processes cannot run that function simultaneously. You may optionally pass a callback, otherwise a promise is returned. Similarly `fn` may take a callback, or no arguments at all, in which case it is expected to return a promise.
+* The new `genex.locks.withLock(lockName, fn)` method can be used to execute a function while the process has the named lock. This ensures that other processes cannot run that function simultaneously. You may optionally pass a callback, otherwise a promise is returned. Similarly `fn` may take a callback, or no arguments at all, in which case it is expected to return a promise.
 * Cleanup: don't call `server.close` unless we've succeeded in listening for connections.
 
 ## 2.60.2 (2018-07-12)
@@ -1085,13 +1085,13 @@ Unit tests passing.
 Regression tests passing.
 
 * New feature: you can now display counts for each tag, joined item, etc. when using the `piecesFilters` option of `apostrophe-pieces-pages`. Just add `counts: true` to the configuration for that filter. The count is then available in a `.count` property for each value in the array. See [creating filter UI with apostrophe-pieces-pages](https://apostrophecms.org/docs/tutorials/intermediate/cursors.html#creating-filter-u-i-with-code-apostrophe-pieces-pages-code) for more information.
-* New feature: command line tasks such as `apostrophe-blog:generate` may now be run programmatically, for example: `apos.tasks.invoke('apostrophe-blog:generate', { total: 50 })`. A promise is returned if a callback is not passed. Note that not all tasks are written to behave politely and invoke their callback normally, however most do. This feature is most useful when writing tasks that logically should incorporate other tasks.
+* New feature: command line tasks such as `apostrophe-blog:generate` may now be run programmatically, for example: `genex.tasks.invoke('apostrophe-blog:generate', { total: 50 })`. A promise is returned if a callback is not passed. Note that not all tasks are written to behave politely and invoke their callback normally, however most do. This feature is most useful when writing tasks that logically should incorporate other tasks.
 * Many UX and UI improvements that make the experience more pleasant in subtle and not-so-subtle ways. Thanks to Carsten, Marco Arnone and the prolific Lars Houmark for their contributions. This was an excellent week for Apostrophe PRs.
 * The full set of controls for joined items are again available in the chooser, as well as in the browse modal.
 * The automatic opening of the admin bar menu on page load can now be configured with the `openOnLoad`, `openOnHomepageLoad`, and `closeDelay` options.
 * `autocomplete="off"` for date fields prevents chrome autocomplete suggestions from wrecking calendar UI.
-* Always remove .apos-global-busy on unlock, even if the transition event never fires. Yes, that is sadly a thing. Prevents the UI from becoming unusable in rare situations (less rare inside functional tests).
-* Use `one` to reduce the overhead of .apos-global-busy's transition event handler. We could do more here to reduce overhead, i.e. unhooking it entirely.
+* Always remove .genex-global-busy on unlock, even if the transition event never fires. Yes, that is sadly a thing. Prevents the UI from becoming unusable in rare situations (less rare inside functional tests).
+* Use `one` to reduce the overhead of .genex-global-busy's transition event handler. We could do more here to reduce overhead, i.e. unhooking it entirely.
 * Much-improved validation of `min`, `max` and `required` for strings, integers and floats on both the server and the browser side. Thanks to Lars Houmark.
 
 ## 2.59.1 (2018-07-02)
@@ -1101,7 +1101,7 @@ Unit tests passing.
 Regression tests passing.
 
 * Widget schemas now support the `def` property for fields. This always worked for pieces and pages.
-* Accommodations for functional testing in nightwatch. The currently active Apostrophe modal, and all of its proxies such as its controls that are in a separate div for presentation reasons, now has the attribute `data-apos-modal-current` which is set to the class name of the modal. This powers the new [apostrophe-nightwatch-tools](https://npmjs.org/package/apostrophe-nightwatch-tools) module, which provides reusable commands and steps that can be used to create test projects similar to our [apostrophe-enterprise-testbed](https://github.com/apostrophecms/apostrophe-enterprise-testbed). Testing with the enterprise testbed project is a standard part of our release process.
+* Accommodations for functional testing in nightwatch. The currently active Apostrophe modal, and all of its proxies such as its controls that are in a separate div for presentation reasons, now has the attribute `data-genex-modal-current` which is set to the class name of the modal. This powers the new [apostrophe-nightwatch-tools](https://npmjs.org/package/apostrophe-nightwatch-tools) module, which provides reusable commands and steps that can be used to create test projects similar to our [apostrophe-enterprise-testbed](https://github.com/apostrophecms/apostrophe-enterprise-testbed). Testing with the enterprise testbed project is a standard part of our release process.
 * Previously if workflow was in use slugs could not be reused by new pages when the original page was in the trash. This has been addressed; the slug is now deduplicated in the same way that email addresses and usernames of users are when in the trash.
 * The infinite scroll feature of `apostrophe-pieces-pages` now works as documented with the styles provided. The code is also more efficient and scroll events are throttled for performance. Thanks to Lars Houmark.
 * Various UX fixes, thanks to Lars Houmark and various members of the Apostrophe team.
@@ -1113,9 +1113,9 @@ Unit tests passing.
 Regression tests passing.
 
 * Fixed nested widget editing for existing widgets whose modal dialog boxes have been accessed (#1428).
-* A clear warning message with instructions has been added for those who are seeing "unblessed" messages due to widget schemas and in-template `apos.area` calls that do not match (#1429). The easiest way to avoid this is to just mark the area `contextual: true` in your widget schema so it is edited *only* on the page. But if you really want to do both, the widget options must match.
+* A clear warning message with instructions has been added for those who are seeing "unblessed" messages due to widget schemas and in-template `genex.area` calls that do not match (#1429). The easiest way to avoid this is to just mark the area `contextual: true` in your widget schema so it is edited *only* on the page. But if you really want to do both, the widget options must match.
 * The mechanism that automatically makes slugs, paths and other keys unique now gives up eventually and reports the original duplicate key error. This makes it easier to debug your code if you are violating your own custom indexes that feature unique keys. It is possible to make the deduplicator aware of your own own properties that need to be made more unique on inserts if you wish, by implementing a `docFixUniqueError` method. *Please note:* this change is not a regression. Code that formerly never completed its task in this situation will simply report an error promptly rather than retrying inserts forever while degrading your database performance.
-* A new profiling API has been added: the `apos.utils.profile` method. This method can be called to report how long code takes to run for later analysis. It does nothing in the default implementation; modules like our forthcoming profiler override it to give feedback on the speed of your code.
+* A new profiling API has been added: the `genex.utils.profile` method. This method can be called to report how long code takes to run for later analysis. It does nothing in the default implementation; modules like our forthcoming profiler override it to give feedback on the speed of your code.
 
 ## 2.58.0 (2018-06-13)
 
@@ -1139,9 +1139,9 @@ This feature is useful for creating navigation that may point to a variety of do
 
 Polymorphic joins work for both `joinByOne` and `joinByArray`. Currently they are **not** available for `joinByOneReverse`, `joinByArrayReverse`, or pieces filters. Their primary use case is creating navigation widgets.
 
-* `apos.images.srcset` helper function added. You can use this function to generate a `srcset` attribute for responsive display of an image. Just pass an attachment to the helper:
+* `genex.images.srcset` helper function added. You can use this function to generate a `srcset` attribute for responsive display of an image. Just pass an attachment to the helper:
 
-`<img srcset="{{ apos.images.srcset(apos.images.first(data.piece.thumbnail)) }}" />`
+`<img srcset="{{ genex.images.srcset(genex.images.first(data.piece.thumbnail)) }}" />`
 
 A `src` attribute for backwards compatibility is always advisable too.
 
@@ -1149,7 +1149,7 @@ Thanks to Fredrik Ekelund for this contribution.
 
 * Fast forms for big schemas are back! The issue with tags has been resolved.
 
-* A single MongoDB connection may be reused by several `apos` objects for separate sites, a feature which is exploited by the [apostrophe-multisite](https://github.com/apostrophecms/apostrophe-multisite) module. Note that this only reuses the connection, it does not share a single MongoDB database. It *does* allow you to keep potentially hundreds of sites on a single MongoDB server or replica set, as the overhead of multiple logical "databases" is small in MongoDB's modern WiredTiger storage engine. To reuse a connection, pass it to the `apostrophe-db` module as the `db` option.
+* A single MongoDB connection may be reused by several `genex` objects for separate sites, a feature which is exploited by the [apostrophe-multisite](https://github.com/apostrophecms/apostrophe-multisite) module. Note that this only reuses the connection, it does not share a single MongoDB database. It *does* allow you to keep potentially hundreds of sites on a single MongoDB server or replica set, as the overhead of multiple logical "databases" is small in MongoDB's modern WiredTiger storage engine. To reuse a connection, pass it to the `apostrophe-db` module as the `db` option.
 
 * Fixed a MongoDB 3.6 incompatibility in the "Apply to Subpages" feature for permissions. Also made this feature available again when *removing* someone's permissions. We plan further UX work here to make this feature easier to understand and use.
 
@@ -1193,7 +1193,7 @@ Conflicts were rare, but possible. Asset generation ids are now proper cuids,
 no conflicts should occur.
 * IDs may be added to notifications as a simple way to give other
 code access to them.
-* The `apos.global.addGlobalToData` method may now be called
+* The `genex.global.addGlobalToData` method may now be called
 with just `req` (returns a promise), with `req, callback` (invokes
 the callback), or as middleware (which Apostrophe does by default).
 This method is handy in command line tasks and other places
@@ -1209,7 +1209,7 @@ Functional tests passing.
 * **Security:** numerous issues formerly flagged by the new `npm audit` command have been addressed. We are now using a [maintained branch of lodash 3.x](https://github.com/sailshq/lodash) to keep bc while addressing security (many thanks to the Sails team). We are also using LESS 3.x, which has caused no issues in our testing and corrects security concerns with LESS 2.x. Numerous `npm audit` security reports regarding `imagemin` modules were addressed by removing `imagemin` from `uploadfs` itself, however you may opt into it via the new [`postprocessors` option of `uploadfs`](https://github.com/punkave/uploadfs). As of this writing, one `npm audit` complaint remains: the `azure-storage` module needs to update a dependency to address a possible vulnerability. You may mitigate this issue by not using the `azure` backend of `uploadfs` with Apostrophe until it is resolved upstream.
 * Many UI enhancements when choosing, browsing and managing items which reduce user confusion. For instance: moving items up and down in a selection no longer refreshes the entire list and forces the user to scroll down again. Trashed pages are easier to distinguish in "reorganize." "More" dropdown for pieces is again fully visible when clicked. Placeholder helpers make the search field for joins easier to understand. Chevrons added to various select elements which were difficult to identify as dropdowns before.
 * Deeply nested areas now save properly. Formerly in certain situations the same widget might be duplicated.
-* `apos.tasks.getReq` now supplies an empty `req.data` object for easier use with code expecting an Express request, Apostrophe-style.
+* `genex.tasks.getReq` now supplies an empty `req.data` object for easier use with code expecting an Express request, Apostrophe-style.
 * Bedeviled by case-sensitive sorting? The `sortify: true` property for `string` schema fields is now documented and automatically creates a database migration to ensure it is available for your existing data as well. When used, this flag ensures that any `sort('fieldname')` call for that field in Apostrophe is case-insensitive, ignores punctuation and otherwise behaves as end users expect.
 
 ## 2.55.2 (2018-05-15)
@@ -1226,7 +1226,7 @@ Unit tests passing.
 
 Relevant functional tests passing.
 
-* `apos.migrations.eachArea` no longer crashes the stack when iterating over a large number of documents without areas.
+* `genex.migrations.eachArea` no longer crashes the stack when iterating over a large number of documents without areas.
 
 ## 2.55.0 (2018-05-11)
 
@@ -1264,7 +1264,7 @@ Regression tests passing.
 
 * Previously executed migrations are remembered in a collection that persists, not just in a cache, avoiding extra work which could be extensive in a large database. Migrations are still required to be idempotent (they should detect whether they have any work to do, and do no harm if they are not needed again for a particular document).
 
-* `apos.migrations.eachWidget` now delivers an accurate `dotPath`, which is crucial for the use of `apos.docs.db.update` with `$set`. No standard migrations in Apostrophe were using the feature until now.
+* `genex.migrations.eachWidget` now delivers an accurate `dotPath`, which is crucial for the use of `genex.docs.db.update` with `$set`. No standard migrations in Apostrophe were using the feature until now.
 
 ## 2.54.2 (2018-04-24)
 
@@ -1289,7 +1289,7 @@ Unit tests passing.
 Regression tests passing.
 
 * Several performance improvements. In situations where Apostrophe formerly made expensive "matching nothing" queries, Apostrophe now either skips the entire query or uses an efficient query for a nonexistent `_id`, depending on whether the method in question has the right to cancel the entire operation.
-* Resources released more completely by `apos.destroy`, which can now satisfy the expectations of `mocha` 5.x (no timeouts left active, etc). This was done by adding a `destroy` method to `uploadfs`.
+* Resources released more completely by `genex.destroy`, which can now satisfy the expectations of `mocha` 5.x (no timeouts left active, etc). This was done by adding a `destroy` method to `uploadfs`.
 * `range` schema fields behave better when there is no existing value.
 * Save operation of a modal now triggers the global busy state to prevent race conditions and other unwanted behavior.
 * Global busy state can now be pushed and popped, and modals utilize this, so that a modal can be used to gather information during the `saveContent` method of another modal.
@@ -1371,8 +1371,8 @@ Unit tests passing.
 Regression tests passing.
 
 * New `color` and `range` schema field types. `color` provides a color picker field allowing values compatible with CSS, etc. `range` provides an `<input type="range">` element and respects `min` and `max` options.
-* New `apos.utils.log`, `apos.utils.info`, `apos.utils.debug`, `apos.utils.warn` and `apos.utils.error` methods. These are now used consistently throughout Apostrophe core, both in the server and in the browser. On the server, these methods wrap the corresponding methods of a `logger` object and you can inject your own via the `logger` option of the `apostrophe-utils` module. By default a logger object that wraps the `console` object is created. For convenience, if your logger has no `log` method, `apos.utils.log` will call `logger.info`. This allows many popular loggers like `winston` to be used without modification "out of the box."
-* `modulesSubdir` option to specify subdir where local modules come from, overriding `lib/modules`. Useful when more than one `apos` object exists in a project.
+* New `genex.utils.log`, `genex.utils.info`, `genex.utils.debug`, `genex.utils.warn` and `genex.utils.error` methods. These are now used consistently throughout Apostrophe core, both in the server and in the browser. On the server, these methods wrap the corresponding methods of a `logger` object and you can inject your own via the `logger` option of the `apostrophe-utils` module. By default a logger object that wraps the `console` object is created. For convenience, if your logger has no `log` method, `genex.utils.log` will call `logger.info`. This allows many popular loggers like `winston` to be used without modification "out of the box."
+* `modulesSubdir` option to specify subdir where local modules come from, overriding `lib/modules`. Useful when more than one `genex` object exists in a project.
 * Major speedup to parked pages. Also eliminates spurious warnings about inefficient joins at startup.
 * Refactored autocollapse behavior of admin bar into its own method for easier overrides.
 * CSS fixes for improved usability.
@@ -1393,7 +1393,7 @@ Regression tests passing.
 
 * The database connection keepalive mechanism now uses a query against an empty collection, rather than a server status call that the database user might not have permission to make.
 
-* The `apos.utils.cssName` helper now preserves double dashes, as they are a common feature in modern CSS frameworks.
+* The `genex.utils.cssName` helper now preserves double dashes, as they are a common feature in modern CSS frameworks.
 
 * There is now an `apostrophe-areas:widgetBase.html` file which can be extended block by block in a project-level `lib/modules/apostrophe-areas/views/widget.html` file. New overrideable methods have also been added to simplify adding custom classes programmatically to the wrapper and the widget itself without overriding any templates.
 
@@ -1405,7 +1405,7 @@ Unit tests passing.
 
 Regression tests passing.
 
-* Attachment fields now save properly when directly part of the schema of a widget. A bug was introduced in version 2.42.0 when the `length` property was added to attachments. A fix made long ago to `apos.utils.clonePermanent` on the server side was also needed on the browser side.
+* Attachment fields now save properly when directly part of the schema of a widget. A bug was introduced in version 2.42.0 when the `length` property was added to attachments. A fix made long ago to `genex.utils.clonePermanent` on the server side was also needed on the browser side.
 
 ## 2.46.0 (2018-01-25)
 
@@ -1421,7 +1421,7 @@ Regression tests passing.
 
 * Apostrophe's codebase now passes `eslint`. In the process many cases of callback errors being ignored were fixed, as well as global variable leaks.
 
-* Apostrophe's `apos.locks.lock` and `apos.locks.unlock` methods now support promises.
+* Apostrophe's `genex.locks.lock` and `genex.locks.unlock` methods now support promises.
 
 ## 2.45.0 (2018-01-11)
 
@@ -1450,8 +1450,8 @@ Regression tests passing.
 
 To add a "Load More" button:
 
-1. Wrap a new element inside your data-apos-ajax-context element around the content that makes up the current "page" of results. This should not wrap around filter links or the "Load More" button itself.
-2. Give that new element the `data-apos-ajax-append` attribute.
+1. Wrap a new element inside your data-genex-ajax-context element around the content that makes up the current "page" of results. This should not wrap around filter links or the "Load More" button itself.
+2. Give that new element the `data-genex-ajax-append` attribute.
 3. Add `append=1` to the query string of your Load More button. Example:
 
 ```
@@ -1460,7 +1460,7 @@ To add a "Load More" button:
 {% endif %}
 ```
 
-To progressively enhance this for infinite scroll, add a `data-apos-ajax-infinite-scroll` attribute to the button.
+To progressively enhance this for infinite scroll, add a `data-genex-ajax-infinite-scroll` attribute to the button.
 
 Note that we do this via progressive enhancement of a "Load More" button so that Google can still reach and index all of the pages (SEO).
 
@@ -1496,7 +1496,7 @@ Regression tests passing.
 
 * Filters for "select" fields now default to "no opinion," rather than the default choice. This is the normal behavior for other field types.
 
-* Even more promise support! `apos.attachments.insert`, `pieces.trash` and `pieces.rescue` all return promises if no callback is given.
+* Even more promise support! `genex.attachments.insert`, `pieces.trash` and `pieces.rescue` all return promises if no callback is given.
 
 * A YouTube embed unit test was removed to ensure consistent results in Travis CI, which is once again in routine use.
 
@@ -1690,13 +1690,13 @@ Unit tests passing.
 
 Regression tests passing.
 
-* `apos.areas.isEmpty(data.page, 'body')` will now tell you if that area is considered empty (it contains no widgets, or the widgets consider themselves empty).
+* `genex.areas.isEmpty(data.page, 'body')` will now tell you if that area is considered empty (it contains no widgets, or the widgets consider themselves empty).
 
-* The new `controls` option may be passed to any widget, via `apos.singleton` or via the configuration for that specific widget type in an `apos.area` call. In this example, the widget cannot be removed, cannot be moved, and has its controls positioned at the upper right instead of the upper left:
+* The new `controls` option may be passed to any widget, via `genex.singleton` or via the configuration for that specific widget type in an `genex.area` call. In this example, the widget cannot be removed, cannot be moved, and has its controls positioned at the upper right instead of the upper left:
 
 ```
 {{
-  apos.singleton(data.page, 'footer', 'apostrophe-rich-text', {
+  genex.singleton(data.page, 'footer', 'apostrophe-rich-text', {
     controls: {
       removable: false,
       movable: false,
@@ -1717,7 +1717,7 @@ The `removable` and `movable` suboptions are primarily intended for singletons.
 
 * `callOne` added for convenience when you want to invoke a method normally invoked by `callAll` in the same way, but for only one module. Thanks to Arthur.
 
-* If an attachment does not exist, `apos.attachments.url` no longer results in a template error page. Instead a fallback icon is displayed and an error message is logged. Developers should still always check whether attachments and joined objects still exist in their templates. Thanks to Raphaël DiRago.
+* If an attachment does not exist, `genex.attachments.url` no longer results in a template error page. Instead a fallback icon is displayed and an error message is logged. Developers should still always check whether attachments and joined objects still exist in their templates. Thanks to Raphaël DiRago.
 
 * Notifications within modals move to lower right corner of modal for readability.
 
@@ -1761,7 +1761,7 @@ If the same user attempts to edit a document in two tabs or windows, something v
 
 * In a related change, Apostrophe does not begin attempting to save an area on the page until the user interacts with it for the first time. This fixes many commonly reported frustrating situations in which one user is editing and the other is logged in but merely looking at the page, creating a ping-pong exchange of save requests.
 
-* Apostrophe's unit tests have been restructured so that a single test file can be run conveniently, via `mocha test/docs.js`, for instance, and there is no longer a need for us to update `test/test.js` every time a test is added. Also, the unit tests use the same `apos.tasks.getReq` and `apos.tasks.getAnonReq` methods that are used by real-life command line tasks, which provide a more faithful simulation of an Express request object and one we anticipate extending as needed.
+* Apostrophe's unit tests have been restructured so that a single test file can be run conveniently, via `mocha test/docs.js`, for instance, and there is no longer a need for us to update `test/test.js` every time a test is added. Also, the unit tests use the same `genex.tasks.getReq` and `genex.tasks.getAnonReq` methods that are used by real-life command line tasks, which provide a more faithful simulation of an Express request object and one we anticipate extending as needed.
 
 ## 2.33.1 (2017-08-16)
 
@@ -1775,7 +1775,7 @@ All tests passing.
 
 * The login page can be disabled via the new `localLogin` option of the `apostrophe-login` module. Set it explicitly to `false` to disable the login URL completely.
 * Refactoring: the `apostrophe-login` module now has an `afterLogin` method which takes care of invoking the `loginAfterLogin` callAll method on all modules that have one, and then redirecting appropriately. This code was factored out to make it easier to use in the new [apostrophe-passport](https://npmjs.org/package/apostrophe-passport) module, which allows the use of almost any [Passport](http://passportjs.org)-based strategy, such as Facebook login, Google login, Github login, etc.
-* `apos.users.ensureGroup` now delivers the group to its callback as the second argument.
+* `genex.users.ensureGroup` now delivers the group to its callback as the second argument.
 
 Thanks to Michelin for their support of this work.
 
@@ -1864,25 +1864,25 @@ When `trashInSchema` is `true`, users can also change the trash status of a piec
 
 * The `apostrophe-doc-type-manager` module now has `getEditPermissionName` and `getAdminPermissionName` methods. These can be overridden by subclasses. For instance, all page subtypes return `edit-apostrophe-page` for the former because page types can be changed.
 
-* `apos.destroy(function() { ... })` may be called to shut down a running Apostrophe instance. This does **not** delete any data. It simply releases the database connection, HTTP server port, etc. This mechanism is extensible by implementing an `apostropheDestroy` method in your own module.
+* `genex.destroy(function() { ... })` may be called to shut down a running Apostrophe instance. This does **not** delete any data. It simply releases the database connection, HTTP server port, etc. This mechanism is extensible by implementing an `apostropheDestroy` method in your own module.
 
 * `before` option for `expressMiddleware`. As before any module can provide middleware via an `expressMiddleware` property which may be a function or array of functions. In addition, if that property is an object, it may also have a `before` subproperty specifying a module whose middleware should run after it. In this case the actual middleware function or functions must be in a `middleware` subproperty.
 
-* `apos.instancesOf(name)` returns an array of modules that extend `name` or a subclass of it. `apos.instanceOf(object, name)` returns true if the given `object` is a moog instance of `name` or a subclass of it.
+* `genex.instancesOf(name)` returns an array of modules that extend `name` or a subclass of it. `genex.instanceOf(object, name)` returns true if the given `object` is a moog instance of `name` or a subclass of it.
 
-* `apos.permissions.criteria` can now supply MongoDB criteria restricted to the types the user can edit when a general permission name like `edit` or `edit-doc` is asked for. *This was never a security bug because permissions for actual editing were checked when individual edits occurred. The change makes it easier to display lists of editable content of mixed types.*
+* `genex.permissions.criteria` can now supply MongoDB criteria restricted to the types the user can edit when a general permission name like `edit` or `edit-doc` is asked for. *This was never a security bug because permissions for actual editing were checked when individual edits occurred. The change makes it easier to display lists of editable content of mixed types.*
 
 * Extending the indexes of Apostrophe's `aposDocs` collection is easier to achieve in modules that use `improve` to extend `apostrophe-docs`.
 
 * Removed tests for obsolete, unsupported Node.js 0.10.x. Node.js 4.x is now the minimum version. *We do not intend to break ES5 compliance in 2.x, however testing old versions of Node that are not maintained with security patches in any freely available repository is not practical.*
 
-* `insert` method for `apos.attachments`, mirroring the other modules better. Thanks to Arthur Agombart.
+* `insert` method for `genex.attachments`, mirroring the other modules better. Thanks to Arthur Agombart.
 
 ## 2.28.0 (2017-07-17)
 
 All tests passing.
 
-* Notifications are available, replacing the use of `alert`. This feature is primarily for Apostrophe's own administrative features; you can use it when extending the editing UI. Call `apos.notify('message')` to display a simple message. You can specify several `type` options such as `error` and `info`, and you can also use `%s` wildcards. Everything is localized on the server side. [See the documentation for more information](http://apostrophecms.org/docs/modules/apostrophe-notifications/browser-apostrophe-notifications.html#trigger). Thanks to Michelin for their support of this work.
+* Notifications are available, replacing the use of `alert`. This feature is primarily for Apostrophe's own administrative features; you can use it when extending the editing UI. Call `genex.notify('message')` to display a simple message. You can specify several `type` options such as `error` and `info`, and you can also use `%s` wildcards. Everything is localized on the server side. [See the documentation for more information](http://apostrophecms.org/docs/modules/apostrophe-notifications/browser-apostrophe-notifications.html#trigger). Thanks to Michelin for their support of this work.
 * The `apostrophe-images` widget now provides a focal point editor. See the new [responsive images HOWTO](http://apostrophecms.org/docs/tutorials/howtos/responsive-images.html). Thanks to Michelin for their support of this work.
 * UX: clicking "edit" on an image you have already selected no longer deselects the image. Thanks to Michelin for their support of this work.
 * Bug fix: corrected issue that sometimes prevented joins with pages from editing properly.
@@ -1907,7 +1907,7 @@ Lazy configuration is in place for doc types (like pages and pieces) and widget 
 
 * ckeditor 4.6.2. Resolves #896: you can now create links properly in Microsoft Edge. Our policy is now to check in periodically with new ckeditor releases and just make sure they are compatible with our editor skin before releasing them.
 
-* `apos.areas.fromRichText` can be used to create an area with a single rich text widget from a trusted string of HTML. Not intended for mixed media, just rich text. Related: both `fromRichText` and `fromPlaintext` now correctly give their widgets an `_id` property.
+* `genex.areas.fromRichText` can be used to create an area with a single rich text widget from a trusted string of HTML. Not intended for mixed media, just rich text. Related: both `fromRichText` and `fromPlaintext` now correctly give their widgets an `_id` property.
 
 ## 2.26.1 (2017-06-12)
 
@@ -1957,7 +1957,7 @@ The options object of `enhanceDate` is now passed on to `pikaday`. Considered a 
 
 All tests passing.
 
-cleanCss needs to know that the output CSS files are going to live in apos-minified in order to correctly parse `@import` statements that pull in plain .css files. Also, the mechanism for prefixing URLs in CSS code was not applied at the correct stage of the bundling process (the minify stage), which broke the ability to reference fonts, images, etc. via URLs beginning with /modules when using an S3 asset bundle.
+cleanCss needs to know that the output CSS files are going to live in genex-minified in order to correctly parse `@import` statements that pull in plain .css files. Also, the mechanism for prefixing URLs in CSS code was not applied at the correct stage of the bundling process (the minify stage), which broke the ability to reference fonts, images, etc. via URLs beginning with /modules when using an S3 asset bundle.
 
 ## 2.23.0 (2017-04-24)
 
@@ -1973,9 +1973,9 @@ See [reusable content with pieces](http://apostrophecms.org/docs/tutorials/getti
 
 Thanks to Michelin for their support of this work.
 
-* `apos.utils.isFalse` allows you to check for values that are strictly `=== false` in templates.
+* `genex.utils.isFalse` allows you to check for values that are strictly `=== false` in templates.
 
-* `apos.utils.startCase` converts property names to English, roughly speaking. It is used as a fallback if a filter does not have a `label` property. This is primarily for bc, you should add a `label` property to your fields.
+* `genex.utils.startCase` converts property names to English, roughly speaking. It is used as a fallback if a filter does not have a `label` property. This is primarily for bc, you should add a `label` property to your fields.
 
 * Production now matches the dev environment with regard to relative URLs in LESS files, such as those used to specify background images or font files. Previously the behavior was different in dev and production, which is a bug.
 
@@ -2127,7 +2127,7 @@ All tests passing.
 
 All tests passing.
 
-* Fixed XSS (cross-site scripting) vulnerability in `req.browserCall` and `apos.push.browserCall`.
+* Fixed XSS (cross-site scripting) vulnerability in `req.browserCall` and `genex.push.browserCall`.
 
 * Removed confusing strikethrough of "Apply to Subpages" subform when the permission is being removed rather than added.
 
@@ -2135,7 +2135,7 @@ All tests passing.
 
 * Improved modal array tab UI and CSS.
 
-* The `oembedReady` Apostrophe event is now emitted correctly after `apostrophe-oembed` renders an oembed-based player, such as a YouTube video player for the `apostrophe-video` widget. This event can be listened for via `apos.on('apostrophe-oembed', fn)` and receives a jQuery object referring to the relevant element.
+* The `oembedReady` Apostrophe event is now emitted correctly after `apostrophe-oembed` renders an oembed-based player, such as a YouTube video player for the `apostrophe-video` widget. This event can be listened for via `genex.on('apostrophe-oembed', fn)` and receives a jQuery object referring to the relevant element.
 
 ## 2.17.0 (2017-02-14)
 
@@ -2181,7 +2181,7 @@ Due to a miscommunication the version number 2.15.0 had been previously used. Th
 
 All tests passing.
 
-* `apos.permissions.addPublic` accepts multiple arguments and array arguments,
+* `genex.permissions.addPublic` accepts multiple arguments and array arguments,
 adding all of the permission names given including any listed in the arrays.
 * Permissions checks for pieces admin routes longer check for req.user, checking for the appropriate `edit-` permission is sufficient and makes addPublic more useful.
 * Updated the `i18n` module to address a problem where labels that happened to be numbers rather than strings would crash the template if passed to `__()`.
@@ -2203,15 +2203,15 @@ Fixed [#385](https://github.com/punkave/apostrophe/issues/385): if a page is mov
 
 All tests passing.
 
-* The `apos.utils.clonePermanent` method no longer turns objects into long arrays of nulls if they happen to have a `length` property. `lodash` uses the `length` property as an indicator that the object should be treated as an array, but this would be an unrealistic restriction on Apostrophe schema field names. Instead, `clonePermanent` now uses `Array.isArray` to distinguish true arrays. This fixes a nasty bug when importing content from A1.5 and subsequently editing it.
+* The `genex.utils.clonePermanent` method no longer turns objects into long arrays of nulls if they happen to have a `length` property. `lodash` uses the `length` property as an indicator that the object should be treated as an array, but this would be an unrealistic restriction on Apostrophe schema field names. Instead, `clonePermanent` now uses `Array.isArray` to distinguish true arrays. This fixes a nasty bug when importing content from A1.5 and subsequently editing it.
 
-* When a user is logged in there is an `apos.user` object on the browser side. Due to a bug this was an empty object. It now contains `title`, `_id` and `username` properties as intended.
+* When a user is logged in there is an `genex.user` object on the browser side. Due to a bug this was an empty object. It now contains `title`, `_id` and `username` properties as intended.
 
 ## 2.14.0 (2017-01-06)
 
 All tests passing.
 
-* A version rollback dialog box for the `global` doc is now opened if an element with the `data-apos-versions-global` attribute is clicked. There is currently no such element in the standard UI but you may introduce one in your own layout if you have mission-critical content in the `global` doc that is awkward to recreate after an accidental deletion, such as a custom sitewide nav.
+* A version rollback dialog box for the `global` doc is now opened if an element with the `data-genex-versions-global` attribute is clicked. There is currently no such element in the standard UI but you may introduce one in your own layout if you have mission-critical content in the `global` doc that is awkward to recreate after an accidental deletion, such as a custom sitewide nav.
 * An error message is correctly displayed when login fails.
 * Many UI messages are now passed through the `__()` internationalization helper correctly. Thanks to `timaebi`.
 
@@ -2219,13 +2219,13 @@ All tests passing.
 
 All tests passing.
 
-The `data-apos-ajax-context` feature had a bug which prevented ordinary anchor links from performing AJAX refreshes correctly.
+The `data-genex-ajax-context` feature had a bug which prevented ordinary anchor links from performing AJAX refreshes correctly.
 
 ## 2.13.1 (2016-12-22)
 
 All tests passing.
 
-The `apostrophe-attachments` module now calls `apos.ui.busy` correctly on the fieldset so that the busy and completed indicators are correctly shown and hidden. Previously the string `0` was passed, which is not falsy.
+The `apostrophe-attachments` module now calls `genex.ui.busy` correctly on the fieldset so that the busy and completed indicators are correctly shown and hidden. Previously the string `0` was passed, which is not falsy.
 
 ## 2.12.0 (2016-12-15)
 
@@ -2244,7 +2244,7 @@ You can now add middleware to your Apostrophe site via any module in your projec
 
 All tests passing.
 
-Fixed bug in `autoPreserveText` feature of our `data-apos-ajax-context` mechanism; also, restricted it to text inputs and textareas that actually have the focus so that you can replace their values normally at other times
+Fixed bug in `autoPreserveText` feature of our `data-genex-ajax-context` mechanism; also, restricted it to text inputs and textareas that actually have the focus so that you can replace their values normally at other times
 
 ## 2.10.2 (2016-12-06)
 
@@ -2270,13 +2270,13 @@ All tests passing.
 All tests passing.
 
 * Starting with MongoDB 3.3.x (?), it is an error to pass `safe: true` when calling `ensureIndex`, and it has never done anything in any version. In our defense, cargo-cult practice was probably adopted back in the days when MongoDB would invoke your write callback without actually confirming anything unless you passed `safe: true`, but apparently this was never a thing for indexes. Removed all the `safe: true` arguments from `ensureIndex` calls.
-* Added a `beforeAjax` Apostrophe event to facilitate progress display and animations when using the new `data-apos-ajax-content` feature.
+* Added a `beforeAjax` Apostrophe event to facilitate progress display and animations when using the new `data-genex-ajax-content` feature.
 
 ## 2.9.1 (2016-12-02)
 
 All tests passing.
 
-* Fixed an omission that prevented the use of the back button to undo the very first click when using the new `data-apos-ajax-context`. Later clicks worked just fine, but for the first one to work we need a call to `replaceState` to make it possible to restore the original query.
+* Fixed an omission that prevented the use of the back button to undo the very first click when using the new `data-genex-ajax-context`. Later clicks worked just fine, but for the first one to work we need a call to `replaceState` to make it possible to restore the original query.
 
 ## 2.9.0 (2016-12-01)
 
@@ -2296,7 +2296,7 @@ All tests passing.
 
 * `APOS_MONGODB_URI` environment variable is used to connect to MongoDB if present. Helpful for cloud hosting. See the new [deploying Apostrophe in the cloud HOWTO](http://apostrophecms.org/docs/tutorials/howtos/deploying-apostrophe-in-the-cloud.html).
 * `APOS_S3_BUCKET`, `APOS_S3_ENDPOINT` (optional), `APOS_S3_SECRET`, `APOS_S3_KEY`, and `APOS_S3_REGION` environment variables can be used to configure Apostrophe to use S3 for uploaded media storage. This behavior kicks in if `APOS_S3_BUCKET` is set. See the new [deploying Apostrophe in the cloud HOWTO](http://apostrophecms.org/docs/tutorials/howtos/deploying-apostrophe-in-the-cloud.html).
-* New advisory locking API accessible via `apos.locks.lock` and `apos.locks.unlock`. `apostrophe-migrations:migrate` is now wrapped in a lock. More locks are coming, although Apostrophe was carefully designed for benign worst case outcomes during race conditions.
+* New advisory locking API accessible via `genex.locks.lock` and `genex.locks.unlock`. `apostrophe-migrations:migrate` is now wrapped in a lock. More locks are coming, although Apostrophe was carefully designed for benign worst case outcomes during race conditions.
 * Better asset deployment for Heroku and other cloud services. `node app apostrophe:generation --create-bundle=NAME` now creates a new folder, `NAME`, containing assets that would otherwise have been written to `public`. Launching a server with the `APOS_BUNDLE` environment variable set to `NAME` will then copy that bundle's contents into `public` before listening for connections. See the new [deploying Apostrophe in the cloud HOWTO](http://apostrophecms.org/docs/tutorials/howtos/deploying-apostrophe-in-the-cloud.html).
 * `apostrophe-pieces-pages` index pages are about 2x faster; discovered we were inefficiently deep-cloning `req` when cloning a cursor.
 * Helpful error message if you forget to set the `name` property of one of your `types` when configuring `apostrophe-pages`.
@@ -2305,7 +2305,7 @@ All tests passing.
 
 * We do a better job of defaulting to a sort by search match quality if full-text search is present in a query. Under the hood this is powered by the new `defaultSort` filter, which just stores a default value for the `sort` filter to be used only if `search` (and anything else with an implicit preferred sort order) is not present. No more lame search results for blog posts. You can explicitly set the `sort()` filter in a cursor override if you really want to, but trust us, when `search` is present sorting by anything but search quality produces poor results.
 * Fixed bugs in the sanitizer for page slugs. It is now impossible to save a slug with trailing or consecutive slashes (except the home page slug which is allowed to consist of a single "trailing" slash). Added unit tests.
-* Apostrophe's dropdown menus, etc. will more robustly maintain their font size in the presence of project-level CSS. There is an explicit default font size for `.apos-ui`.
+* Apostrophe's dropdown menus, etc. will more robustly maintain their font size in the presence of project-level CSS. There is an explicit default font size for `.genex-ui`.
 
 ## 2.6.2 (2016-11-12)
 
@@ -2367,8 +2367,8 @@ All tests passing.
 
 All tests passing.
 
-* Implemented `apos.areas.fromPlaintext`, which accepts a string of plaintext (not markup) and returns an area with a single `apostrophe-rich-text` widget in it, containing that text. Useful in implementing importers.
-* The so-called `csv` import mode of `apos.schemas.convert` works properly for areas, using the above. Although it is called csv this mode is really suitable for any situation in which you have plaintext representations of each property in an object and would like those sanitized and converted to populate a doc.
+* Implemented `genex.areas.fromPlaintext`, which accepts a string of plaintext (not markup) and returns an area with a single `apostrophe-rich-text` widget in it, containing that text. Useful in implementing importers.
+* The so-called `csv` import mode of `genex.schemas.convert` works properly for areas, using the above. Although it is called csv this mode is really suitable for any situation in which you have plaintext representations of each property in an object and would like those sanitized and converted to populate a doc.
 * Bug fix: emit the `enhance` Apostrophe event only once on page load. This event is emitted only when there is new content that has been added to the page, e.g. once at page load, and also when a new widget is added or updated, etc. The first argument to your event handler will be a jQuery element which will contain only new elements.
 * Legacy support for `data/port` and `data/address` files has been restored. (Note that `PORT` and `ADDRESS` environment variables supersede these. In modern Stagecoach deployments `data/port` is often a space-separated list of ports, and the `deployment/start` script parses these out and launches multiple processes with different PORT variables.)
 
@@ -2406,7 +2406,7 @@ All tests passing.
 
 * Fixed a bug in the new "copy page" feature that affects pages that have `null` properties.
 * Improved the experience of using the widget controls to manage the widgets in an area.
-* The `login` module now has an alias, `apos.login`, like other core modules.
+* The `login` module now has an alias, `genex.login`, like other core modules.
 * Updated the jquery projector plugin to the latest version.
 
 ## 2.3.0 (2016-10-06)
@@ -2478,13 +2478,13 @@ Since Apostrophe did not function previously on Windows and there is no behavior
 
 ## 2.1.0 (2016-09-16)
 
-* Introduced the new `apos.areas.richText` and `apos.areas.plaintext` methods, which are also available in templates by the same names.
+* Introduced the new `genex.areas.richText` and `genex.areas.plaintext` methods, which are also available in templates by the same names.
 
 * Added and documented the `addImageSizes` option of the `apostrophe-attachments` module.
 
 ## 2.0.4 (2016-09-14)
 
-* The `apostrophe-login` module now invokes `loginAfterLogin(req, callback)` on all modules that have such a method, via `apos.callAll`. Modules that do not need a callback can supply this method with only one argument. Afterwards, `apostrophe-login` redirects to `req.redirect`, as is supported elsewhere in Apostrophe. So you can assign to `req.redirect` in your callback to change the user's destination after a successful login. If `req.redirect` is not set, the user is redirected to the home page.
+* The `apostrophe-login` module now invokes `loginAfterLogin(req, callback)` on all modules that have such a method, via `genex.callAll`. Modules that do not need a callback can supply this method with only one argument. Afterwards, `apostrophe-login` redirects to `req.redirect`, as is supported elsewhere in Apostrophe. So you can assign to `req.redirect` in your callback to change the user's destination after a successful login. If `req.redirect` is not set, the user is redirected to the home page.
 
 ## 2.0.3 (2016-09-13)
 

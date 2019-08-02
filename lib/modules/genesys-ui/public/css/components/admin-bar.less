@@ -1,0 +1,151 @@
+.genex-admin-bar
+{
+  position: fixed;
+  height: 60px;
+  top: @genex-padding-2;
+  left: @genex-padding-2;
+  z-index: @genex-z-index-7;
+  background-color: @genex-base;
+  color: @genex-white;
+  .genex-button-border(@genex-white);
+  .genex-rounded();
+  .genex-drop-shadow();
+  overflow: hidden;
+  // .genex-transition;
+  .genex-no-select;
+
+  @media @genex-breakpoint-desktop-xl
+  {
+    height: 80px;
+    top: @genex-padding-4;
+    left: @genex-padding-4;
+  }
+
+  * { .genex-transition; }
+}
+
+.genex-admin-bar-logo
+{
+  position: relative;
+  padding: 13px 15px 8px 15px;
+  @media @genex-breakpoint-desktop-xl
+  {
+    padding: @genex-padding-2;
+  }
+  .genex-inline-block();
+  
+  cursor: pointer;
+
+  svg
+  {
+    max-height: 30px;
+    max-width: 30px;
+    @media @genex-breakpoint-desktop-xl
+    {
+      max-height: 36px;
+      max-width: 36px;
+    }
+  }
+
+}
+
+.genex-admin-bar-items
+{
+  display: inline-block;
+  white-space: nowrap;
+  .genex-transition;
+  transform: translateX(-130%);
+
+  .genex-admin-bar-item{ opacity: 0; }
+
+}
+
+.genex-admin-bar-item
+{
+  cursor: pointer;
+  height: 56px;
+  @media @genex-breakpoint-desktop-xl
+  {
+    height: 75px;  
+  }
+
+  &:hover
+  {
+    background-color: darken(@genex-primary, 3%)
+  }
+  
+  // height: 100%;
+  .genex-inline-block(middle);
+}
+
+
+.genex-admin-bar-item:before
+{
+  content: '';
+  .genex-inline-block(middle);
+  height: 100%;
+}
+
+.genex-admin-bar-item .genex-active
+{
+  background-color: darken(@genex-base, 10%);
+}
+
+.genex-admin-bar-items > div:last-child
+{
+  padding-right: @genex-padding-3;
+}
+
+.genex-admin-bar-inner
+{
+  max-width: 60px;
+  font-size: 13px;
+  @media @genex-breakpoint-desktop-xl
+  {
+    font-size: 16px;
+    max-width: 80px;
+  }
+}
+
+.genex-admin-bar-item-inner
+{
+  .genex-inline-block(middle);
+  padding: 0 @genex-padding-1;
+  @media @genex-breakpoint-desktop-xl
+  {
+    padding: 0 @genex-padding-2;
+  }
+  
+  // .genex-transition();
+  height: 100%;
+  line-height: 4.5em;
+  @media @genex-breakpoint-desktop-xl
+  {
+    line-height: 4.9em;
+  }
+}
+
+.genex-admin-bar.genex-active
+
+{
+  .genex-admin-bar-items { transform: translateX(0%); .genex-admin-bar-item{ opacity: 1; } }
+  .genex-admin-bar-inner { max-width: 1400px; }
+}
+
+.genex-admin-bar .genex-admin-bar-item .genex-dropdown
+{
+  .genex-drop-shadow(0, 0, 0, 0);
+}
+
+.genex-admin-bar .genex-admin-bar-item .genex-dropdown-items
+{
+  top: 102%;
+}
+
+.genex-admin-bar a
+{
+  // Direct links should look the same as other dropdown menu items. -Tom
+  color: inherit;
+  text-decoration: inherit;
+  transition: none;
+}

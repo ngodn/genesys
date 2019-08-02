@@ -1,20 +1,20 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
-var apos;
+var genex;
 
 describe('Email', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
-  it('should be a property of the apos object', function(done) {
+  it('should be a property of the genex object', function(done) {
     this.timeout(t.timeout);
     this.slow(2000);
 
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
@@ -32,11 +32,11 @@ describe('Email', function() {
         'email-test': {}
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-email']);
+        assert(genex.modules['apostrophe-email']);
         // In tests this will be the name of the test file,
         // so override that in order to get apostrophe to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -47,7 +47,7 @@ describe('Email', function() {
   });
 
   it('can send email on behalf of a module', function(done) {
-    apos.modules['email-test'].email(apos.tasks.getReq(),
+    genex.modules['email-test'].email(genex.tasks.getReq(),
       'welcome',
       {
         name: 'Fred Astaire'
@@ -71,7 +71,7 @@ describe('Email', function() {
     );
   });
   it('can do it with promises', function() {
-    return apos.modules['email-test'].email(apos.tasks.getReq(),
+    return genex.modules['email-test'].email(genex.tasks.getReq(),
       'welcome',
       {
         name: 'Fred Astaire'

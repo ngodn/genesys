@@ -1,14 +1,14 @@
 
 var t = require('../test-lib/test.js');
 var assert = require('assert');
-var apos;
+var genex;
 
 describe('Oembed', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   /// ///
@@ -16,24 +16,24 @@ describe('Oembed', function() {
   /// ///
 
   it('should initialize', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900,
           csrf: false
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-oembed']);
-        assert(apos.oembed);
+        assert(genex.modules['genesys-oembed']);
+        assert(genex.oembed);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -58,7 +58,7 @@ describe('Oembed', function() {
   // });
 
   // it('Should deliver an oembed response for YouTube', function(done) {
-  //   return request('http://localhost:7900/modules/apostrophe-oembed/query?' + qs.stringify(
+  //   return request('http://localhost:7900/modules/genesys-oembed/query?' + qs.stringify(
   //   {
   //     url: youtube
   //   }), function(err, response, body) {

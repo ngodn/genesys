@@ -1,13 +1,13 @@
 var async = require('async');
 
-// Properly clean up an apostrophe instance and drop its
+// Properly clean up an genesys instance and drop its
 // database collections to create a sane environment for the next test.
 // Drops the collections, not the entire database, to avoid problems
 // when testing something like a mongodb hosting environment with
 // credentials per database.
 
-function destroy(apos, done) {
-  if (!apos) {
+function destroy(genex, done) {
+  if (!genex) {
     done();
     return;
   }
@@ -23,10 +23,10 @@ function destroy(apos, done) {
     return done();
   });
   function drop(callback) {
-    if (!(apos.db && apos.db.collections)) {
+    if (!(genex.db && genex.db.collections)) {
       return callback(null);
     }
-    return apos.db.collections(function(err, collections) {
+    return genex.db.collections(function(err, collections) {
       if (err) {
         return callback(err);
       }
@@ -41,10 +41,10 @@ function destroy(apos, done) {
     });
   }
   function destroy(callback) {
-    if (!apos.destroy) {
+    if (!genex.destroy) {
       return callback(null);
     }
-    return apos.destroy(callback);
+    return genex.destroy(callback);
   }
 };
 

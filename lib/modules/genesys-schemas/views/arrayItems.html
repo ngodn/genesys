@@ -1,0 +1,14 @@
+<div class="genex-schema-tabs genex-array-items" data-schema-tabs>
+  {% for item in data.arrayItems %}
+    <div class="genex-schema-tab genex-array-item{{ ' genex-active' if (data.active == loop.index0)}}" data-genex-array-items-trigger="{{loop.index0}}" data-id="{{ item.id }}">
+      {% if not data.field.readOnly %}
+        <div class="genex-array-item-controls">
+          <i class="fa fa-remove" data-genex-delete-array-item></i>
+          <i class="fa fa-arrow-down" data-genex-move-array-item="down"></i>
+          <i class="fa fa-arrow-up" data-genex-move-array-item="up"></i>	
+        </div>
+      {% endif %}
+      {% include data.field.listItemTemplate or "arrayListItem.html" %}
+    </div>
+  {% endfor %}
+</div>

@@ -1,0 +1,39 @@
+// ===============================================================
+//    Apostrophe Modal-Blackout
+//
+//    -  Opaque overlay which appears in between page and modals
+//
+// ===============================================================
+
+
+// Variables  ===================================
+@genex-z-index-blackout: @genex-z-index-5;
+
+
+// Base Class ===================================
+.genex-modal-blackout
+{
+	position: fixed;
+
+	top: 0;
+	bottom:	0;
+	left: 0;
+	right: 0;
+
+	z-index: @genex-z-index-blackout;
+
+	background-color: rgba(0, 0, 0, 0.5);
+	opacity: 1;
+
+	&.genex-modal-blackout-fade
+	{
+		opacity: 0;
+	}
+	.genex-transition(opacity, @genex-modal-timing, @genex-modal-transition-curve);
+}
+
+body.genex-active-blackout
+{
+	overflow: hidden;
+	width: 100%;
+}

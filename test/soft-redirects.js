@@ -2,18 +2,18 @@ var t = require('../test-lib/test.js');
 var assert = require('assert');
 var request = require('request');
 
-var apos;
+var genex;
 
 describe('Soft Redirects', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   it('should exist', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
@@ -35,8 +35,8 @@ describe('Soft Redirects', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-soft-redirects']);
-        apos.argv._ = [];
+        assert(genex.modules['apostrophe-soft-redirects']);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -58,7 +58,7 @@ describe('Soft Redirects', function() {
   });
 
   it('should be able to change the URL via db', function() {
-    return apos.docs.db.update({ slug: '/child' }, { $set: { slug: '/child-moved' } });
+    return genex.docs.db.update({ slug: '/child' }, { $set: { slug: '/child-moved' } });
   });
 
   it('should be able to serve the page at its new URL', function(done) {
@@ -93,11 +93,11 @@ describe('Soft Redirects - with `statusCode` option', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   it('should exist', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
@@ -122,9 +122,9 @@ describe('Soft Redirects - with `statusCode` option', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-soft-redirects']);
-        assert.equal(apos.modules['apostrophe-soft-redirects'].options.statusCode, 301);
-        apos.argv._ = [];
+        assert(genex.modules['apostrophe-soft-redirects']);
+        assert.equal(genex.modules['apostrophe-soft-redirects'].options.statusCode, 301);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -146,7 +146,7 @@ describe('Soft Redirects - with `statusCode` option', function() {
   });
 
   it('should be able to change the URL via db', function() {
-    return apos.docs.db.update({ slug: '/child' }, { $set: { slug: '/child-moved' } });
+    return genex.docs.db.update({ slug: '/child' }, { $set: { slug: '/child-moved' } });
   });
 
   it('should be able to serve the page at its old URL too, via redirect', function(done) {

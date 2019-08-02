@@ -1,0 +1,310 @@
+// ===============================================================
+// Apostrophe default form fields
+// ===============================================================
+
+// General Styles ===================================
+
+.genex-field
+{
+  margin-bottom: @genex-margin-4;
+  width: 100%;
+  max-width: 540px;
+}
+
+.genex-field-label
+{
+  display: block;
+  margin-bottom: @genex-margin-1;
+  .genex-text-instruction;
+}
+
+.genex-field-input
+{
+  display: block;
+  padding: @genex-padding-2;
+  background-color: @genex-light;
+  width: 100%;
+  border: none;
+  .genex-text-normal;
+  .genex-transition;
+}
+
+.genex-field-input--small {
+  padding: @genex-padding-1 @genex-padding-2;
+}
+
+// Select Specific ============================
+
+.genex-field-input-select-wrapper
+{
+  position: relative;
+  display: flex;
+  align-items: center;
+  &:after
+  {
+    content: "\f0d7";
+    position: absolute;
+    right: @genex-padding-3;
+    .fa;
+    pointer-events: none;
+  }
+}
+
+.genex-field-input-select-wrapper--small:after {
+}
+
+.genex-field-input-select
+{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+
+  &:hover { cursor: pointer; }
+}
+
+.genex-field-input-text,
+.genex-field-input-select,
+.genex-field-input-textarea
+{
+  &:focus
+  {
+    outline:none;
+    .genex-glow;
+  }
+}
+
+// Checkbox (singular) ===================================
+.genex-field-input-checkbox-indicator
+{
+  display: inline-block;
+  vertical-align: top;
+  height: 21px;
+  width: 21px;
+  border: 1px solid @genex-dark;
+  .genex-transition(all, .1s, ease-in-out);
+  .genex-no-select;
+
+  &:hover{ cursor: pointer; }
+}
+
+.genex-field-input-checkbox:checked + .genex-field-input-checkbox-indicator
+{
+  background: @genex-primary;
+  border-color: @genex-primary;
+  border-width: 6px;
+
+}
+
+.genex-field-input-checkbox
+{
+  display: inline;
+  max-width: 21px; //Match it to our indicator box;
+  visibility: hidden;
+  position: absolute;
+  //&:checked + .genex-field-input-checkbox-indicator
+
+}
+
+// Checkboxes (collection) ===================================
+
+.genex-checkbox-choice
+{
+  label {
+    width: 200px;
+    display: inline-block;
+    margin-bottom: 0.5em;
+  }
+}
+
+.genex-form-checkbox
+{
+  position: relative;
+  padding: @genex-padding-2 0 @genex-padding-2 @genex-padding-2;
+
+  &:nth-child(even)
+  {
+    background-color: @genex-lighter;
+  }
+
+  &-label
+  {
+    color: @genex-dark;
+
+    &:hover
+    {
+      cursor: pointer;
+    }
+  }
+
+  &-input
+  {
+    margin-right: @genex-margin-2;
+    opacity: 0;
+    z-index: -1;
+
+    &:checked ~ .genex-form-checkbox-indicator
+    {
+      background: @genex-primary;
+      border-color: @genex-primary;
+      border-width: 6px;
+    }
+  }
+
+  &-indicator
+  {
+    position: absolute;
+    display: inline-block;
+    vertical-align: top;
+    height: 21px;
+    width: 21px;
+    left: 0;
+    margin-left: @genex-margin-2;
+    border: 1px solid @genex-dark;
+    .genex-transition(all, .1s, ease-in-out);
+    .genex-no-select;
+
+    &:hover { cursor: pointer; }
+  }
+}
+
+// Tags ========================================
+.genex-field-tags .genex-tags
+{
+  position: relative;
+  .genex-field-input { position: relative; }
+  .genex-tag-add
+  {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: @genex-padding-2;
+    color: @genex-dark;
+    text-decoration: none;
+    line-height: 28px;
+    &:hover { color: @genex-primary; }
+  }
+  .genex-tag-remove
+  {
+    color: @genex-mid;
+    text-decoration: none;
+    &:hover { color: @genex-delete; }
+  }
+  .genex-tag-list
+  {
+    position: relative;
+    padding: @genex-padding-1 @genex-padding-2;
+    background-color: fade(@genex-light, 50%);
+    &.genex-empty { display: none; }
+    &.ui-sortable
+    {
+      .genex-tag-list-item
+      {
+        cursor: -webkit-grab;
+        cursor: grab;
+        &.ui-sortable-helper
+        {
+          cursor: -webkit-grabbing;
+          cursor: grabbing;
+        }
+      }
+      .ui-sortable-placeholder
+      {
+        visibility: visible !important;
+        height: 38px;
+        width: 100px;
+        display: inline-block;
+        border: 1px dashed @genex-base;
+        background-color: fade(@genex-base, 50%);
+        transform: translateY(30%);
+      }
+    }
+  }
+  .genex-tag-list-item
+  {
+    // .genex-inline-block;
+    display: inline;
+    margin-top: 6px;
+    &:not(:first-of-type) { margin-left: 10px; }
+  }
+  .genex-tag-entry
+  {
+    .genex-text-normal;
+    line-height: 38px;
+    text-transform: capitalize;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed @genex-primary;
+  }
+}
+
+// Colorpicker ===================================
+.genex-field-color {
+  position: relative;
+  max-width: 229px;
+
+  .sp-replacer {
+    position: absolute;
+    background-color: transparent;
+    padding: 16px 10px 18px 60px;
+    left: 0;
+    z-index: 2;
+  }
+}
+
+.genex-field-input-color-value {
+  float: left;
+  margin: 20px 0px 0 20px
+}
+
+.genex-field-input-color-preview {
+  float: left;
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+}
+
+.genex-field-input-color-preview--empty {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAAG0lEQVQYV2NMKL/ty4ADMIIkF3SqbsYmP+gkAayXGgfe8HOVAAAAAElFTkSuQmCC);
+}
+
+.genex-field-input-color {
+  width: 70px;
+  padding: 15px;
+  height: 60px;
+  float: left;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+// Range ===================================
+
+.genex-field-input-range {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.genex-field-input-range-value {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.genex-field-range .genex-field-label {
+  display: inline-block;
+}
+
+// Browse and autocomplete combo
+.genex-browse-and-autocomplete {
+  display: flex;
+  position: relative;
+  align-items: center;
+  .genex-button {
+    position: absolute;
+    right: 10px;
+  }
+}
+
+// Browse only
+.genex-browse {
+  margin-bottom: 16px;
+}

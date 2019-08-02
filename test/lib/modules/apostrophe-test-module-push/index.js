@@ -6,7 +6,7 @@ module.exports = {
     // Push an asset
     self.pushAsset('stylesheet', 'test', { when: 'always' });
 
-    // Attach to apos
-    self.apos.test = self;
+    // Attach to genex
+    self.genex.test = self;
   }
 };

@@ -1,6 +1,6 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
-var apos, apos2;
+var genex, apos2;
 var request = require('request-promise');
 var _ = require('@sailshq/lodash');
 var Promise = require('bluebird');
@@ -10,26 +10,26 @@ describe('Global', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, function() {
+    return t.destroy(genex, function() {
       return t.destroy(apos2, done);
     });
   });
 
-  it('global should exist on the apos object', function(done) {
-    apos = require('../index.js')({
+  it('global should exist on the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
         'products': {
           alias: 'products',
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'product'
         },
-        'apostrophe-global': {
+        'genesys-global': {
           whileBusyDelay: 0.5,
           addFields: [
             {
@@ -46,11 +46,11 @@ describe('Global', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.global);
+        assert(genex.global);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -61,40 +61,40 @@ describe('Global', function() {
   });
 
   it('should populate when global.addGlobalToData is used as middleware', function(done) {
-    var req = apos.tasks.getAnonReq();
+    var req = genex.tasks.getAnonReq();
     req.res.status = function(n) {
       assert(n <= 400);
       return req.res;
     };
     req.res.send = function(m) {};
-    return apos.global.addGlobalToData(req, req.res, function() {
+    return genex.global.addGlobalToData(req, req.res, function() {
       assert(req.data.global);
-      assert(req.data.global.type === 'apostrophe-global');
+      assert(req.data.global.type === 'genesys-global');
       done();
     });
   });
 
   it('should populate when global.addGlobalToData is used with a callback', function(done) {
-    var req = apos.tasks.getAnonReq();
-    return apos.global.addGlobalToData(req, function(err) {
+    var req = genex.tasks.getAnonReq();
+    return genex.global.addGlobalToData(req, function(err) {
       assert(!err);
       assert(req.data.global);
-      assert(req.data.global.type === 'apostrophe-global');
+      assert(req.data.global.type === 'genesys-global');
       done();
     });
   });
 
   it('should populate when global.addGlobalToData is used to return a promise', function() {
-    var req = apos.tasks.getAnonReq();
-    return apos.global.addGlobalToData(req).then(function() {
+    var req = genex.tasks.getAnonReq();
+    return genex.global.addGlobalToData(req).then(function() {
       assert(req.data.global);
-      assert(req.data.global.type === 'apostrophe-global');
+      assert(req.data.global.type === 'genesys-global');
     });
   });
 
   it('should populate def values of schema properties at insert time', function(done) {
-    var req = apos.tasks.getAnonReq();
-    return apos.global.addGlobalToData(req, function(err) {
+    var req = genex.tasks.getAnonReq();
+    return genex.global.addGlobalToData(req, function(err) {
       assert(!err);
       assert(req.data.global.testString === 'populated def');
       done();
@@ -102,18 +102,18 @@ describe('Global', function() {
   });
 
   it('insert products via task', function() {
-    return apos.tasks.invoke('products:generate', [], {});
+    return genex.tasks.invoke('products:generate', [], {});
   });
 
   var product;
 
   it('set a product join up in the global doc', function() {
-    var req = apos.tasks.getReq();
-    return apos.products.find(req).sort({ sortTitle: 1 }).limit(1).toObject().then(function(object) {
+    var req = genex.tasks.getReq();
+    return genex.products.find(req).sort({ sortTitle: 1 }).limit(1).toObject().then(function(object) {
       assert(object);
       product = object;
     }).then(function() {
-      return apos.docs.db.update({
+      return genex.docs.db.update({
         slug: 'global'
       }, {
         $set: {
@@ -124,8 +124,8 @@ describe('Global', function() {
   });
 
   it('fetch the global doc, verify join', function() {
-    var req = apos.tasks.getAnonReq();
-    return apos.global.addGlobalToData(req).then(function() {
+    var req = genex.tasks.getAnonReq();
+    return genex.global.addGlobalToData(req).then(function() {
       assert(req.data.global);
       assert(req.data.global._featuredProducts);
       assert(req.data.global._featuredProducts.length === 1);
@@ -134,8 +134,8 @@ describe('Global', function() {
   });
 
   it('give global doc a workflowLocale property to simulate use with workflow', function() {
-    return apos.docs.db.update({
-      type: 'apostrophe-global'
+    return genex.docs.db.update({
+      type: 'genesys-global'
     }, {
       $set: {
         workflowLocale: 'en'
@@ -146,7 +146,7 @@ describe('Global', function() {
   it('busy mechanism (global)', function() {
     this.timeout(50000);
     var retrieved = false;
-    return apos.global.whileBusy(function() {
+    return genex.global.whileBusy(function() {
       // Intentional parallelism: start a request while
       // we're busy, so we can verify it waits
       request('http://localhost:7900/').then(function(content) {
@@ -154,14 +154,14 @@ describe('Global', function() {
         assert(content.indexOf('counts: 10') !== -1);
         retrieved = true;
       });
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       }).then(function(global) {
         assert(global.globalBusy);
       }).then(function() {
         return Promise.mapSeries(_.range(0, 10), function(i) {
-          return apos.docs.db.update({
-            type: 'apostrophe-global'
+          return genex.docs.db.update({
+            type: 'genesys-global'
           }, {
             $inc: {
               counts: 1
@@ -170,8 +170,8 @@ describe('Global', function() {
             return Promise.delay(50);
           });
         }).then(function() {
-          return apos.docs.db.findOne({
-            type: 'apostrophe-global'
+          return genex.docs.db.findOne({
+            type: 'genesys-global'
           });
         }).then(function(doc) {
           assert(doc.counts === 10);
@@ -198,8 +198,8 @@ describe('Global', function() {
         assert(content.indexOf('counts: 10') !== -1);
       });
     }).then(function() {
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       });
     }).then(function(global) {
       assert(!global.globalBusy);
@@ -207,8 +207,8 @@ describe('Global', function() {
   });
 
   it('reset counts', function() {
-    return apos.docs.db.update({
-      type: 'apostrophe-global'
+    return genex.docs.db.update({
+      type: 'genesys-global'
     }, {
       $set: {
         counts: 0
@@ -219,7 +219,7 @@ describe('Global', function() {
   it('busy mechanism (default locale)', function() {
     this.timeout(50000);
     var retrieved = false;
-    return apos.global.whileBusy(function() {
+    return genex.global.whileBusy(function() {
       // Intentional parallelism: start a request while
       // we're busy, so we can verify it waits
       request('http://localhost:7900/').then(function(content) {
@@ -227,14 +227,14 @@ describe('Global', function() {
         assert(content.indexOf('counts: 10') !== -1);
         retrieved = true;
       });
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       }).then(function(global) {
         assert(global.globalBusyen);
       }).then(function() {
         return Promise.mapSeries(_.range(0, 10), function(i) {
-          return apos.docs.db.update({
-            type: 'apostrophe-global'
+          return genex.docs.db.update({
+            type: 'genesys-global'
           }, {
             $inc: {
               counts: 1
@@ -243,8 +243,8 @@ describe('Global', function() {
             return Promise.delay(50);
           });
         }).then(function() {
-          return apos.docs.db.findOne({
-            type: 'apostrophe-global'
+          return genex.docs.db.findOne({
+            type: 'genesys-global'
           });
         }).then(function(doc) {
           assert(doc.counts === 10);
@@ -271,8 +271,8 @@ describe('Global', function() {
         assert(content.indexOf('counts: 10') !== -1);
       });
     }).then(function() {
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       });
     }).then(function(global) {
       assert(!global.globalBusyen);
@@ -280,8 +280,8 @@ describe('Global', function() {
   });
 
   it('reset counts', function() {
-    return apos.docs.db.update({
-      type: 'apostrophe-global'
+    return genex.docs.db.update({
+      type: 'genesys-global'
     }, {
       $set: {
         counts: 0
@@ -292,7 +292,7 @@ describe('Global', function() {
   it('busy mechanism (some other locale)', function() {
     this.timeout(50000);
     var retrieved = false;
-    return apos.global.whileBusy(function() {
+    return genex.global.whileBusy(function() {
       // Intentional parallelism: start a request while
       // we're busy, so we can verify it doesn't wait
       request('http://localhost:7900/').then(function(content) {
@@ -301,8 +301,8 @@ describe('Global', function() {
         assert(content.indexOf('counts: 10') === -1);
         retrieved = true;
       });
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       }).then(function(global) {
         // This property would only appear on the global doc
         // for the fr locale, if there were one, and we are simulating
@@ -310,8 +310,8 @@ describe('Global', function() {
         assert(!global.globalBusyfr);
       }).then(function() {
         return Promise.mapSeries(_.range(0, 10), function(i) {
-          return apos.docs.db.update({
-            type: 'apostrophe-global'
+          return genex.docs.db.update({
+            type: 'genesys-global'
           }, {
             $inc: {
               counts: 1
@@ -320,8 +320,8 @@ describe('Global', function() {
             return Promise.delay(50);
           });
         }).then(function() {
-          return apos.docs.db.findOne({
-            type: 'apostrophe-global'
+          return genex.docs.db.findOne({
+            type: 'genesys-global'
           });
         }).then(function(doc) {
           assert(doc.counts === 10);
@@ -349,23 +349,23 @@ describe('Global', function() {
         assert(content.indexOf('counts: 10') !== -1);
       });
     }).then(function() {
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       });
     }).then(function(global) {
       assert(!global.globalBusyfr);
     });
   });
-  it('global should exist on the second apos object', function(done) {
+  it('global should exist on the second genex object', function(done) {
     apos2 = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7901
         },
-        'apostrophe-global': {
+        'genesys-global': {
           whileBusyDelay: 0.5,
           addFields: [
             {
@@ -379,7 +379,7 @@ describe('Global', function() {
       afterInit: function(callback) {
         assert(apos2.global);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
         apos2.argv._ = [];
         return callback(null);
@@ -392,8 +392,8 @@ describe('Global', function() {
   });
 
   it('should populate def values of schema properties at update time', function(done) {
-    var req = apos.tasks.getAnonReq();
-    return apos.global.addGlobalToData(req, function(err) {
+    var req = genex.tasks.getAnonReq();
+    return genex.global.addGlobalToData(req, function(err) {
       assert(!err);
       // First verify it's an update not an insert - apos2 schema doesn't contain this but it should
       // still be hanging around in the db
@@ -409,19 +409,19 @@ describe('Global with separateWhileBusyMiddleware', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
-  it('global should exist on the apos object', function(done) {
-    apos = require('../index.js')({
+  it('global should exist on the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
-        'apostrophe-global': {
+        'genesys-global': {
           separateWhileBusyMiddleware: true,
           whileBusyDelay: 0.5,
           construct: function(self, options) {
@@ -444,11 +444,11 @@ describe('Global with separateWhileBusyMiddleware', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.global);
+        assert(genex.global);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -459,26 +459,26 @@ describe('Global with separateWhileBusyMiddleware', function() {
   });
 
   it('test findGlobal with callback', function(done) {
-    var req = apos.tasks.getReq();
-    return apos.global.findGlobal(req, function(err, global) {
+    var req = genex.tasks.getReq();
+    return genex.global.findGlobal(req, function(err, global) {
       assert(!err);
       assert(global);
-      assert(global.type === 'apostrophe-global');
+      assert(global.type === 'genesys-global');
       done();
     });
   });
 
   it('test findGlobal with promise', function() {
-    var req = apos.tasks.getReq();
-    return apos.global.findGlobal(req).then(function(global) {
+    var req = genex.tasks.getReq();
+    return genex.global.findGlobal(req).then(function(global) {
       assert(global);
-      assert(global.type === 'apostrophe-global');
+      assert(global.type === 'genesys-global');
     });
   });
 
   it('give global doc a workflowLocale property to simulate use with workflow', function() {
-    return apos.docs.db.update({
-      type: 'apostrophe-global'
+    return genex.docs.db.update({
+      type: 'genesys-global'
     }, {
       $set: {
         workflowLocale: 'en'
@@ -489,7 +489,7 @@ describe('Global with separateWhileBusyMiddleware', function() {
   it('busy mechanism (global)', function() {
     this.timeout(50000);
     var retrieved = false;
-    return apos.global.whileBusy(function() {
+    return genex.global.whileBusy(function() {
       // Intentional parallelism: start a request while
       // we're busy, so we can verify it waits
       request('http://localhost:7900/').then(function(content) {
@@ -497,14 +497,14 @@ describe('Global with separateWhileBusyMiddleware', function() {
         assert(content.indexOf('counts: 10') !== -1);
         retrieved = true;
       });
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       }).then(function(global) {
         assert(global.globalBusy);
       }).then(function() {
         return Promise.mapSeries(_.range(0, 10), function(i) {
-          return apos.docs.db.update({
-            type: 'apostrophe-global'
+          return genex.docs.db.update({
+            type: 'genesys-global'
           }, {
             $inc: {
               counts: 1
@@ -513,8 +513,8 @@ describe('Global with separateWhileBusyMiddleware', function() {
             return Promise.delay(50);
           });
         }).then(function() {
-          return apos.docs.db.findOne({
-            type: 'apostrophe-global'
+          return genex.docs.db.findOne({
+            type: 'genesys-global'
           });
         }).then(function(doc) {
           assert(doc.counts === 10);
@@ -541,8 +541,8 @@ describe('Global with separateWhileBusyMiddleware', function() {
         assert(content.indexOf('counts: 10') !== -1);
       });
     }).then(function() {
-      return apos.docs.db.findOne({
-        type: 'apostrophe-global'
+      return genex.docs.db.findOne({
+        type: 'genesys-global'
       });
     }).then(function(global) {
       assert(!global.globalBusy);

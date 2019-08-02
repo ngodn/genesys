@@ -1,0 +1,14 @@
+<div class="genex-manage-tags">
+  {%- for result in data.results -%}
+    <div class="genex-manage-tag" data-genex-tag="{{ result }}">
+      <div class="genex-manage-tag-label">
+        <input type="text" class="genex-field-input genex-field-input-text" disabled=true value="{{ result }}"/>
+      </div>
+      <div class="genex-manage-tag-controls">
+        <a href="#" data-genex-tag-rename="{{ result }}" class="genex-manage-tag-control genex-manage-tag-control--rename fa fa-save"></a>
+        <a href="#" data-genex-tag-edit="{{ result }}" class="genex-manage-tag-control genex-manage-tag-control--edit fa fa-pencil"></a>
+        <a href="#" data-genex-tag-delete="{{ result }}" class="genex-manage-tag-control genex-manage-tag-control--delete fa fa-trash-o"></a>
+      </div>
+    </div>
+  {%- endfor -%}
+</div>

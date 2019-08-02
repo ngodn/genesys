@@ -1,21 +1,21 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
 
-var apos;
+var genex;
 
 describe('Db', function() {
 
   this.timeout(t.timeout);
 
-  it('should exist on the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should exist on the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       afterInit: function(callback) {
-        assert(apos.db);
+        assert(genex.db);
         // Verify a normal, boring connection to localhost without the db option worked
-        return apos.docs.db.findOne().then(function(doc) {
+        return genex.docs.db.findOne().then(function(doc) {
           assert(doc);
           return done();
         }).catch(function(err) {
@@ -31,19 +31,19 @@ describe('Db', function() {
       root: module,
       shortName: 'test2',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7777
         },
-        'apostrophe-db': {
-          db: apos.db,
+        'genesys-db': {
+          db: genex.db,
           uri: 'mongodb://this-will-not-work-unless-db-successfully-overrides-it/fail'
         }
       },
       afterInit: function(callback) {
-        return apos.docs.db.findOne().then(function(doc) {
+        return genex.docs.db.findOne().then(function(doc) {
           assert(doc);
           return t.destroy(apos2, function() {
-            return t.destroy(apos, done);
+            return t.destroy(genex, done);
           });
         }).catch(function(err) {
           console.error(err);

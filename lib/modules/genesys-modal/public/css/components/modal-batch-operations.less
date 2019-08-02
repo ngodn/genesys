@@ -1,0 +1,100 @@
+.genex-manage-batch-operations {
+  display: flex;
+  float: left;
+
+  .genex-hidden { display: none; }
+  .genex-inline-block { display: inline-block; }
+
+	.genex-manage-batch-operations-select {
+		display: inline-block;
+		width: auto;
+    min-width: 180px;
+		margin-right: @genex-margin-2;
+		font-size: 14px;
+		line-height: 21px;
+    .genex-rounded
+	}
+
+  .genex-field-input,
+  .genex-field-input--small {
+		max-height: 38px;
+  }
+}
+
+.genex-manage-batch-operations-buttons {
+  display: inline-block;
+}
+
+.genex-ui .genex-manage-batch-operation-forms {
+
+	.genex-field-label {
+		font-size: 12px;
+		float: left;
+		margin-bottom: 0;
+		margin-right: @genex-margin-2;
+		margin-top: 11px;
+	}
+
+	.genex-tags {
+		margin-left: 40px;
+	}
+
+	.genex-field-tags .genex-field-label {
+		position: absolute;
+		margin-top: 10px;
+	}
+
+	.genex-field-tags .genex-tags .genex-tag-add {
+		font-size: 10px;
+		padding: @genex-padding-1/2 @genex-padding-1;
+		letter-spacing: 1px;
+		font-weight: 700;
+		left: 133px;
+		right: auto;
+		white-space: nowrap;
+	}
+
+	.genex-field-tags .genex-field-input {
+		padding: 10px;
+		width: 190px;
+		line-height: 21px;
+	}
+
+	.genex-field-tags {
+		.genex-tag-list {
+			margin-bottom: 2px;
+			max-width: 400px;
+		}
+		.genex-tag-remove {
+			color: @genex-red;
+			font-size: 10px;
+		}
+		.genex-tag-list-item .genex-tag-entry {
+			font-size: 10px;
+			line-height: 15px;
+			padding-bottom: 2px;
+		}
+		.genex-field-input {
+			order: 1;
+		}
+	}
+
+	 .genex-field-input {
+	 	font-size: 12px;
+	 }
+
+	.genex-field {
+		max-width: none;
+		width: auto;
+		margin-bottom: 0;
+	}
+
+  .genex-manage-batch-operation-form {
+    display: none;
+    &.genex-active {
+      display: inline-block;
+  		margin-right: @genex-margin-1;
+  		margin-left: @genex-margin-3;
+    }
+  }
+}

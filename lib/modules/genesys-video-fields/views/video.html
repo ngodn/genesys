@@ -1,0 +1,11 @@
+{%- import "apostrophe-schemas:macros.html" as schemas -%}
+{%- import "apostrophe-ui:components/buttons.html" as buttons -%}
+
+{% macro video(field) %}
+  {% if not field.readOnly %}<input type="text" class="genex-field-input genex-field-input-text" name="{{ field.name }}" />{% endif %}
+  <div class="genex-video-player" data-genex-video-player></div>
+  <div class="genex-video-error" data-genex-video-error="401">{{ __('Embedding is not allowed for this video.') }}</div>
+  <div class="genex-video-error" data-genex-video-error="404">{{ __('That video was not found. Paste a URL to the video\'s page.') }}</div>
+{% endmacro %}
+
+{{ schemas.fieldset(data, video) }}

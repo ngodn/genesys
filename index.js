@@ -20,15 +20,15 @@ module.exports = function(options) {
   // to participate as a promise event emitter
   var self = {
     __meta: {
-      name: 'apostrophe'
+      name: 'genesys'
     }
   };
 
   // The core must have a reference to itself in order to use the
   // promise event emitter code
-  self.apos = self;
+  self.genex = self;
 
-  require('./lib/modules/apostrophe-module/lib/events.js')(self, options);
+  require('./lib/modules/genesys-module/lib/events.js')(self, options);
 
   try {
     // Determine root module and root directory
@@ -82,21 +82,21 @@ module.exports = function(options) {
     if (self.argv._.length) {
       self.emit('runTask');
     } else {
-      // The apostrophe-express module adds this method
+      // The genesys-express module adds this method
       self.listen();
     }
   });
 
   // EVENT HANDLING (legacy events)
   //
-  // apos.emit(eventName, /* arg1, arg2, arg3... */)
+  // genex.emit(eventName, /* arg1, arg2, arg3... */)
   //
   // Emit an Apostrophe legacy event. All handlers that have been set
-  // with apos.on for the same eventName will be invoked. Any additional
+  // with genex.on for the same eventName will be invoked. Any additional
   // arguments are received by the handler functions as arguments.
   //
   // See the `self.on` and `self.emit` methods of all modules
-  // (via the `apostrophe-module`) base class for a better,
+  // (via the `genesys-module`) base class for a better,
   // promisified event system.
 
   self.emit = function(eventName /* ,arg1, arg2, arg3... */) {
@@ -112,11 +112,11 @@ module.exports = function(options) {
   };
 
   // Install an Apostrophe legacy event handler. The handler will be called
-  // when apos.emit is invoked with the same eventName. The handler
-  // will receive any additional arguments passed to apos.emit.
+  // when genex.emit is invoked with the same eventName. The handler
+  // will receive any additional arguments passed to genex.emit.
   //
   // See the `self.on` and `self.emit` methods of all modules
-  // (via the `apostrophe-module`) base class for a better,
+  // (via the `genesys-module`) base class for a better,
   // promisified event system.
 
   self.on = function(eventName, fn) {
@@ -176,7 +176,7 @@ module.exports = function(options) {
   // remain available for the next startup. Invokes
   // the `apostropheDestroy` methods of all modules that
   // provide one, and also emits the `destroy` promise event on
-  // the `apostrophe` module; use this mechanism to free your own
+  // the `genesys` module; use this mechanism to free your own
   // server-side resources that could prevent garbage
   // collection by the JavaScript engine, such as timers
   // and intervals.
@@ -192,9 +192,9 @@ module.exports = function(options) {
 
   // Returns an array of modules that are instances of the given
   // module name, i.e. they are of that type or they extend it.
-  // For instance, `apos.instancesOf('apostrophe-pieces')` returns
+  // For instance, `genex.instancesOf('genesys-pieces')` returns
   // an array of active modules in your project that extend
-  // pieces, such as `apostrophe-users`, `apostrophe-groups` and
+  // pieces, such as `genesys-users`, `genesys-groups` and
   // your own piece types
 
   self.instancesOf = function(name) {
@@ -205,13 +205,13 @@ module.exports = function(options) {
 
   // Returns true if the object is an instance of the given
   // moog type name or a subclass thereof. A convenience wrapper
-  // for `apos.synth.instanceOf`
+  // for `genex.synth.instanceOf`
 
   self.instanceOf = function(object, name) {
     return self.synth.instanceOf(object, name);
   };
 
-  // Return self so that app.js can refer to apos
+  // Return self so that app.js can refer to genex
   // in inline functions, etc.
   return self;
 
@@ -228,7 +228,7 @@ module.exports = function(options) {
       local = require(reallyLocalPath);
     }
 
-    // Otherwise making a second apos instance
+    // Otherwise making a second genex instance
     // uses the same modified defaults object
 
     config = _.cloneDeep(options.__testDefaults || defaults);
@@ -241,7 +241,7 @@ module.exports = function(options) {
       } else if (local.length === 2) {
         local(self, config);
       } else {
-        throw new Error('data/local.js may export an object, a function that takes apos as an argument and returns an object, OR a function that takes apos and config as objects and directly modifies config');
+        throw new Error('data/local.js may export an object, a function that takes genex as an argument and returns an object, OR a function that takes genex and config as objects and directly modifies config');
       }
     } else {
       _.merge(config, local || {});
@@ -341,7 +341,7 @@ module.exports = function(options) {
 
   // Tweak the Apostrophe environment suitably for
   // unit testing a separate npm module that extends
-  // Apostrophe, like apostrophe-workflow. For instance,
+  // Apostrophe, like genesys-workflow. For instance,
   // a node_modules subdirectory with a symlink to the
   // module itself is created so that the module can
   // be found by Apostrophe during testing. Invoked
@@ -358,9 +358,9 @@ module.exports = function(options) {
     }
     defaults = _.cloneDeep(defaults);
     _.defaults(defaults, {
-      'apostrophe-express': {}
+      'genesys-express': {}
     });
-    _.defaults(defaults['apostrophe-express'], {
+    _.defaults(defaults['genesys-express'], {
       port: 7900,
       secret: 'irrelevant'
     });
@@ -418,9 +418,9 @@ module.exports = function(options) {
 
     self.moogOptions = {
       root: self.root,
-      bundles: [ 'apostrophe' ].concat(self.options.bundles || []),
+      bundles: [ 'genesys' ].concat(self.options.bundles || []),
       localModules: self.options.modulesSubdir || self.options.__testLocalModules || (self.rootDir + '/lib/modules'),
-      defaultBaseClass: 'apostrophe-module',
+      defaultBaseClass: 'genesys-module',
       nestedModuleSubdirs: self.options.nestedModuleSubdirs
     };
     var synth = require('moog-require')(self.moogOptions);
@@ -428,7 +428,7 @@ module.exports = function(options) {
     self.synth = synth;
 
     // Just like on the browser side, we can
-    // call apos.define rather than apos.synth.define
+    // call genex.define rather than genex.synth.define
     self.define = self.synth.define;
     self.redefine = self.synth.redefine;
     self.create = self.synth.create;
@@ -455,7 +455,7 @@ module.exports = function(options) {
         // is how we got here)
         return setImmediate(callback);
       }
-      return self.synth.create(item, { apos: self }, function(err, obj) {
+      return self.synth.create(item, { genex: self }, function(err, obj) {
         if (err) {
           return callback(err);
         }
@@ -488,9 +488,9 @@ module.exports = function(options) {
         lint('The module ' + name + ' extends ' + module.options.singletonWarningIfNot + ', which is normally\na singleton (Apostrophe creates only one instance of it). Two competing\ninstances will lead to problems. If you are adding project-level code to it,\njust use lib/modules/' + module.options.singletonWarningIfNot + '/index.js and do not use "extend".\nIf you are improving it via an npm module, use "improve" rather than "extend".\nIf neither situation applies you should probably just make a new module that does\nnot extend anything.\n\nIf you are sure you know what you are doing, you can set the\nsingletonWarningIfNot: false option for this module.');
       }
       if (name.match(/-widgets$/) && (!extending(module)) && (!module.options.ignoreNoExtendWarning)) {
-        lint('The module ' + name + ' does not extend anything.\n\nA `-widgets` module usually extends `apostrophe-widgets` or\n`apostrophe-pieces-widgets`. Or possibly you forgot to npm install something.\n\nIf you are sure you are doing the right thing, set the\n`ignoreNoExtendWarning` option to `true` for this module.');
-      } else if (name.match(/-pages$/) && (name !== 'apostrophe-pages') && (!extending(module)) && (!module.options.ignoreNoExtendWarning)) {
-        lint('The module ' + name + ' does not extend anything.\n\nA `-pages` module usually extends `apostrophe-custom-pages` or\n`apostrophe-pieces-pages`. Or possibly you forgot to npm install something.\n\nIf you are sure you are doing the right thing, set the\n`ignoreNoExtendWarning` option to `true` for this module.');
+        lint('The module ' + name + ' does not extend anything.\n\nA `-widgets` module usually extends `genesys-widgets` or\n`genesys-pieces-widgets`. Or possibly you forgot to npm install something.\n\nIf you are sure you are doing the right thing, set the\n`ignoreNoExtendWarning` option to `true` for this module.');
+      } else if (name.match(/-pages$/) && (name !== 'genesys-pages') && (!extending(module)) && (!module.options.ignoreNoExtendWarning)) {
+        lint('The module ' + name + ' does not extend anything.\n\nA `-pages` module usually extends `genesys-custom-pages` or\n`genesys-pieces-pages`. Or possibly you forgot to npm install something.\n\nIf you are sure you are doing the right thing, set the\n`ignoreNoExtendWarning` option to `true` for this module.');
       } else if ((!extending(module)) && (!hasConstruct(name)) && (!isMoogBundle(name)) && (!module.options.ignoreNoCodeWarning)) {
         lint('The module ' + name + ' does not extend anything and does not have a\n`beforeConstruct`, `construct` or `afterConstruct` function. This usually means that you:\n\n1. Forgot to `extend` another module\n2. Configured a module that comes from npm without npm installing it\n3. Simply haven\'t written your `index.js` yet\n\nIf you really want a module with no code, set the `ignoreNoCodeWarning` option\nto `true` for this module.');
       }
@@ -507,7 +507,7 @@ module.exports = function(options) {
       }
       // If we got to the base class of all modules, the module
       // has no construct of its own
-      if (d.__meta.name.match(/apostrophe-module$/)) {
+      if (d.__meta.name.match(/genesys-module$/)) {
         return false;
       }
       return d.beforeConstruct || d.construct || d.afterConstruct;
@@ -519,8 +519,8 @@ module.exports = function(options) {
     function extending(module) {
       // If the module extends no other module, then it will
       // have up to four entries in its inheritance chain:
-      // project level self, npm level self, `apostrophe-modules`
-      // project-level and `apostrophe-modules` npm level.
+      // project level self, npm level self, `genesys-modules`
+      // project-level and `genesys-modules` npm level.
       return module.__meta.chain.length > 4;
     }
     return callback(null);
@@ -528,21 +528,21 @@ module.exports = function(options) {
 
   function migrate(callback) {
     traceStartup('migrate');
-    if (self.argv._[0] === 'apostrophe-migrations:migrate') {
+    if (self.argv._[0] === 'genesys-migrations:migrate') {
       // Migration task will do this later with custom arguments to
       // the event
       return callback(null);
     }
     // Allow the migrate-at-startup behavior to be complete shut off, including
     // parked page checks, etc. In this case you are obligated to run the
-    // apostrophe-migrations:migrate task during deployment before launching
+    // genesys-migrations:migrate task during deployment before launching
     // with new versions of the code
     if (process.env.APOS_NO_MIGRATE || (self.options.migrate === false)) {
       return callback(null);
     }
     // Carry out all migrations and consistency checks of the database that are
     // still pending before proceeding to listen for connections or run tasks
-    // that assume a sane environment. If `apostrophe-migrations:migrate` has
+    // that assume a sane environment. If `genesys-migrations:migrate` has
     // already been run then this will typically find no work to do, although
     // the consistency checks can take time on a very large distributed database
     // (see the options above).
@@ -591,7 +591,7 @@ module.exports = function(options) {
 
 };
 
-var abstractClasses = [ 'apostrophe-module', 'apostrophe-widgets', 'apostrophe-custom-pages', 'apostrophe-pieces', 'apostrophe-pieces-pages', 'apostrophe-pieces-widgets', 'apostrophe-doc-type-manager' ];
+var abstractClasses = [ 'genesys-module', 'genesys-widgets', 'genesys-custom-pages', 'genesys-pieces', 'genesys-pieces-pages', 'genesys-pieces-widgets', 'genesys-doc-type-manager' ];
 
 module.exports.moogBundle = {
   modules: abstractClasses.concat(_.keys(defaults.modules)),

@@ -1,0 +1,85 @@
+.genex-modal .genex-array-editor
+{
+  float: right;
+  width: 75%;
+
+  .genex-schema-group { width: 100%; }
+}
+
+.genex-ui {
+  .genex-array-item-controls
+  {
+    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    margin-right: @genex-margin-1;
+  }
+}
+
+.genex-modal .genex-schema-tabs.genex-array-items
+{
+  padding-top: 50px;
+  width: 25%;
+  i
+  {
+    float: right;
+    margin-left: @genex-margin-1;
+    color: @genex-mid;
+    &:hover
+    {
+      cursor: pointer;
+      color: @genex-dark;
+    }
+    &:first-child {
+      margin-left: 0;
+    }
+    .genex-transition();
+  }
+}
+
+// TODO re-figure .genex-modal .genex-schema-group {} width when no tabs are present.
+// Question: Do we need tabs in arrays?
+
+// "Add Item" button
+.genex-modal
+{
+  // Like genex-chooser, but without the 15% width, and let's
+  // stop trying to reuse it because separate evolution already
+  // broke this once. -Tom
+  .genex-array-chooser
+  {
+    position: fixed;
+    .genex-inline-block;
+    height: 100%;
+    overflow: auto;
+    width: 25%;
+    @media @genex-breakpoint-desktop-xl { width: 25%; }
+    background-color: @genex-light;
+  }
+
+  .genex-array-add-item, .genex-array-limit-reached
+  {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25%;
+    text-align: center;
+    padding: @genex-padding-2*.75 0;
+    z-index: 1;
+  }
+
+  .genex-array-limit-reached
+  {
+    display: none;
+    &:hover {
+      background-color: @genex-base;
+    }
+  }
+}

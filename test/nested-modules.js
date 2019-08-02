@@ -1,13 +1,13 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
-var apos;
+var genex;
 
 describe('Nested Modules', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   /// ///
@@ -15,7 +15,7 @@ describe('Nested Modules', function() {
   /// ///
 
   it('should initialize', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       nestedModuleSubdirs: true,
@@ -26,7 +26,7 @@ describe('Nested Modules', function() {
         // In tests this will be the name of the test file,
         // so override that in order to get apostrophe to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -37,12 +37,12 @@ describe('Nested Modules', function() {
   });
 
   it('should have both apostrophe-test-module and nested-module-1', function() {
-    assert(apos.modules['apostrophe-test-module']);
-    assert(apos.modules['apostrophe-test-module'].color === 'red');
+    assert(genex.modules['apostrophe-test-module']);
+    assert(genex.modules['apostrophe-test-module'].color === 'red');
     // Option from modules.js
-    assert(apos.modules['nested-module-1'].options.color === 'blue');
+    assert(genex.modules['nested-module-1'].options.color === 'blue');
     // Option from index.js
-    assert(apos.modules['nested-module-1'].options.size === 'large');
+    assert(genex.modules['nested-module-1'].options.size === 'large');
   });
 
 });

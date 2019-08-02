@@ -1,0 +1,174 @@
+// grid item
+.genex-ui .genex-manage-grid-view
+.genex-manage-grid-piece
+{
+  position: relative;
+  .genex-inline-block(top);
+
+  margin: 2px 2px ~'calc(0.75em + 2px)';
+  padding: 8px 8px 0;
+  background-color: @genex-light;
+  width: 100%;
+  box-shadow: 0 2px 8px 0 rgba(21,22,22,0.0);
+  overflow: hidden;
+
+  .genex-manage-grid-select
+  {
+    .genex-inline-block(top);
+  }
+
+  // thumbnail
+  .genex-manage-grid-image
+  {
+    position: relative;
+    width: 100%;
+    height: auto;
+
+    @supports(display: grid) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+    }
+
+    img{
+      width: 100%;
+
+      @supports(display: grid) {
+        width: auto;
+        max-width: 100%;
+        max-height: 120px;
+        @media @genex-breakpoint-desktop-xl {
+          max-height: 200px;
+        }
+      }
+    }
+
+    .genex-image-screen
+    {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: rgba(0,0,0,0.5);
+      opacity: 0;
+      .genex-transition(opacity);
+    }
+  }
+  // label
+  .genex-manage-grid-piece-label
+  {
+    display: block;
+    padding: @genex-padding-2 @genex-padding-2;
+    padding-left: 28px;  // room for checkbox
+    background-color: @genex-light;
+    color: @genex-black;
+    text-decoration: none;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .genex-transition();
+  }
+  // checkbox
+  .genex-field-input-checkbox-indicator
+  {
+    position: absolute;
+    bottom: 18px;
+    left: 8px;
+    border-color: @genex-mid;
+    background-color: @genex-light;
+
+    .genex-transition();
+  }
+  input:checked + .genex-field-input-checkbox-indicator,
+  {
+    border-width: 1;
+  }
+
+  // border
+  &::before
+  {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: ~'calc(100%)';  // add the border width
+    height: ~'calc(100%)';
+    border: 2px solid transparent;
+    content: "";
+    .genex-transition();
+  }
+
+
+  // Controls
+  .genex-manage-grid-piece-controls
+  {
+    .genex-center-vertical(absolute);
+
+    width: 100%;
+    text-align: center;
+    opacity: 0;
+
+    .genex-button
+    {
+      padding: @genex-padding-1 @genex-padding-2*0.75;
+
+      i
+      {
+        color: @genex-green;
+        margin-left: @genex-margin-1;
+      }
+    }
+
+    .genex-transition;
+  }
+
+
+  &:hover
+  {
+    cursor: pointer;
+    box-shadow: 0 2px 8px 0 rgba(21,22,22,0.30);
+
+    .genex-manage-grid-piece-controls
+    {
+      opacity: 1;
+    }
+    .genex-image-screen
+    {
+      opacity: 0.5;
+    }
+    // border
+    &::before
+    {
+      border: 2px solid @genex-green;
+    }
+  }
+
+  // Focused
+  &.genex-focus
+  {
+    &::before
+    {
+      border: 2px solid @genex-green;
+    }
+
+    .genex-field-input-checkbox-indicator
+    {
+      background: @genex-green;
+      border-color: @genex-green;
+      border-width: 1;
+    }
+  }
+
+  .genex-transition();
+}
+
+// full state
+.genex-chooser-full .genex-manage-grid-piece:not(.genex-focus):hover
+{
+  cursor: not-allowed;
+  .genex-field-input-checkbox-indicator:hover { cursor: not-allowed; }
+  &::before { border: 2px solid @genex-gold; }
+}

@@ -1,0 +1,77 @@
+// ===============================================================
+// Tables and Tabular Data in Apostrophe
+// ===============================================================
+.genex-table
+{
+  padding: 0 @genex-padding-3;
+  .genex-text-small;
+  max-width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  background-color: @genex-lighter;
+  @media screen and (max-width: 960px)
+  {
+    overflow: auto;
+		display: block;
+  }
+}
+
+.genex-manage-table
+{
+  font-size: 13px;
+  @media @genex-breakpoint-desktop-xl { .genex-text-small; }
+}
+
+.genex-table table
+{
+  text-align: left;
+  min-width: 900px;
+  width: 100%;
+}
+
+.genex-table th,
+.genex-table td
+{
+  padding: @genex-padding-1;
+  @media @genex-breakpoint-desktop-xl { padding: @genex-padding-2; }
+}
+
+.genex-table th,
+.genex-table td
+{
+  max-width: 300px;
+  min-width: 25px;
+  a
+  {
+    display: block;
+    color: @genex-dark;
+    text-decoration: none;
+    .genex-transition;
+    &:hover { color: @genex-primary; }
+  }
+}
+.genex-table td:first-child //check-box input
+{
+  width: 21px;
+}
+
+// The Head ===================================
+.genex-table thead
+{
+  border-bottom: 1px solid @genex-dark;
+
+  tr{ background-color: @genex-lighter; }
+}
+
+
+// The Body ===================================
+.genex-table tbody tr:nth-child(2n+1){ background-color: @genex-white; }
+.genex-table tbody tr:nth-child(2n){ background-color: @genex-lighter; }
+
+
+// Checkboxes ===================================
+
+.genex-table .genex-field-input-checkbox-indicator
+{
+  margin-left: 2px;
+}

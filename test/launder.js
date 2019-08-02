@@ -6,17 +6,17 @@ describe('Launder', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
-  var apos;
+  var genex;
 
-  it('should exist on the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should exist on the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       afterInit: function(callback) {
-        assert(apos.launder);
+        assert(genex.launder);
         return done();
       }
     });
@@ -27,6 +27,6 @@ describe('Launder', function() {
   // hooked up to launder.
 
   it('should launder a number to a string', function() {
-    assert(apos.launder.string(5) === '5');
+    assert(genex.launder.string(5) === '5');
   });
 });

@@ -1,0 +1,59 @@
+.genex-ui
+{
+  .genex-manage-tag-add-wrapper
+  {
+    position: relative;
+  }
+  .genex-manage-tag-add
+  {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    padding: @genex-padding-2;
+    text-decoration: none;
+    .genex-transition;
+    color: @genex-primary;
+    &:hover { color: darken(@genex-primary, 10%); }
+  }
+}
+.genex-manage-tags-view
+{
+  .genex-manage-tags
+  {
+    margin: 0 auto;
+    width: 50%;
+    min-width: 400px;
+    min-height: 100%;
+    background-color: @genex-white;
+  }
+  .genex-manage-tag { position: relative; }
+  .genex-manage-tag-label .genex-field-input:disabled
+  {
+    background-color: transparent;
+    padding: @genex-padding-1 @genex-padding-2;
+  }
+  .genex-manage-tag-controls
+  {
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    right: 0;
+  }
+  .genex-manage-tag-control
+  {
+    padding: @genex-padding-1;
+    text-decoration: none;
+    color: @genex-mid;
+    .genex-transition;
+  }
+  .genex-manage-tag-control--rename, .genex-manage-tag-control--edit
+  {
+    &:hover { color: @genex-primary; }
+  }
+  .genex-manage-tag-control--delete:hover { color: @genex-delete; }
+  .genex-manage-tag .genex-manage-tag-control--rename { display: none; }
+  .genex-manage-tag.genex-active .genex-manage-tag-control--rename { display: inline-block; }
+  .genex-manage-tag.genex-active .genex-manage-tag-control--edit { display: none; }
+
+}

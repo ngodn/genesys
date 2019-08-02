@@ -5,37 +5,37 @@ var request = require('request');
 
 describe('Pieces Widgets', function() {
 
-  var apos;
+  var genex;
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
   it('should initialize', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
         'events': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'event',
           label: 'Event',
           alias: 'events',
           sort: { title: 1 }
         },
         'events-widgets': {
-          extend: 'apostrophe-pieces-widgets'
+          extend: 'genesys-pieces-widgets'
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           types: [
             {
               name: 'home',
@@ -78,14 +78,14 @@ describe('Pieces Widgets', function() {
       },
       afterInit: function(callback) {
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
         assert(!err);
-        assert(apos.modules['events-widgets']);
+        assert(genex.modules['events-widgets']);
         done();
       }
     });
@@ -95,7 +95,7 @@ describe('Pieces Widgets', function() {
     var testItems = [];
     var total = 100;
     for (var i = 1; (i <= total); i++) {
-      var paddedInt = apos.launder.padInteger(i, 3);
+      var paddedInt = genex.launder.padInteger(i, 3);
       var tags;
       if (i > 50) {
         tags = [ 'tag2' ];
@@ -114,7 +114,7 @@ describe('Pieces Widgets', function() {
           type: 'area',
           items: [
             {
-              type: 'apostrophe-rich-text',
+              type: 'genesys-rich-text',
               content: '<p>This is some content.</p>'
             }
           ]
@@ -137,21 +137,21 @@ describe('Pieces Widgets', function() {
       tags: tags,
       // fake highSearchText and highSearchWords until the
       // search module is finished
-      highSearchText: apos.utils.sortify(title),
-      highSearchWords: apos.utils.sortify(title).split(/ /),
+      highSearchText: genex.utils.sortify(title),
+      highSearchWords: genex.utils.sortify(title).split(/ /),
       body: {
         type: 'area',
         items: [
           {
-            type: 'apostrophe-rich-text',
+            type: 'genesys-rich-text',
             content: '<p>This is some content.</p>'
           }
         ]
       }
     });
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     return async.eachSeries(testItems, function(item, callback) {
-      return apos.docs.insert(req, item, callback);
+      return genex.docs.insert(req, item, callback);
     }, function(err) {
       assert(!err);
       done();
@@ -197,35 +197,35 @@ describe('Pieces Widgets', function() {
 
 describe('Pieces Widget With Extra Join', function() {
 
-  var apos;
+  var genex;
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
   it('should initialize', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
         'events': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'event',
           label: 'Event',
           alias: 'events',
           sort: { title: 1 }
         },
         'events-widgets': {
-          extend: 'apostrophe-pieces-widgets',
+          extend: 'genesys-pieces-widgets',
           addFields: [
             {
               name: '_featured',
@@ -234,7 +234,7 @@ describe('Pieces Widget With Extra Join', function() {
             }
           ]
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           types: [
             {
               name: 'home',
@@ -280,14 +280,14 @@ describe('Pieces Widget With Extra Join', function() {
       },
       afterInit: function(callback) {
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
         assert(!err);
-        assert(apos.modules['events-widgets']);
+        assert(genex.modules['events-widgets']);
         done();
       }
     });
@@ -297,7 +297,7 @@ describe('Pieces Widget With Extra Join', function() {
     var testItems = [];
     var total = 100;
     for (var i = 1; (i <= total); i++) {
-      var paddedInt = apos.launder.padInteger(i, 3);
+      var paddedInt = genex.launder.padInteger(i, 3);
       var tags;
       if (i > 50) {
         tags = [ 'tag2' ];
@@ -316,7 +316,7 @@ describe('Pieces Widget With Extra Join', function() {
           type: 'area',
           items: [
             {
-              type: 'apostrophe-rich-text',
+              type: 'genesys-rich-text',
               content: '<p>This is some content.</p>'
             }
           ]
@@ -339,21 +339,21 @@ describe('Pieces Widget With Extra Join', function() {
       tags: tags,
       // fake highSearchText and highSearchWords until the
       // search module is finished
-      highSearchText: apos.utils.sortify(title),
-      highSearchWords: apos.utils.sortify(title).split(/ /),
+      highSearchText: genex.utils.sortify(title),
+      highSearchWords: genex.utils.sortify(title).split(/ /),
       body: {
         type: 'area',
         items: [
           {
-            type: 'apostrophe-rich-text',
+            type: 'genesys-rich-text',
             content: '<p>This is some content.</p>'
           }
         ]
       }
     });
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     return async.eachSeries(testItems, function(item, callback) {
-      return apos.docs.insert(req, item, callback);
+      return genex.docs.insert(req, item, callback);
     }, function(err) {
       assert(!err);
       done();

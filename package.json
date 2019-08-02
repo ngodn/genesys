@@ -1,7 +1,7 @@
 {
-  "name": "apostrophe",
+  "name": "genesys",
   "version": "2.93.0",
-  "description": "The Apostrophe Content Management System.",
+  "description": "The Genesys Content Management System by Esri Indonesia",
   "main": "index.js",
   "scripts": {
     "test": "npm run lint && npm audit && mocha",
@@ -9,18 +9,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:apostrophecms/apostrophe.git"
+    "url": "git@github.com:ngodn/genesys.git"
   },
   "keywords": [
-    "apostrophe",
-    "apostrophe-cms",
-    "apostrophecms",
+    "genesys",
+    "genesys-cms",
+    "genesyscms",
     "cms",
     "content management",
     "content management system",
-    "punkave"
+    "ngodn",
+    "esri indonesia"
   ],
-  "author": "P'unk Avenue LLC",
+  "author": "ngodn",
   "license": "MIT",
   "dependencies": {
     "@apostrophecms/nunjucks": "^2.5.3",
@@ -84,7 +85,7 @@
   },
   "devDependencies": {
     "eslint": "^5.0.0",
-    "eslint-config-apostrophe": "^2.0.2",
+    "eslint-config-genesys": "^2.0.2",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-node": "^6.0.1",

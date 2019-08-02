@@ -2,20 +2,20 @@ var t = require('../test-lib/test.js');
 var assert = require('assert');
 var _ = require('@sailshq/lodash');
 
-var apos;
+var genex;
 
 describe('Search', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
-  it('should be a property of the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should be a property of the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
@@ -31,8 +31,8 @@ describe('Search', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.search);
-        apos.argv._ = [];
+        assert(genex.search);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -43,8 +43,8 @@ describe('Search', function() {
   });
 
   it('should add highSearchText, highSearchWords, lowSearchText, searchSummary to all docs on insert', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.insert(req, {
+    var req = genex.tasks.getReq();
+    genex.docs.insert(req, {
       title: 'Testing Search Event',
       type: 'event',
       tags: ['search', 'test', 'pizza'],
@@ -53,7 +53,7 @@ describe('Search', function() {
     }, function(err) {
       assert(!err);
 
-      apos.docs.find(req, { slug: 'search-test-event' }).toObject(function(err, doc) {
+      genex.docs.find(req, { slug: 'search-test-event' }).toObject(function(err, doc) {
         assert(!err);
         assert(doc.highSearchText);
         assert(doc.highSearchWords);

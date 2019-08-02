@@ -1,0 +1,132 @@
+// ===============================================================
+//    Apostrophe Modal
+// ===============================================================
+//
+//
+//    |-----------------------------------------------|
+//    |                                               |
+//    |                 modal-header       {controls} |
+//    |                                               |
+//    |-----------------------------------------------|
+//    |               modal-breadcrumb                |
+//    |-----------------------------------------------|
+//    |                                               |
+//    |                                               |
+//    |                                               |
+//    |                modal-contents                 |
+//    |                                               |
+//    |                                               |
+//    |                                               |
+//    |-----------------------------------------------|
+//    |                 modal-footer                  |
+//    |-----------------------------------------------|
+//
+
+
+// Variables  ===================================
+@genex-z-index-modal: @genex-z-index-7;
+@genex-modal-timing: 0.25s;
+@genex-modal-transition-curve: ease;
+
+
+// Base Class  ===================================
+.genex-ui.genex-modal
+{
+	position: fixed;
+
+	top: 20px;
+	right: 20px;
+	bottom: 20px;
+	left: 20px;
+
+  z-index: @genex-z-index-modal;
+
+  overflow: hidden;
+  opacity: 1;
+
+  .genex-transform(translate3d(0,0,0) scale3d(1,1,1));
+  .genex-transitions(transform @genex-modal-timing @genex-modal-transition-curve, opacity @genex-modal-timing @genex-modal-transition-curve;);
+	.genex-table tbody
+  {
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+// A modal nested as a view should be less aggressive about sizing and positioning
+.genex-ui.genex-modal .genex-modal
+{
+  width: 100%;
+  height: 100%;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  overflow: auto;
+  position: relative;
+}
+
+.genex-modal--pushed
+{
+  .genex-modal-body
+  {
+    border-left: 220px solid @genex-light;
+  }
+}
+// Modal Body ===================================
+.genex-modal
+.genex-modal-content
+{
+  position: absolute;
+
+	// this is replaced dynamically with js
+  height: ~'calc(100vh - 100px - 189px - 82px)';     // 100vh - 100 (position) - 189 (header + breadcrumb) - 82px (footer bar)
+  width: 100%;
+
+  // background-color: @genex-white;
+	background-color: lighten(@genex-light, 5%);
+}
+
+.genex-modal-body
+{
+	height: 100%;
+	overflow: auto;
+  .genex-scrollbar;
+  background-color: lighten(@genex-light, 5%);
+	li a {
+		&:hover { color: @genex-primary; }
+	}
+}
+
+// Stack Push Transition ===================================
+.genex-modal.genex-modal-stack-push
+{
+	opacity: 0;
+	.genex-transform(translate3d(0,0,0) scale3d(1.2,1.2,1));
+	.genex-transitions(transform @genex-modal-timing @genex-modal-transition-curve, opacity @genex-modal-timing @genex-modal-transition-curve;);
+}
+
+
+
+// Sliding Transition ===================================
+// - In a 'slide' transition, the body translates
+//   out of the modal
+.genex-modal-slideable .genex-modal-content
+{
+  .genex-transform(translate3d(-100%,0,0));
+  .genex-transition(transform, @genex-modal-timing, @genex-modal-transition-curve);
+}
+
+
+// Current Slide ===================================
+.genex-modal-slideable
+.genex-modal-content.genex-modal-slide-current
+{
+	.genex-transform(translate3d(0,0,0));
+}
+
+// Next Slide ===================================
+.genex-modal-content.genex-modal-slide-current + .genex-modal-content
+{
+	.genex-transform(translate3d(100%,0,0));
+}

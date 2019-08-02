@@ -1,0 +1,84 @@
+// Base + Non-Slideable ============================
+.genex-ui.genex-modal
+.genex-modal-header
+{
+  position: relative;
+  width: 100%;
+  padding: @genex-padding-2 @genex-padding-3 @genex-padding-2;
+  background-color: @genex-white;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom: 2px solid @genex-mid;
+
+  .genex-dropdown-items
+  {
+    text-align: left;
+  }
+
+  .genex-dropdown
+  {
+    vertical-align: top;
+    box-shadow: none;
+    .genex-rounded;
+    &:hover, &.genex-active { .genex-drop-shadow; }
+    .genex-dropdown-items{ min-width: 100px; }
+    .genex-button { border-width: 0; &:hover { box-shadow: none; } }
+  }
+
+  .genex-modal-title
+  {
+    .genex-inline-block(top);
+    max-width: 30%;
+    margin-right: 2%;
+
+    font-weight: 600;
+    font-size: 32px;
+    color: @genex-dark;
+    line-height: 32px;
+    letter-spacing: -1px;
+  }
+
+  .genex-modal-instructions
+  {
+    .genex-inline-block(bottom);
+    width: 27%;
+    margin-right: 1%;
+    font-size: 14px;
+    line-height: 19px;
+    @media @genex-breakpoint-desktop-xl
+    {
+      font-size: 16px;
+      line-height: 18px;
+    }
+    letter-spacing: 0px;
+  }
+
+  .genex-modal-controls
+  {
+    position: relative;
+    .genex-inline-block(top);
+    max-width: 100%;
+    float: right;
+    white-space: nowrap;
+    text-align: right;
+
+    // Too many buttons here right now.
+    // Halfing the left/right padding on these "minor"
+    // buttons for now.  -Matt C
+    .genex-button.genex-button--minor
+    {
+      padding: @genex-padding-1 @genex-padding-2;
+    }
+    .genex-button.genex-button--minor + .genex-button.genex-button--major,
+    .genex-button.genex-button--minor + .genex-button:last-of-type
+    {
+      margin-left: @genex-padding-1;
+      @media @genex-breakpoint-desktop-xl { margin-left: @genex-padding-2; }
+    }
+    .genex-dropdown
+    {
+      margin-right: @genex-padding-1;
+      @media @genex-breakpoint-desktop-xl { margin-right: @genex-padding-2; }
+    }
+  }
+}

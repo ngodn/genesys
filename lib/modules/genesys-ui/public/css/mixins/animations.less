@@ -1,0 +1,12 @@
+
+// ROTATE
+.genex-rotate(@time: 1s)
+{
+  .genex-animation(genex-rotate @time linear infinite);
+}
+.genex-keyframes(genex-rotate;
+  {
+		from { .genex-transform(rotateZ(0deg)) }
+		to { .genex-transform(rotateZ(360deg)) }
+	}
+);

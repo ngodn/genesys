@@ -1,7 +1,7 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
 var _ = require('@sailshq/lodash');
-var apos;
+var genex;
 var sessionShouldBeEmpty;
 
 describe('Express', function() {
@@ -9,16 +9,16 @@ describe('Express', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
-  it('express should exist on the apos object', function(done) {
+  it('express should exist on the genex object', function(done) {
     sessionShouldBeEmpty = true;
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900,
           csrf: {
@@ -34,7 +34,7 @@ describe('Express', function() {
         },
         'check-session-empty': {
           construct: function(self, options) {
-            self.on('apostrophe-pages:beforeSend', 'verifyEmptySession', function(req) {
+            self.on('genesys-pages:beforeSend', 'verifyEmptySession', function(req) {
               // The session should be empty as the only thing in
               // default Apostrophe that forces a session to exist
               // when logged out is the csrf token we disabled above
@@ -48,11 +48,11 @@ describe('Express', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.express);
+        assert(genex.express);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -67,7 +67,7 @@ describe('Express', function() {
   var jar;
 
   function getCsrfToken(jar) {
-    var csrfCookie = _.find(jar.getCookies('http://localhost:7900/'), { key: apos.csrfCookieName });
+    var csrfCookie = _.find(jar.getCookies('http://localhost:7900/'), { key: genex.csrfCookieName });
     if (!csrfCookie) {
       return 'csrf-fallback';
     }
@@ -170,8 +170,8 @@ describe('Express', function() {
   });
 
   it('should be able to insert test user', function(done) {
-    assert(apos.users.newInstance);
-    var user = apos.users.newInstance();
+    assert(genex.users.newInstance);
+    var user = genex.users.newInstance();
     assert(user);
 
     user.firstName = 'Harry';
@@ -181,9 +181,9 @@ describe('Express', function() {
     user.password = 'crookshanks';
     user.email = 'hputter@aol.com';
 
-    assert(user.type === 'apostrophe-user');
-    assert(apos.users.insert);
-    apos.users.insert(apos.tasks.getReq(), user, function(err) {
+    assert(user.type === 'genesys-user');
+    assert(genex.users.insert);
+    genex.users.insert(genex.tasks.getReq(), user, function(err) {
       assert(!err);
       done();
     });

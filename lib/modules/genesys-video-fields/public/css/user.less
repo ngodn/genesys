@@ -1,0 +1,29 @@
+.genex-field-video {
+  input {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+  }
+  .genex-video-player {
+    margin-bottom: 1em;
+    &.genex-oembed-busy
+    {
+      &:after
+      {
+        opacity: 1;
+        .genex-rotate();
+      }
+    }
+  }
+  .genex-video-error {
+    color: @genex-red;
+    display: none;
+    text-align: center;
+  }
+}
+
+// SPINNER =====================
+.genex-field-video .genex-video-player:after
+{
+  .genex-busy-spinner(@top: 130px);
+}

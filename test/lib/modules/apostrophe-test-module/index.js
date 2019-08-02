@@ -3,7 +3,7 @@ module.exports = {
     // Set property
     self.color = 'red';
 
-    // Attach to apos
-    self.apos.test = self;
+    // Attach to genex
+    self.genex.test = self;
   }
 };

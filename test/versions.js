@@ -1,7 +1,7 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
 
-var apos;
+var genex;
 
 var initDone = false;
 
@@ -10,18 +10,18 @@ describe('Versions', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
   it('should should be a module', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
@@ -29,7 +29,7 @@ describe('Versions', function() {
         // Create a custom schema for test-person so we can
         // play with comparing versions
         'test-people': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'test-person',
           label: 'Test Person',
           addFields: [
@@ -61,18 +61,18 @@ describe('Versions', function() {
         },
 
         'poems': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'poem',
           label: 'Poem'
         },
 
         'test-person-pages': {
-          extend: 'apostrophe-custom-pages'
+          extend: 'genesys-custom-pages'
         }
       },
       afterInit: function(callback) {
-        assert(apos.versions);
-        apos.argv._ = [];
+        assert(genex.versions);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -85,11 +85,11 @@ describe('Versions', function() {
 
   it('should have a db property', function() {
     assert(initDone);
-    assert(apos.versions.db);
+    assert(genex.versions.db);
   });
 
   it('should accept a direct mongo insert of poems for join test purposes', function(done) {
-    return apos.docs.db.insert([
+    return genex.docs.db.insert([
       {
         title: 'Poem ABC',
         slug: 'poem-abc',
@@ -129,13 +129,13 @@ describe('Versions', function() {
       alive: true
     };
 
-    apos.docs.insert(apos.tasks.getReq(), object, function(err, object) {
+    genex.docs.insert(genex.tasks.getReq(), object, function(err, object) {
       assert(!err);
       assert(object);
       assert(object._id);
       var docId = object._id;
       // did the versions module kick-in?
-      apos.versions.db.findWithProjection({ docId: docId }).toArray(function(err, versions) {
+      genex.versions.db.findWithProjection({ docId: docId }).toArray(function(err, versions) {
         assert(!err);
         // we should have a document
         assert(versions);
@@ -149,7 +149,7 @@ describe('Versions', function() {
   });
 
   it('should be able to update', function(done) {
-    apos.docs.find(apos.tasks.getReq(), { slug: 'one' }).toArray(function(err, docs) {
+    genex.docs.find(genex.tasks.getReq(), { slug: 'one' }).toArray(function(err, docs) {
       assert(!err);
       // we should have a document
       assert(docs);
@@ -161,14 +161,14 @@ describe('Versions', function() {
       // we want update the alive property
       object.alive = false;
 
-      apos.docs.update(apos.tasks.getReq(), object, function(err, object) {
+      genex.docs.update(genex.tasks.getReq(), object, function(err, object) {
         assert(!err);
         assert(object);
         // has the property been updated?
         assert(object.alive === false);
 
         // did the versions module kick-in?
-        apos.versions.db.findWithProjection({ docId: object._id }).sort({createdAt: -1}).toArray(function(err, versions) {
+        genex.versions.db.findWithProjection({ docId: object._id }).sort({createdAt: -1}).toArray(function(err, versions) {
           assert(!err);
           // we should have a document
           assert(versions);
@@ -184,15 +184,15 @@ describe('Versions', function() {
   });
 
   it('should be able to revert to a previous version', function(done) {
-    apos.docs.find(apos.tasks.getReq(), { slug: 'one' }).toObject(function(err, doc) {
+    genex.docs.find(genex.tasks.getReq(), { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
-      apos.versions.find(apos.tasks.getReq(), { docId: doc._id }, {}, function(err, versions) {
+      genex.versions.find(genex.tasks.getReq(), { docId: doc._id }, {}, function(err, versions) {
         assert(!err);
         assert(versions.length === 2);
-        apos.versions.revert(apos.tasks.getReq(), versions[1], function(err) {
+        genex.versions.revert(genex.tasks.getReq(), versions[1], function(err) {
           assert(!err);
           // make sure the change propagated to the database
-          apos.docs.find(apos.tasks.getReq(), { slug: 'one' }).toObject(function(err, doc) {
+          genex.docs.find(genex.tasks.getReq(), { slug: 'one' }).toObject(function(err, doc) {
             assert(!err);
             assert(doc);
             assert(doc.alive === true);
@@ -204,10 +204,10 @@ describe('Versions', function() {
   });
 
   it('should be able to fetch all versions in proper order', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
-      apos.versions.find(apos.tasks.getReq(), { docId: doc._id }, {}, function(err, versions) {
+      genex.versions.find(genex.tasks.getReq(), { docId: doc._id }, {}, function(err, versions) {
         assert(!err);
         assert(versions.length === 3);
         assert(versions[0].createdAt > versions[1].createdAt);
@@ -218,13 +218,13 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions and spot a simple field change', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
-      apos.versions.find(req, { docId: doc._id }, {}, function(err, versions) {
+      genex.versions.find(req, { docId: doc._id }, {}, function(err, versions) {
         assert(!err);
         assert(versions.length === 3);
-        return apos.versions.compare(req, doc, versions[1], versions[0], function(err, changes) {
+        return genex.versions.compare(req, doc, versions[1], versions[0], function(err, changes) {
           assert(!err);
           assert(changes.length === 1);
           assert(changes[0].action === 'change');
@@ -239,12 +239,12 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions with areas and spot a widget addition', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
       assert(doc);
       // compare mock versions
-      apos.versions.compare(req, doc, {
+      genex.versions.compare(req, doc, {
         doc: {
           title: 'whatever',
           slug: 'whatever',
@@ -253,7 +253,7 @@ describe('Versions', function() {
             items: [
               {
                 _id: 'woo',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So great'
               }
             ]
@@ -268,12 +268,12 @@ describe('Versions', function() {
             items: [
               {
                 _id: 'woo',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So great'
               },
               {
                 _id: 'woo2',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So amazing'
               }
             ]
@@ -296,12 +296,12 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions with areas and spot a widget removal', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
       assert(doc);
       // compare mock versions
-      apos.versions.compare(req, doc, {
+      genex.versions.compare(req, doc, {
         doc: {
           title: 'whatever',
           slug: 'whatever',
@@ -310,12 +310,12 @@ describe('Versions', function() {
             items: [
               {
                 _id: 'woo',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So great'
               },
               {
                 _id: 'woo2',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So amazing'
               }
             ]
@@ -330,7 +330,7 @@ describe('Versions', function() {
             items: [
               {
                 _id: 'woo',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So great'
               }
             ]
@@ -353,12 +353,12 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions with areas and spot a widget change', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
       assert(doc);
       // compare mock versions
-      apos.versions.compare(req, doc, {
+      genex.versions.compare(req, doc, {
         doc: {
           title: 'whatever',
           slug: 'whatever',
@@ -367,12 +367,12 @@ describe('Versions', function() {
             items: [
               {
                 _id: 'woo',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So great'
               },
               {
                 _id: 'woo2',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So amazing'
               }
             ]
@@ -387,12 +387,12 @@ describe('Versions', function() {
             items: [
               {
                 _id: 'woo',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So great'
               },
               {
                 _id: 'woo2',
-                type: 'apostrophe-rich-text',
+                type: 'genesys-rich-text',
                 content: 'So wimpy'
               }
             ]
@@ -419,12 +419,12 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions with arrays and spot an addition', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
       assert(doc);
       // compare mock versions
-      apos.versions.compare(req, doc, {
+      genex.versions.compare(req, doc, {
         doc: {
           title: 'whatever',
           slug: 'whatever',
@@ -468,12 +468,12 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions with arrays and spot an item removal', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
       assert(doc);
       // compare mock versions
-      apos.versions.compare(req, doc, {
+      genex.versions.compare(req, doc, {
         doc: {
           title: 'whatever',
           slug: 'whatever',
@@ -516,12 +516,12 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions with arrays and spot an item change', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
       assert(doc);
       // compare mock versions
-      apos.versions.compare(req, doc, {
+      genex.versions.compare(req, doc, {
         doc: {
           title: 'whatever',
           slug: 'whatever',
@@ -572,12 +572,12 @@ describe('Versions', function() {
   });
 
   it('should be able to compare versions with joinByArray and spot an id change, providing the titles via a join', function(done) {
-    var req = apos.tasks.getReq();
-    apos.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
+    var req = genex.tasks.getReq();
+    genex.docs.find(req, { slug: 'one' }).toObject(function(err, doc) {
       assert(!err);
       assert(doc);
       // compare mock versions
-      apos.versions.compare(req, doc, {
+      genex.versions.compare(req, doc, {
         doc: {
           title: 'whatever',
           slug: 'whatever',
@@ -616,22 +616,22 @@ describe('Versions', function() {
   // and docs can still be inserted
   /// ///
   // it('should not version pages if not set to enabled', function(done) {
-  //   apos = require('../index.js')({
+  //   genex = require('../index.js')({
   //     root: module,
   //     shortName: 'test',
   //
   //     modules: {
-  //       'apostrophe-express': {
+  //       'genesys-express': {
   //         secret: 'xxx',
   //         port: 7900
   //       },
-  //       'apostrophe-versions':{
+  //       'genesys-versions':{
   //         enabled: false
   //       }
   //     },
   //     afterInit: function(callback) {
-  //       apos.argv._ = [];
-  //       assert(!apos.versions.db);
+  //       genex.argv._ = [];
+  //       assert(!genex.versions.db);
   //       return callback(null);
   //     }
   //   });

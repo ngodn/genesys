@@ -3,7 +3,7 @@ var assert = require('assert');
 var _ = require('@sailshq/lodash');
 var async = require('async');
 var Promise = require('bluebird');
-var apos;
+var genex;
 var cats = [];
 var people = [];
 
@@ -12,7 +12,7 @@ describe('Schema Filters', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   /// ///
@@ -20,17 +20,17 @@ describe('Schema Filters', function() {
   /// ///
 
   it('test modules exist', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
         'cats': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'cat',
           label: 'Cat',
           alias: 'cats',
@@ -116,7 +116,7 @@ describe('Schema Filters', function() {
           }
         },
         'people': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'person',
           label: 'Person',
           addFields: [
@@ -139,10 +139,10 @@ describe('Schema Filters', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.schemas);
-        assert(apos.cats);
-        assert(apos.people);
-        apos.argv._ = [];
+        assert(genex.schemas);
+        assert(genex.cats);
+        assert(genex.people);
+        genex.argv._ = [];
         var i;
         for (i = 0; (i < 11); i++) {
           cats[i] = {};
@@ -161,7 +161,7 @@ describe('Schema Filters', function() {
         cats[4].flavor = 'mint';
         cats[0].dynamicFlavor = 'dynamic cherry';
         cats[4].dynamicFlavors = [ 'dynamic cherry', 'dynamic chocolate' ];
-        var req = apos.tasks.getReq();
+        var req = genex.tasks.getReq();
         return async.series([
           purgeCats,
           insertCats,
@@ -171,15 +171,15 @@ describe('Schema Filters', function() {
           return callback(err);
         });
         function purgeCats(callback) {
-          return apos.docs.db.remove({ type: 'cat' }, callback);
+          return genex.docs.db.remove({ type: 'cat' }, callback);
         }
         function insertCats(callback) {
           return async.eachSeries(cats, function(cat, callback) {
-            return apos.cats.insert(req, cat, callback);
+            return genex.cats.insert(req, cat, callback);
           }, callback);
         }
         function purgePeople(callback) {
-          return apos.docs.db.remove({ type: 'person' }, callback);
+          return genex.docs.db.remove({ type: 'person' }, callback);
         }
         function insertPeople(callback) {
           return async.eachSeries(people, function(person, callback) {
@@ -195,7 +195,7 @@ describe('Schema Filters', function() {
                 person.catsIds.push(cats[i]._id);
               }
             }
-            return apos.people.insert(req, person, callback);
+            return genex.people.insert(req, person, callback);
           }, callback);
         }
       },
@@ -207,14 +207,14 @@ describe('Schema Filters', function() {
   });
 
   it('filter for _cats exists', function() {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     assert(cursor._cats);
   });
 
   it('filter for _cats can select people with a specified cat', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     // Four people should have cat 5 (because their i is greater than 5, see
     // the sample data generator above)
     cursor._cats(cats[5]._id);
@@ -226,8 +226,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for _cats can select people with any of three cats via array', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor._cats([ cats[0]._id, cats[1]._id, cats[2]._id ]);
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -238,8 +238,8 @@ describe('Schema Filters', function() {
   });
 
   it('_catsAnd filter can select people with all three cats', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor._catsAnd([ cats[0]._id, cats[1]._id, cats[2]._id ]);
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -250,8 +250,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for _cats can select sad people with no cat', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor._cats('none');
     return cursor.toArray(function(err, _people) {
       assert(!err);
@@ -265,8 +265,8 @@ describe('Schema Filters', function() {
   });
 
   it('when not used filter for _cats has no effect', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toArray(function(err, people) {
       assert(!err);
       assert(people.length === 11);
@@ -275,8 +275,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for _cats', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toChoices('_cats', function(err, cats) {
       assert(!err);
       // Only the cats that are actually somebody's cat come up
@@ -289,14 +289,14 @@ describe('Schema Filters', function() {
   });
 
   it('filter for cats exists', function() {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     assert(cursor.cats);
   });
 
   it('filter for cats can select people with a specified cat (by slug)', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     // Four people should have cat 5 (because their i is greater than 5, see
     // the sample data generator above)
     cursor.cats(cats[5].slug);
@@ -308,8 +308,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for cats can select people with any of three cats via array (by slug)', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor.cats([ cats[0].slug, cats[1].slug, cats[2].slug ]);
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -320,8 +320,8 @@ describe('Schema Filters', function() {
   });
 
   it('catsAnd filter can select people with all three cats (by slug)', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor.catsAnd([ cats[0].slug, cats[1].slug, cats[2].slug ]);
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -332,8 +332,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for cats can select sad people with no cat (by slug)', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor.cats('none');
     return cursor.toArray(function(err, _people) {
       assert(!err);
@@ -347,8 +347,8 @@ describe('Schema Filters', function() {
   });
 
   it('when not used filter for cats (by slug) has no effect', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toArray(function(err, people) {
       assert(!err);
       assert(people.length === 11);
@@ -357,8 +357,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for cats (by slug)', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toChoices('cats', function(err, cats) {
       assert(!err);
       // Only the cats that are actually somebody's cat come up
@@ -371,14 +371,14 @@ describe('Schema Filters', function() {
   });
 
   it('filter for _favorite exists', function() {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     assert(cursor._favorite);
   });
 
   it('filter for _favorite can select people with a specified favorite cat', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     // Only one person has each favorite
     cursor._favorite(cats[3]._id);
     return cursor.toArray(function(err, people) {
@@ -390,8 +390,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for _favorite can use array syntax', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor._favorite([ cats[7]._id ]);
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -403,8 +403,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for _favorite can select sad people who dislike cats', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor._favorite('none');
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -416,8 +416,8 @@ describe('Schema Filters', function() {
   });
 
   it('when not used filter for _favorite has no effect', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toArray(function(err, people) {
       assert(!err);
       assert(people.length === 11);
@@ -426,8 +426,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for _favorite', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toChoices('_favorite', function(err, cats) {
       assert(!err);
       // Only the cats that are actually someone's favorite come up
@@ -440,14 +440,14 @@ describe('Schema Filters', function() {
   });
 
   it('filter for favorite (by slug) exists', function() {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     assert(cursor._favorite);
   });
 
   it('filter for favorite can select people with a specified favorite cat (by slug)', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     // Only one person has each favorite
     cursor.favorite(cats[3].slug);
     return cursor.toArray(function(err, people) {
@@ -459,8 +459,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for favorite can select people with a specified favorite cat (by slug) plus a search without a refinalize crash', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     // Only one person has each favorite
     cursor.favorite(cats[3].slug);
     return cursor.search('person').toArray(function(err, people) {
@@ -472,8 +472,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for favorite (by slug) can use array syntax', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor.favorite([ cats[7].slug ]);
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -485,8 +485,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for favorite (by slug) can select sad people who dislike cats', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     cursor.favorite('none');
     return cursor.toArray(function(err, people) {
       assert(!err);
@@ -498,8 +498,8 @@ describe('Schema Filters', function() {
   });
 
   it('when not used filter for favorite (by slug) has no effect', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toArray(function(err, people) {
       assert(!err);
       assert(people.length === 11);
@@ -508,8 +508,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for favorite (by slug)', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.people.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.people.find(req);
     return cursor.toChoices('favorite', function(err, cats) {
       assert(!err);
       // Only the cats that are actually someone's favorite come up
@@ -522,14 +522,14 @@ describe('Schema Filters', function() {
   });
 
   it('filter for flavor exists', function() {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     assert(cursor.flavor);
   });
 
   it('filter for flavor can select cats of a specified flavor', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     cursor.flavor('mint');
     return cursor.toArray(function(err, cats) {
       assert(!err);
@@ -541,8 +541,8 @@ describe('Schema Filters', function() {
   });
 
   it('filter for flavor can use array syntax', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     cursor.flavor([ 'mint', 'cherry' ]);
     return cursor.toArray(function(err, cats) {
       assert(!err);
@@ -555,8 +555,8 @@ describe('Schema Filters', function() {
   });
 
   it('when not used filter for flavor has no effect', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     return cursor.toArray(function(err, people) {
       assert(!err);
       assert(cats.length === 11);
@@ -565,8 +565,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for flavor', function(done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     return cursor.toChoices('flavor', function(err, flavors) {
       assert(!err);
       // Only the flavor choices associated with at least one cat come up, in alpha order
@@ -580,8 +580,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for flavors', function (done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     return cursor.toChoices('flavors', function (err, flavors) {
       assert(!err);
       // Only the flavors choices associated with at least one cat come up, in alpha order
@@ -597,8 +597,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for dynamicFlavor', function (done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     return cursor.toChoices('dynamicFlavor', function (err, flavors) {
       assert(!err);
       // Only the dynamicFlavor choices associated with at least one cat come up, in alpha order
@@ -610,8 +610,8 @@ describe('Schema Filters', function() {
   });
 
   it('can obtain choices for dynamicFlavors', function (done) {
-    var req = apos.tasks.getReq();
-    var cursor = apos.cats.find(req);
+    var req = genex.tasks.getReq();
+    var cursor = genex.cats.find(req);
     return cursor.toChoices('dynamicFlavors', function (err, flavors) {
       assert(!err);
       // Only the dynamicFlavors choices associated with at least one cat come up, in alpha order

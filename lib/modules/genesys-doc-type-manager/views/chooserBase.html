@@ -1,0 +1,21 @@
+{%- import 'apostrophe-ui:components/buttons.html' as buttons with context -%}
+{% if data.autocomplete and data.browse %}
+  <div class="genex-browse-and-autocomplete">
+{% elseif data.browse %}
+  <div class="genex-browse">
+{% endif %}
+{% if data.autocomplete %}
+  <input type="text" name="autocomplete" class="genex-field-input genex-field-input-text" placeholder="{{ __('Search...') }}" data-autocomplete />
+{% endif %}
+{% if data.browse %}
+  {{ buttons.action('Browse', { action: 'browse', icon: 'caret-right' }) }}
+{% endif %}
+{% if data.autocomplete or data.browse %}
+  </div>
+{% endif %}
+{# Existing selections #}
+<div data-choices>
+  {# AJAX populates me #}
+</div>
+{# Initially hidden #}
+<div class="genex-chooser-limit-reached">{{ __("Limit Reached") }}</div>

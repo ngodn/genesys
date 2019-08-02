@@ -1,6 +1,6 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
-var apos;
+var genex;
 
 describe('Admin bar', function() {
 
@@ -11,103 +11,103 @@ describe('Admin bar', function() {
   /// ///
 
   it('should allow a group reversing the current order', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900,
           csrf: false
         },
-        'apostrophe-admin-bar': {
+        'genesys-admin-bar': {
           addGroups: [
             {
               label: 'Media',
               items: [
-                'apostrophe-images',
-                'apostrophe-files'
+                'genesys-images',
+                'genesys-files'
               ]
             },
             {
               label: 'Content',
               items: [
-                'apostrophe-login-logout',
-                'apostrophe-files',
-                'apostrophe-images'
+                'genesys-login-logout',
+                'genesys-files',
+                'genesys-images'
               ]
             }
           ]
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-admin-bar']);
-        assert(apos.adminBar);
-        assert(apos.adminBar.items.length === 8);
-        assert(apos.adminBar.items[5].name === 'apostrophe-login-logout');
-        assert(apos.adminBar.items[6].name === 'apostrophe-files');
-        assert(apos.adminBar.items[7].name === 'apostrophe-images');
+        assert(genex.modules['genesys-admin-bar']);
+        assert(genex.adminBar);
+        assert(genex.adminBar.items.length === 8);
+        assert(genex.adminBar.items[5].name === 'genesys-login-logout');
+        assert(genex.adminBar.items[6].name === 'genesys-files');
+        assert(genex.adminBar.items[7].name === 'genesys-images');
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
         assert(!err);
-        return t.destroy(apos, done);
+        return t.destroy(genex, done);
       }
     });
   });
 
   it('should allow a group obeying the current order', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900,
           csrf: false
         },
-        'apostrophe-admin-bar': {
+        'genesys-admin-bar': {
           addGroups: [
             {
               label: 'Media',
               items: [
-                'apostrophe-images',
-                'apostrophe-files'
+                'genesys-images',
+                'genesys-files'
               ]
             },
             {
               label: 'Content',
               items: [
-                'apostrophe-files',
-                'apostrophe-images',
-                'apostrophe-login-logout'
+                'genesys-files',
+                'genesys-images',
+                'genesys-login-logout'
               ]
             }
           ]
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-admin-bar']);
-        assert(apos.adminBar);
-        assert(apos.adminBar.items.length === 8);
-        assert(apos.adminBar.items[5].name === 'apostrophe-files');
-        assert(apos.adminBar.items[6].name === 'apostrophe-images');
-        assert(apos.adminBar.items[7].name === 'apostrophe-login-logout');
+        assert(genex.modules['genesys-admin-bar']);
+        assert(genex.adminBar);
+        assert(genex.adminBar.items.length === 8);
+        assert(genex.adminBar.items[5].name === 'genesys-files');
+        assert(genex.adminBar.items[6].name === 'genesys-images');
+        assert(genex.adminBar.items[7].name === 'genesys-login-logout');
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
         assert(!err);
-        return t.destroy(apos, done);
+        return t.destroy(genex, done);
       }
     });
   });

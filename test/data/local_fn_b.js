@@ -1,3 +1,3 @@
-module.exports = function(apos, config) {
+module.exports = function(genex, config) {
   config.overrideTest += '-foo';
 };

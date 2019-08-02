@@ -1,0 +1,275 @@
+.genex-buttons
+{
+  background: @genex-white;
+  white-space: nowrap;
+  .genex-glow;
+  .genex-rounded;
+  .genex-button-border(@genex-green);
+  .genex-button-group
+  {
+    display: inline-block;
+    margin: 0 (@genex-padding-1 / 2);
+  }
+  .genex-button
+  {
+    border-radius: 0;
+  }
+}
+
+[data-genex-trash-item].genex-button { color: @genex-red; }
+
+.genex-button
+{
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  .genex-inline-block;
+  padding: @genex-padding-1 @genex-padding-2;
+  .genex-rounded;
+  .genex-button-border;
+  // .genex-text-small;
+  font-size: 14px;
+  line-height: inherit;
+  letter-spacing: 1px;
+  @media @genex-breakpoint-desktop-xl { .genex-text-small; }
+  background-color: @genex-white;
+  color: @genex-dark;
+  cursor: pointer;
+  text-decoration: none;
+  .genex-no-select;
+  .genex-transition--bounce;
+
+  .genex-button-label
+  {
+    opacity: 1;
+    .genex-transition();
+  }
+
+  .fa-caret-right {
+    margin-left: 10px;
+    position: relative;
+    top: 1px;
+  }
+
+
+  &:hover
+  {
+    .genex-glow;
+    cursor: pointer;
+  }
+  &:focus
+  {
+    outline: none;
+  }
+  &:active,
+  &:focus
+  {
+    .genex-drop-shadow(0px, 0px, 13px, 4px, fade(@genex-base, 30%));
+  }
+  &.genex-button--square
+  {
+    border-radius: 0px;
+  }
+
+  &.ui-draggable-handle
+  {
+    cursor: move;
+  }
+
+  &[data-busy="1"]
+  {
+    .genex-button-label { opacity: 0; }
+    &:after
+    {
+      opacity: 1;
+      .genex-rotate();
+    }
+  }
+
+  // i { margin-left: 4px; }
+}
+
+// SPINNER =====================
+
+.genex-button:after
+{
+  position: absolute;
+  left: ~'calc(50% - 12px)';
+  top: 8px;
+  width: 24px;
+  height: 24px;
+
+  color: @genex-green;
+  font-size: 24px;
+  .fa;
+  content: '\f110';
+  opacity: 0;
+  line-height: 100%;
+  .genex-transition();
+}
+
+.genex-button--group:after
+{
+  display: none;
+}
+
+// TYPES =======================
+
+.genex-button--small {
+  .genex-button {
+    padding: 8px;
+    font-size: 12px;
+  }
+}
+
+.genex-button--in-context
+{
+  .genex-glow;
+
+  &:hover
+  {
+    .genex-drop-shadow(0px, 0px, 13px, 4px, fade(@genex-base, 30%));
+  }
+  &:active
+  {
+    .genex-drop-shadow(0px, 0px, 20px, 6px, fade(@genex-base, 30%));
+  }
+}
+
+.genex-button--global
+{
+  .genex-button-border(@genex-white);
+  background-color: @genex-base;
+  color: @genex-white;
+  .genex-drop-shadow;
+  &:hover
+  {
+    .genex-drop-shadow(0px, 0px, 13px, 4px, fade(@genex-black, 20%));
+  }
+  &:after
+  {
+    color: @genex-white;
+  }
+  &[genex--danger]
+  {
+    background-color: @genex-red;
+  }
+}
+
+.genex-button--more
+{
+  .genex-arrow-right;
+  &:hover
+  {
+
+  }
+}
+
+.genex-button--major
+{
+  background-color: @genex-base;
+  color: @genex-white;
+  padding: @genex-padding-1 @genex-padding-4;
+  border: none;
+  &:after
+  {
+    color: @genex-white;
+  }
+}
+
+.genex-button--minor
+{
+  padding: @genex-padding-1 @genex-padding-4;
+  border: none;
+  &:hover
+  {
+    .genex-drop-shadow(@spread:0;);
+  }
+}
+
+.genex-button--action
+{
+  background-color: @genex-white;
+  color: @genex-dark;
+  padding: @genex-padding-1 @genex-padding-2;
+  .genex-button-border(@genex-green);
+}
+
+.genex-button--danger
+{
+  .genex-button--major;
+  background-color: @genex-red;
+  &:hover
+  {
+    .genex-drop-shadow(@color:@genex-red, @spread:0);
+  }
+}
+
+.genex-button--group
+{
+  padding: 0 @genex-padding-1;
+  white-space: nowrap;
+}
+
+.genex-button--in-group
+{
+  padding: @genex-padding-1;
+  background-color: transparent;
+  border: none;
+  .genex-transition;
+  &:hover
+  {
+    color: @genex-primary;
+    .genex-drop-shadow(0, 0, 0, 0);
+    &[data-genex-trash-item] {
+      color: darken(@genex-red, 20%);
+    }
+  }
+}
+
+.genex-button--circular
+{
+  line-height: 0;
+  font-size: 12px;
+  padding: 9px;
+  .genex-rounded(@genex-padding-3);
+  i
+  {
+    position: absolute;
+    margin-left: 0px;
+    margin-left: 0.5px;
+    transform: translateX(-50%);
+    .genex-transition--bounce;
+  }
+
+}
+
+.genex-button--disabled
+{
+  border: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+  &:hover, &:active
+  {
+    box-shadow: none;
+  }
+}
+
+.genex-button--inline {
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+
+  .genex-button {
+    color: @genex-dark;
+    padding: 4px 5px;
+    font-size: 12px;
+    &:hover { color: @genex-white; }
+  }
+}
+
+.genex-button-group {
+  margin-bottom: @genex-margin-2;
+}

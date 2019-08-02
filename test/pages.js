@@ -3,7 +3,7 @@ var assert = require('assert');
 var _ = require('@sailshq/lodash');
 var request = require('request');
 var Promise = require('bluebird');
-var apos;
+var genex;
 var homeId;
 
 describe('Pages', function() {
@@ -11,13 +11,13 @@ describe('Pages', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
-  it('should be a property of the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should be a property of the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
@@ -41,8 +41,8 @@ describe('Pages', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.pages);
-        apos.argv._ = [];
+        assert(genex.pages);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -58,7 +58,7 @@ describe('Pages', function() {
     var expectedIndexes = ['path'];
     var actualIndexes = [];
 
-    apos.docs.db.indexInformation(function(err, info) {
+    genex.docs.db.indexInformation(function(err, info) {
       assert(!err);
 
       // Extract the actual index info we care about
@@ -76,7 +76,7 @@ describe('Pages', function() {
   });
 
   it('parked homepage exists', function(done) {
-    return apos.pages.find(apos.tasks.getAnonReq(), { level: 0 }).toObject(function(err, home) {
+    return genex.pages.find(genex.tasks.getAnonReq(), { level: 0 }).toObject(function(err, home) {
       assert(!err);
       assert(home);
       homeId = home._id;
@@ -90,7 +90,7 @@ describe('Pages', function() {
   });
 
   it('parked trash can exists', function(done) {
-    return apos.pages.find(apos.tasks.getReq(), { slug: '/trash' }).published(null).trash(null).toObject(function(err, trash) {
+    return genex.pages.find(genex.tasks.getReq(), { slug: '/trash' }).published(null).trash(null).toObject(function(err, trash) {
       assert(!err);
       assert(trash);
       assert(trash.slug === '/trash');
@@ -164,7 +164,7 @@ describe('Pages', function() {
       }
     ];
 
-    apos.docs.db.insert(testItems, function(err) {
+    genex.docs.db.insert(testItems, function(err) {
       assert(!err);
       done();
     });
@@ -174,12 +174,12 @@ describe('Pages', function() {
   // FINDING
 
   it('should have a find method on pages that returns a cursor', function() {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq());
+    var cursor = genex.pages.find(genex.tasks.getAnonReq());
     assert(cursor);
   });
 
   it('should be able to find the parked homepage', function(done) {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq(), { slug: '/' });
+    var cursor = genex.pages.find(genex.tasks.getAnonReq(), { slug: '/' });
 
     cursor.toObject(function(err, page) {
       assert(!err);
@@ -193,7 +193,7 @@ describe('Pages', function() {
   });
 
   it('should be able to find just a single page', function(done) {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq(), { slug: '/child' });
+    var cursor = genex.pages.find(genex.tasks.getAnonReq(), { slug: '/child' });
 
     cursor.toObject(function(err, page) {
       assert(!err);
@@ -206,7 +206,7 @@ describe('Pages', function() {
   });
 
   it('should be able to include the ancestors of a page', function(done) {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq(), { slug: '/child' });
+    var cursor = genex.pages.find(genex.tasks.getAnonReq(), { slug: '/child' });
 
     cursor.ancestors(true).toObject(function(err, page) {
       assert(!err);
@@ -223,7 +223,7 @@ describe('Pages', function() {
   });
 
   it('should be able to include just one ancestor of a page, i.e. the parent', function(done) {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq(), { slug: '/child' });
+    var cursor = genex.pages.find(genex.tasks.getAnonReq(), { slug: '/child' });
 
     cursor.ancestors({ depth: 1 }).toObject(function(err, page) {
       assert(!err);
@@ -238,7 +238,7 @@ describe('Pages', function() {
   });
 
   it('should be able to include the children of the ancestors of a page', function(done) {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq(), { slug: '/child' });
+    var cursor = genex.pages.find(genex.tasks.getAnonReq(), { slug: '/child' });
 
     cursor.ancestors({children: 1}).toObject(function(err, page) {
       assert(!err);
@@ -267,7 +267,7 @@ describe('Pages', function() {
       type: 'testPage',
       title: 'New Page'
     };
-    apos.pages.insert(apos.tasks.getReq(), parentId, newPage, function(err, page) {
+    genex.pages.insert(genex.tasks.getReq(), parentId, newPage, function(err, page) {
       // did it return an error?
       assert(!err);
       // Is the path generally correct?
@@ -277,7 +277,7 @@ describe('Pages', function() {
   });
 
   it('is able to insert a new page in the correct order', function(done) {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq(), { slug: '/new-page' });
+    var cursor = genex.pages.find(genex.tasks.getAnonReq(), { slug: '/new-page' });
 
     cursor.toObject(function(err, page) {
       assert(!err);
@@ -298,7 +298,7 @@ describe('Pages', function() {
       type: 'testPage',
       title: 'New Page 2'
     };
-    apos.pages.insert(apos.tasks.getReq(), parentId, newPage).then(function(page) {
+    genex.pages.insert(genex.tasks.getReq(), parentId, newPage).then(function(page) {
       assert.equal(page.path, '/parent/new-page-2');
       done();
     }).catch(function(err) {
@@ -307,7 +307,7 @@ describe('Pages', function() {
   });
 
   it('is able to insert a new page in the correct order with promises', function(done) {
-    var cursor = apos.pages.find(apos.tasks.getAnonReq(), { slug: '/new-page-2' });
+    var cursor = genex.pages.find(genex.tasks.getAnonReq(), { slug: '/new-page-2' });
 
     cursor.toObject().then(function(page) {
       assert.equal(page.rank, 3);
@@ -322,12 +322,12 @@ describe('Pages', function() {
   it('is able to move root/parent/sibling/cousin after root/parent', function(done) {
     // 'Cousin' _id === 4312
     // 'Parent' _id === 1234
-    apos.pages.move(apos.tasks.getReq(), '4312', '1234', 'after', function(err) {
+    genex.pages.move(genex.tasks.getReq(), '4312', '1234', 'after', function(err) {
       if (err) {
         console.log(err);
       }
       assert(!err);
-      var cursor = apos.pages.find(apos.tasks.getAnonReq(), {_id: '4312'});
+      var cursor = genex.pages.find(genex.tasks.getAnonReq(), {_id: '4312'});
       cursor.toObject(function(err, page) {
         if (err) {
           console.log(err);
@@ -346,12 +346,12 @@ describe('Pages', function() {
   it('is able to move root/cousin before root/parent/child', function(done) {
     // 'Cousin' _id === 4312
     // 'Child' _id === 2341
-    apos.pages.move(apos.tasks.getReq(), '4312', '2341', 'before', function(err) {
+    genex.pages.move(genex.tasks.getReq(), '4312', '2341', 'before', function(err) {
       if (err) {
         console.log(err);
       }
       assert(!err);
-      var cursor = apos.pages.find(apos.tasks.getAnonReq(), {_id: '4312'});
+      var cursor = genex.pages.find(genex.tasks.getAnonReq(), {_id: '4312'});
       cursor.toObject(function(err, page) {
         if (err) {
           console.log(err);
@@ -369,12 +369,12 @@ describe('Pages', function() {
   it('is able to move root/parent/cousin inside root/parent/sibling', function(done) {
     // 'Cousin' _id === 4312
     // 'Sibling' _id === 4321
-    apos.pages.move(apos.tasks.getReq(), '4312', '4321', 'inside', function(err) {
+    genex.pages.move(genex.tasks.getReq(), '4312', '4321', 'inside', function(err) {
       if (err) {
         console.log(err);
       }
       assert(!err);
-      var cursor = apos.pages.find(apos.tasks.getAnonReq(), {_id: '4312'});
+      var cursor = genex.pages.find(genex.tasks.getAnonReq(), {_id: '4312'});
       cursor.toObject(function(err, page) {
         if (err) {
           console.log(err);
@@ -391,12 +391,12 @@ describe('Pages', function() {
   });
 
   it('moving /parent into /another-parent should also move /parent/sibling', function(done) {
-    apos.pages.move(apos.tasks.getReq(), '1234', '4333', 'inside', function(err) {
+    genex.pages.move(genex.tasks.getReq(), '1234', '4333', 'inside', function(err) {
       if (err) {
         console.log(err);
       }
       assert(!err);
-      var cursor = apos.pages.find(apos.tasks.getAnonReq(), {_id: '4321'});
+      var cursor = genex.pages.find(genex.tasks.getAnonReq(), {_id: '4321'});
       cursor.toObject(function(err, page) {
         if (err) {
           console.log(err);
@@ -442,7 +442,7 @@ describe('Pages', function() {
 
   it('should detect that the home page is an ancestor of any page except itself', function() {
     assert(
-      apos.pages.isAncestorOf({
+      genex.pages.isAncestorOf({
         path: '/'
       }, {
         path: '/about'
@@ -450,14 +450,14 @@ describe('Pages', function() {
       )
     );
     assert(
-      apos.pages.isAncestorOf({
+      genex.pages.isAncestorOf({
         path: '/'
       }, {
         path: '/about/grandkid'
       }
       )
     );
-    assert(!apos.pages.isAncestorOf({
+    assert(!genex.pages.isAncestorOf({
       path: '/'
     }, {
       path: '/'
@@ -466,7 +466,7 @@ describe('Pages', function() {
 
   it('should detect a tab as the ancestor of its great grandchild but not someone else\'s', function() {
     assert(
-      apos.pages.isAncestorOf({
+      genex.pages.isAncestorOf({
         path: '/about'
       }, {
         path: '/about/test/thing'
@@ -475,7 +475,7 @@ describe('Pages', function() {
     );
 
     assert(
-      !apos.pages.isAncestorOf({
+      !genex.pages.isAncestorOf({
         path: '/about'
       }, {
         path: '/wiggy/test/thing'
@@ -486,19 +486,19 @@ describe('Pages', function() {
   });
 
   it('is able to move parent to the trash', function(done) {
-    apos.pages.moveToTrash(apos.tasks.getReq(), '1234', function(err) {
+    genex.pages.moveToTrash(genex.tasks.getReq(), '1234', function(err) {
       if (err) {
         console.error(err);
       }
       assert(!err);
-      var cursor = apos.pages.find(apos.tasks.getAnonReq(), {_id: '1234'});
+      var cursor = genex.pages.find(genex.tasks.getAnonReq(), {_id: '1234'});
       cursor.toObject(function(err, page) {
         if (err) {
           console.log(err);
         }
         assert(!err);
         assert(!page);
-        apos.pages.find(apos.tasks.getAnonReq(), { _id: '1234' })
+        genex.pages.find(genex.tasks.getAnonReq(), { _id: '1234' })
           .permission(false).trash(null).toObject(function(err, page) {
             assert(!err);
             assert.equal(page.path, '/trash/parent');
@@ -519,7 +519,7 @@ describe('Pages', function() {
       type: 'testPage',
       title: 'New Page'
     };
-    apos.pages.insert(apos.tasks.getReq(), parentId, newPage, function(err, page) {
+    genex.pages.insert(genex.tasks.getReq(), parentId, newPage, function(err, page) {
       // did it return an error?
       assert(!err);
       // Is the path based on the slug rather than the title?
@@ -535,13 +535,13 @@ describe('Pages with trashInSchema', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
-  it('should be a property of the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should be a property of the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test2',
 
@@ -568,8 +568,8 @@ describe('Pages with trashInSchema', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.pages);
-        apos.argv._ = [];
+        assert(genex.pages);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -618,7 +618,7 @@ describe('Pages with trashInSchema', function() {
       }
     ];
 
-    apos.docs.db.insert(testItems, function(err) {
+    genex.docs.db.insert(testItems, function(err) {
       assert(!err);
       done();
     });
@@ -630,12 +630,12 @@ describe('Pages with trashInSchema', function() {
   it('is able to move p2 inside p1', function(done) {
     // 'Cousin' _id === 4312
     // 'Parent' _id === 1234
-    apos.pages.move(apos.tasks.getReq(), 'p2', 'p1', 'inside', function(err) {
+    genex.pages.move(genex.tasks.getReq(), 'p2', 'p1', 'inside', function(err) {
       if (err) {
         console.log(err);
       }
       assert(!err);
-      var cursor = apos.pages.find(apos.tasks.getAnonReq(), {_id: 'p2'});
+      var cursor = genex.pages.find(genex.tasks.getAnonReq(), {_id: 'p2'});
       cursor.toObject(function(err, page) {
         if (err) {
           console.log(err);
@@ -653,7 +653,7 @@ describe('Pages with trashInSchema', function() {
 
   it('p2c2 is now grandchild of p1, but still in trash', function() {
     return Promise.try(function() {
-      return apos.docs.db.findOne({ _id: 'p2c2' });
+      return genex.docs.db.findOne({ _id: 'p2c2' });
     }).then(function(p2c2) {
       assert(p2c2.level === 3);
       assert(p2c2.path === '/parent1/parent2/child2');
@@ -662,39 +662,39 @@ describe('Pages with trashInSchema', function() {
   });
 
   it('add permissions for a new group to the home page', function() {
-    const req = apos.tasks.getReq();
+    const req = genex.tasks.getReq();
     let group;
     return Promise.try(function() {
-      return apos.groups.insert(req, {
+      return genex.groups.insert(req, {
         title: 'test',
         permissions: [ 'edit-page' ]
       });
     }).then(function(_group) {
       group = _group;
-      return apos.docs.db.findOne({ slug: '/' });
+      return genex.docs.db.findOne({ slug: '/' });
     }).then(function(home) {
       home.editGroupsIds = [ group._id ];
-      const update = Promise.promisify(apos.pages.update);
+      const update = Promise.promisify(genex.pages.update);
       return update(req, home, {});
     }).then(function() {
-      return apos.docs.db.findOne({ slug: '/' });
+      return genex.docs.db.findOne({ slug: '/' });
     }).then(function(home) {
       assert(_.includes(home.docPermissions, 'edit-' + group._id));
     });
   });
 
   it('"apply to subpages": propagate group id to child pages', function() {
-    const req = apos.tasks.getReq();
+    const req = genex.tasks.getReq();
     let home;
     return Promise.try(function() {
-      return apos.docs.db.findOne({ slug: '/' });
+      return genex.docs.db.findOne({ slug: '/' });
     }).then(function(_home) {
       home = _home;
       home.applyToSubpages = true;
-      const update = Promise.promisify(apos.pages.update);
+      const update = Promise.promisify(genex.pages.update);
       return update(req, home, {});
     }).then(function() {
-      return apos.docs.db.find({ slug: /^\//, trash: { $ne: true } }).toArray();
+      return genex.docs.db.find({ slug: /^\//, trash: { $ne: true } }).toArray();
     }).then(function(pages) {
       assert(!_.find(pages, function(page) {
         return (!_.includes(page.docPermissions, 'edit-' + home.editGroupsIds[0]));

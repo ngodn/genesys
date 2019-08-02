@@ -1,32 +1,32 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
 
-var apos;
+var genex;
 
 describe('Templates', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   it('should have a push property', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         }
       },
       afterInit: function(callback) {
-        assert(apos.push);
+        assert(genex.push);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -37,7 +37,7 @@ describe('Templates', function() {
   });
 
   it('should be able to push a browser call and get back an HTML-safe JSON string', function() {
-    var req = apos.tasks.getAnonReq();
+    var req = genex.tasks.getAnonReq();
     req.browserCall('test(?)', { data: '<script>alert(\'ruh roh\');</script>' });
     var calls = req.getBrowserCalls();
     assert(calls.indexOf('<\\/script>') !== -1);

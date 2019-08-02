@@ -6,14 +6,14 @@ describe('Promisified Events Core', function() {
 
   this.timeout(50000);
 
-  var apos;
+  var genex;
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   it('should execute handlers for several events in the proper order', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {

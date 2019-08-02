@@ -1,0 +1,21 @@
+<div class="genex-ui" data-genex-area-controls data-genex-area-controls-original>
+  <div class="genex-area-controls">
+    <div class="genex-dropdown genex-dropdown--area-controls genex-dropdown--down" data-genex-dropdown="{{ direction }}">
+      <div class="genex-button genex-button--major genex-button--circular genex-button--in-context" data-genex-add-content>
+        <i class="fa fa-plus"></i>
+      </div>
+      <ul class="genex-dropdown-items" data-genex-dropdown-items>
+        {%- for name, options in data.options.widgets -%}
+          {%- if data.widgetManagers[name] -%}
+            {%- if not options.readOnly -%}
+              <li class="genex-dropdown-item" data-genex-add-item="{{ name }}">{{ options.addLabel or __(data.widgetManagers[name].label) }}</li>
+            {% endif %}
+          {%- else -%}
+            {{ genex.log("Your area contains a widget of type " + name + " but there is no manager for that type. Maybe you forgot to configure the " + name + "-widgets module?") }}
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+    <div class="genex-area-divider"></div>
+  </div>
+</div>

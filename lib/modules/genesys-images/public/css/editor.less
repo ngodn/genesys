@@ -1,0 +1,105 @@
+
+.apostrophe-image-manager
+.genex-modal-content .genex-form,
+.apostrophe-image-editor
+.genex-modal-content .genex-form,
+.apostrophe-file-editor
+.genex-modal-content .genex-form,
+
+{
+  max-width: 100%;
+
+  img { max-width: 100%; }
+  .apostrophe-images-editor-attachment
+  {
+    .genex-inline-block(top);
+    height: 100%;
+    width: ~'calc(100% - 750px)';
+    padding: 20px;
+    background: @genex-white;
+
+    .genex-attachment-preview
+    {
+      position: relative;
+      // width: 50%;
+      width: auto;
+      max-width: 500px;
+      height: auto;
+      overflow: hidden;
+
+      background-repeat: no-repeat;
+      img
+      {
+        width: 100%;
+        height: auto;
+      }
+    }
+    .genex-attachment-name
+    {
+      display: block;
+      font-size: 1em;
+      margin: 0.5em 0;
+    }
+  }
+}
+
+.genex-modal-content .genex-form
+{
+  .apostrophe-images-editor-attachment
+  {
+    .genex-inline-block(top);
+    height: 100%;
+    width: ~'calc(100% - 750px)';
+    padding: 20px;
+    background: @genex-white;
+    .genex-field-attachment { margin-bottom: 0; }
+    .genex-attachment-preview
+    {
+      position: relative;
+      // width: 50%;
+      width: auto;
+      max-width: 500px;
+      height: auto;
+      overflow: hidden;
+
+      background-repeat: no-repeat;
+      img
+      {
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+}
+
+.apostrophe-image-editor-fields
+{
+  float: left;
+  width: 100%;
+
+  .genex-schema-group
+  {
+    position: relative;
+    width: 45%;
+    float: left;
+    margin-left: 25%;
+    overflow: visible;
+  }
+
+  .genex-field { max-width: none; }
+
+  .genex-field-attachment
+  {
+    position: absolute;
+    left: 100%;
+    width: 80%;
+
+    img { max-width: 100%; }
+  }
+
+}
+
+
+.genex-crop-editor .jcrop-holder { margin: 0 auto; }
+.genex-crop-editor .jcrop-keymgr { top: -20px; }
+.genex-crop-editor .genex-modal-body { overflow: hidden; padding: @genex-padding-2; }

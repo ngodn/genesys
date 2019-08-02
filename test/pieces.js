@@ -3,14 +3,14 @@ var assert = require('assert');
 var _ = require('@sailshq/lodash');
 var async = require('async');
 
-var apos;
+var genex;
 
 describe('Pieces', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   /// ///
@@ -18,7 +18,7 @@ describe('Pieces', function() {
   /// ///
 
   it('should initialize with a schema', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
@@ -48,9 +48,9 @@ describe('Pieces', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['things']);
-        assert(apos.modules['things'].schema);
-        apos.argv._ = [];
+        assert(genex.modules['things']);
+        assert(genex.modules['things'].schema);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -62,7 +62,7 @@ describe('Pieces', function() {
 
   // little test-helper function to get piece by id regardless of trash status
   function findPiece(req, id, callback) {
-    return apos.modules['things'].find(req, { _id: id })
+    return genex.modules['things'].find(req, { _id: id })
       .permission('edit')
       .published(null)
       .trash(null)
@@ -120,10 +120,10 @@ describe('Pieces', function() {
   // Wipe the database so we can run this test suite independent of bootstrap
   it('should make sure there is no test data hanging around from last time', function(done) {
     // Attempt to purge the entire aposDocs collection
-    apos.docs.db.remove({}, function(err) {
+    genex.docs.db.remove({}, function(err) {
       assert(!err);
       // Make sure it went away
-      apos.docs.db.findWithProjection({ _id: 'testThing' }).toArray(function(err, docs) {
+      genex.docs.db.findWithProjection({ _id: 'testThing' }).toArray(function(err, docs) {
         assert(!err);
         assert(docs.length === 0);
         done();
@@ -133,16 +133,16 @@ describe('Pieces', function() {
 
   // Test pieces.newInstance()
   it('should be able to create a new piece', function() {
-    assert(apos.modules['things'].newInstance);
-    var thing = apos.modules['things'].newInstance();
+    assert(genex.modules['things'].newInstance);
+    var thing = genex.modules['things'].newInstance();
     assert(thing);
     assert(thing.type === 'thing');
   });
 
   // Test pieces.insert()
   it('should be able to insert a piece into the database', function(done) {
-    assert(apos.modules['things'].insert);
-    apos.modules['things'].insert(apos.tasks.getReq(), testThing, function(err, piece) {
+    assert(genex.modules['things'].insert);
+    genex.modules['things'].insert(genex.tasks.getReq(), testThing, function(err, piece) {
       assert(!err);
       assert(testThing === piece);
       done();
@@ -150,8 +150,8 @@ describe('Pieces', function() {
   });
 
   it('same thing with promises', function(done) {
-    assert(apos.modules['things'].insert);
-    apos.modules['things'].insert(apos.tasks.getReq(), testThing2)
+    assert(genex.modules['things'].insert);
+    genex.modules['things'].insert(genex.tasks.getReq(), testThing2)
       .then(function(piece2) {
         assert(testThing2 === piece2);
         done();
@@ -163,11 +163,11 @@ describe('Pieces', function() {
 
   // Test pieces.requirePiece()
   it('should be able to retrieve a piece by id from the database', function(done) {
-    assert(apos.modules['things'].requirePiece);
-    var req = apos.tasks.getReq();
+    assert(genex.modules['things'].requirePiece);
+    var req = genex.tasks.getReq();
     req.body = {};
     req.body._id = "testThing";
-    apos.modules['things'].requirePiece(req, req.res, function() {
+    genex.modules['things'].requirePiece(req, req.res, function() {
       assert(req.piece);
       assert(req.piece._id === 'testThing');
       assert(req.piece.title === 'hello');
@@ -178,16 +178,16 @@ describe('Pieces', function() {
 
   // Test pieces.update()
   it('should be able to update a piece in the database', function(done) {
-    assert(apos.modules['things'].update);
+    assert(genex.modules['things'].update);
     testThing.foo = 'moo';
-    apos.modules['things'].update(apos.tasks.getReq(), testThing, function(err, piece) {
+    genex.modules['things'].update(genex.tasks.getReq(), testThing, function(err, piece) {
       assert(!err);
       assert(testThing === piece);
       // Now let's get the piece and check if it was updated
-      var req = apos.tasks.getReq();
+      var req = genex.tasks.getReq();
       req.body = {};
       req.body._id = "testThing";
-      apos.modules['things'].requirePiece(req, req.res, function() {
+      genex.modules['things'].requirePiece(req, req.res, function() {
         assert(req.piece);
         assert(req.piece._id === 'testThing');
         assert(req.piece.foo === 'moo');
@@ -197,16 +197,16 @@ describe('Pieces', function() {
   });
 
   it('same thing with promises', function(done) {
-    assert(apos.modules['things'].update);
+    assert(genex.modules['things'].update);
     testThing.foo = 'goo';
-    apos.modules['things'].update(apos.tasks.getReq(), testThing)
+    genex.modules['things'].update(genex.tasks.getReq(), testThing)
       .then(function(piece) {
         assert(testThing === piece);
         // Now let's get the piece and check if it was updated
-        var req = apos.tasks.getReq();
+        var req = genex.tasks.getReq();
         req.body = {};
         req.body._id = "testThing";
-        apos.modules['things'].requirePiece(req, req.res, function() {
+        genex.modules['things'].requirePiece(req, req.res, function() {
           assert(req.piece);
           assert(req.piece._id === 'testThing');
           assert(req.piece.foo === 'goo');
@@ -224,7 +224,7 @@ describe('Pieces', function() {
     var manageTest = false;
     // addListFilters should execute launder and filters for filter
     // definitions that are safe for 'public' or 'manage' contexts
-    var mockCursor = apos.docs.find(apos.tasks.getAnonReq());
+    var mockCursor = genex.docs.find(genex.tasks.getAnonReq());
     _.merge(mockCursor, {
       filters: {
         publicTest: {
@@ -268,9 +268,9 @@ describe('Pieces', function() {
 
   // Test pieces.list()
   it('should add some more things for testing', function(done) {
-    assert(apos.modules['things'].insert);
+    assert(genex.modules['things'].insert);
     async.each(additionalThings, function(thing, callback) {
-      apos.modules['things'].insert(apos.tasks.getReq(), thing, function(err) {
+      genex.modules['things'].insert(genex.tasks.getReq(), thing, function(err) {
         callback(err);
       });
     }, function(err) {
@@ -280,13 +280,13 @@ describe('Pieces', function() {
   });
 
   it('should list all the pieces if skip and limit are set to large enough values', function(done) {
-    assert(apos.modules['things'].list);
-    var req = apos.tasks.getReq();
+    assert(genex.modules['things'].list);
+    var req = genex.tasks.getReq();
     var filters = {
       limit: 10,
       skip: 0
     };
-    apos.modules['things'].list(req, filters, function(err, results) {
+    genex.modules['things'].list(req, filters, function(err, results) {
       assert(!err);
       assert(results.total === 5);
       assert(results.limit === 10);
@@ -298,16 +298,16 @@ describe('Pieces', function() {
 
   // pieces.trash()
   it('should be able to trash a piece', function(done) {
-    assert(apos.modules['things'].trash);
-    assert(apos.modules['things'].requirePiece);
-    var req = apos.tasks.getReq();
+    assert(genex.modules['things'].trash);
+    assert(genex.modules['things'].requirePiece);
+    var req = genex.tasks.getReq();
     var id = 'testThing';
     req.body = {_id: id};
     // let's make sure the piece is not trashed to start
     findPiece(req, id, function(err, piece) {
       assert(!err);
       assert(!piece.trash);
-      apos.modules['things'].trash(req, id, function(err) {
+      genex.modules['things'].trash(req, id, function(err) {
         assert(!err);
         // let's get the piece to make sure it is trashed
         findPiece(req, id, function(err, piece) {
@@ -322,15 +322,15 @@ describe('Pieces', function() {
 
   // pieces.rescue()
   it('should be able to rescue a trashed piece', function(done) {
-    assert(apos.modules['things'].rescue);
-    var req = apos.tasks.getReq();
+    assert(genex.modules['things'].rescue);
+    var req = genex.tasks.getReq();
     var id = 'testThing';
     req.body = {_id: id};
     // let's make sure the piece is trashed to start
     findPiece(req, id, function(err, piece) {
       assert(!err);
       assert(piece.trash === true);
-      apos.modules['things'].rescue(req, id, function(err) {
+      genex.modules['things'].rescue(req, id, function(err) {
         assert(!err);
         // let's get the piece to make sure it is rescued
         findPiece(req, id, function(err, piece) {
@@ -345,8 +345,8 @@ describe('Pieces', function() {
 
   // pieces.apiResponse()
   it('should pass through an error message if the error is passed as a string', function(done) {
-    assert(apos.modules['things'].apiResponse);
-    var res = apos.tasks.getAnonReq().res;
+    assert(genex.modules['things'].apiResponse);
+    var res = genex.tasks.getAnonReq().res;
     var errMsg = "Test Error";
     res.send = function(response) {
       assert(response);
@@ -355,12 +355,12 @@ describe('Pieces', function() {
       done();
     };
 
-    apos.modules['things'].apiResponse(res, errMsg, { foo: 'bar' });
+    genex.modules['things'].apiResponse(res, errMsg, { foo: 'bar' });
   });
 
   it('should not pass through an error message if the error is not passed as a string', function(done) {
-    assert(apos.modules['things'].apiResponse);
-    var res = apos.tasks.getAnonReq().res;
+    assert(genex.modules['things'].apiResponse);
+    var res = genex.tasks.getAnonReq().res;
     var errMsg = new Error('it is good to see this error in the log');
     res.send = function(response) {
       assert(response);
@@ -369,12 +369,12 @@ describe('Pieces', function() {
       done();
     };
 
-    apos.modules['things'].apiResponse(res, errMsg, { foo: 'bar' });
+    genex.modules['things'].apiResponse(res, errMsg, { foo: 'bar' });
   });
 
   it('should properly pass a result as a json if there is no error', function(done) {
-    assert(apos.modules['things'].apiResponse);
-    var res = apos.tasks.getAnonReq().res;
+    assert(genex.modules['things'].apiResponse);
+    var res = genex.tasks.getAnonReq().res;
     res.send = function(response) {
       assert(response);
       assert(response.status === 'ok');
@@ -383,7 +383,7 @@ describe('Pieces', function() {
       done();
     };
 
-    apos.modules['things'].apiResponse(res, null, { foo: 'bar' });
+    genex.modules['things'].apiResponse(res, null, { foo: 'bar' });
   });
 
   // done with api.js tests, now let's test routes
@@ -396,9 +396,9 @@ describe('Pieces', function() {
 
   // routes.insert
   it('should insert an item from the routes.insert method', function(done) {
-    assert(apos.modules['things'].routes.insert);
+    assert(genex.modules['things'].routes.insert);
 
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     req.body = routeThing;
     var res = req.res;
     res.send = function(result) {
@@ -410,14 +410,14 @@ describe('Pieces', function() {
       done();
     };
 
-    return apos.modules['things'].routes.insert(req, res);
+    return genex.modules['things'].routes.insert(req, res);
   });
 
   // routes.retrieve
   it('should get an item from the routes.retrieve method', function(done) {
-    assert(apos.modules['things'].routes.retrieve);
+    assert(genex.modules['things'].routes.retrieve);
 
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     // note we set the req.piece here, because the middleware would do the query nd supply the piece
     req.piece = insertedRouteThing;
     var res = req.res;
@@ -428,14 +428,14 @@ describe('Pieces', function() {
       done();
     };
 
-    return apos.modules['things'].routes.retrieve(req, res);
+    return genex.modules['things'].routes.retrieve(req, res);
   });
 
   // routes.list
   it('should get a list of all the items from routes.list', function(done) {
-    assert(apos.modules['things'].routes.list);
+    assert(genex.modules['things'].routes.list);
 
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     // note we set the req.piece here, because the middleware would do the query nd supply the piece
     req.body = { limit: 10, skip: 0 };
     var res = req.res;
@@ -449,16 +449,16 @@ describe('Pieces', function() {
       done();
     };
 
-    return apos.modules['things'].routes.list(req, res);
+    return genex.modules['things'].routes.list(req, res);
   });
 
   // routes.update
   it('should update an item in the database from route.update', function(done) {
-    assert(apos.modules['things'].routes.update);
+    assert(genex.modules['things'].routes.update);
 
     // simulate that middleware first
-    assert(apos.modules['things'].requirePiece);
-    var req = apos.tasks.getReq();
+    assert(genex.modules['things'].requirePiece);
+    var req = genex.tasks.getReq();
     req.body = insertedRouteThing;
     // make a change to the thing we are inserting
     req.body.title = "blue";
@@ -469,17 +469,17 @@ describe('Pieces', function() {
       assert(result.data.title === 'blue');
       done();
     };
-    apos.modules['things'].requirePiece(req, res, function() {
-      return apos.modules['things'].routes.update(req, res);
+    genex.modules['things'].requirePiece(req, res, function() {
+      return genex.modules['things'].routes.update(req, res);
     });
   });
 
   // routes.trash
   it('should trash an item in the database from route.trash', function(done) {
-    assert(apos.modules['things'].routes.trash);
-    assert(apos.modules['things'].requirePiece);
+    assert(genex.modules['things'].routes.trash);
+    assert(genex.modules['things'].requirePiece);
 
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var id = insertedRouteThing._id;
     req.body = {_id: id};
     var res = req.res;
@@ -497,17 +497,17 @@ describe('Pieces', function() {
     findPiece(req, id, function(err, piece) {
       assert(!err);
       assert(!piece.trash);
-      apos.modules['things'].routes.trash(req, res);
+      genex.modules['things'].routes.trash(req, res);
     });
 
   });
 
   // routes.rescue
   it('should rescue an item in the database from route.rescue', function(done) {
-    assert(apos.modules['things'].routes.rescue);
-    assert(apos.modules['things'].requirePiece);
+    assert(genex.modules['things'].routes.rescue);
+    assert(genex.modules['things'].requirePiece);
 
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var id = insertedRouteThing._id;
     req.body = {_id: id};
     var res = req.res;
@@ -525,16 +525,16 @@ describe('Pieces', function() {
     findPiece(req, id, function(err, piece) {
       assert(!err);
       assert(piece.trash === true);
-      apos.modules['things'].routes.rescue(req, res);
+      genex.modules['things'].routes.rescue(req, res);
     });
 
   });
 
   it('people can find things via a join', function() {
-    var req = apos.tasks.getReq();
-    return apos.docs.db.insert(testPeople)
+    var req = genex.tasks.getReq();
+    return genex.docs.db.insert(testPeople)
       .then(function() {
-        return apos.docs.getManager('person').find(req, {}).toObject();
+        return genex.docs.getManager('person').find(req, {}).toObject();
       })
       .then(function(person) {
         assert(person);
@@ -545,8 +545,8 @@ describe('Pieces', function() {
   });
 
   it('people cannot find things via a join with an inadequate projection', function() {
-    var req = apos.tasks.getReq();
-    return apos.docs.getManager('person').find(req, {}, {title: 1}).toObject()
+    var req = genex.tasks.getReq();
+    return genex.docs.getManager('person').find(req, {}, {title: 1}).toObject()
       .then(function(person) {
         assert(person);
         assert(person.title === 'Bob');
@@ -555,8 +555,8 @@ describe('Pieces', function() {
   });
 
   it('people can find things via a join with a "projection" of the join name', function() {
-    var req = apos.tasks.getReq();
-    return apos.docs.getManager('person').find(req, {}, {title: 1, _things: 1}).toObject()
+    var req = genex.tasks.getReq();
+    return genex.docs.getManager('person').find(req, {}, {title: 1, _things: 1}).toObject()
       .then(function(person) {
         assert(person);
         assert(person.title === 'Bob');

@@ -1,0 +1,31 @@
+.genex-ui
+{
+
+  .genex-pager
+  {
+    display: inline-block;
+    padding: @genex-padding-1;
+    .genex-rounded;
+    background-color: @genex-light;
+    font-size: 14px;
+  }
+
+  .genex-pager-number
+  {
+    a
+    {
+      padding: @genex-padding-1 4px;
+      text-decoration: none;
+      color: @genex-black;
+    }
+    &.genex-active
+    {
+      color: @genex-mid;
+    }
+    &.genex-last:after
+    {
+      content: ' (Last)';
+    }
+  }
+
+}

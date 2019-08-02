@@ -1,0 +1,31 @@
+.genex-ui.genex-modal
+.genex-modal-breadcrumb
+{
+	width: 100%;
+	padding: 10px @genex-padding-3;
+
+	background-color: @genex-light;
+	list-style: none;
+	border-bottom: 2px solid @genex-mid;
+
+
+	.genex-modal-breadcrumb-item
+	{
+		position: relative;
+		.genex-inline-block(top);
+
+		line-height: 27px;
+		border-bottom: 1px dashed @genex-green;
+		margin-right: @genex-margin-3;
+		cursor: pointer;
+
+		&:not(:last-child):after
+		{
+			position: absolute;
+			top: 6px;
+			right: -20px;
+			.fa;
+			content: "\f0da";
+		}
+	}
+}

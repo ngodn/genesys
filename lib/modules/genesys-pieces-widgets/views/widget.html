@@ -1,0 +1,13 @@
+{% for piece in data.widget._pieces %}
+  <h4>
+    {% if piece._url %}<a href="{{ piece._url }}">{% endif %}
+    {{ piece.title }}
+    {% if piece._url %}</a>{% endif %}
+  </h4>
+{% endfor %}
+{% if data.widget._pieces.length === 0 and data.widget._edit %}
+  <div class="genex-ui genex-pieces-widget-placeholder">
+    <h3 class="genex-ui genex-text-instruction">Editor note:</h3>
+    <p>This widget is currently configured but empty. Move your cursor over this message and use the "Select" link to select some {{ data.widget.type }}. Only editors will see this message.</p>
+  </div>
+{% endif %}

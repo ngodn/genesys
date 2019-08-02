@@ -3,53 +3,53 @@ var assert = require('assert');
 var async = require('async');
 var Promise = require('bluebird');
 var _ = require('@sailshq/lodash');
-var apos;
+var genex;
 
 describe('Locks', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
-  it('should be a property of the apos object', function(done) {
+  it('should be a property of the genex object', function(done) {
     this.timeout(t.timeout);
     this.slow(2000);
 
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900
         },
         // Make some subclasses of the locks module. NORMALLY A BAD IDEA. But
         // we're doing it to deliberately force them to contend with each other,
         // rather than just throwing an error saying "hey you have this lock now"
-        'apostrophe-locks-1': {
-          extend: 'apostrophe-locks',
+        'genesys-locks-1': {
+          extend: 'genesys-locks',
           alias: 'locks1'
         },
-        'apostrophe-locks-2': {
-          extend: 'apostrophe-locks',
+        'genesys-locks-2': {
+          extend: 'genesys-locks',
           alias: 'locks2'
         },
-        'apostrophe-locks-3': {
-          extend: 'apostrophe-locks',
+        'genesys-locks-3': {
+          extend: 'genesys-locks',
           alias: 'locks3'
         }
       },
       afterInit: function(callback) {
-        assert(apos.modules['apostrophe-locks']);
-        assert(apos.modules['apostrophe-locks-1']);
-        assert(apos.modules['apostrophe-locks-2']);
-        assert(apos.modules['apostrophe-locks-3']);
+        assert(genex.modules['genesys-locks']);
+        assert(genex.modules['genesys-locks-1']);
+        assert(genex.modules['genesys-locks-2']);
+        assert(genex.modules['genesys-locks-3']);
 
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -60,14 +60,14 @@ describe('Locks', function() {
   });
 
   it('cleanup', function(done) {
-    apos.locks.db.remove({}, function(err) {
+    genex.locks.db.remove({}, function(err) {
       assert(!err);
       done();
     });
   });
 
   it('should allow a single lock without contention uneventfully', function(done) {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return async.series([ lock, unlock ], function(err) {
       assert(!err);
       done();
@@ -81,7 +81,7 @@ describe('Locks', function() {
   });
 
   it('should allow two differently-named locks uneventfully', function(done) {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return async.series([ lock1, lock2, unlock1, unlock2 ], function(err) {
       assert(!err);
       done();
@@ -101,7 +101,7 @@ describe('Locks', function() {
   });
 
   it('should flunk a second lock by the same module', function(done) {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return async.series([ lock, lockAgain, unlock, unlockAgain ], function(err) {
       assert(!err);
       done();
@@ -129,10 +129,10 @@ describe('Locks', function() {
   });
 
   it('four parallel lock calls via the different modules should all succeed but not simultaneously', function(done) {
-    var one = apos.modules['apostrophe-locks'];
-    var two = apos.modules['apostrophe-locks-1'];
-    var three = apos.modules['apostrophe-locks-2'];
-    var four = apos.modules['apostrophe-locks-3'];
+    var one = genex.modules['genesys-locks'];
+    var two = genex.modules['genesys-locks-1'];
+    var three = genex.modules['genesys-locks-2'];
+    var four = genex.modules['genesys-locks-3'];
     var active = 0;
     var successful = 0;
     attempt(one);
@@ -163,10 +163,10 @@ describe('Locks', function() {
     }
   });
   it('four parallel lock calls via the different modules should all succeed but not simultaneously, even when the idleTimeout is short', function(done) {
-    var one = apos.modules['apostrophe-locks'];
-    var two = apos.modules['apostrophe-locks-1'];
-    var three = apos.modules['apostrophe-locks-2'];
-    var four = apos.modules['apostrophe-locks-3'];
+    var one = genex.modules['genesys-locks'];
+    var two = genex.modules['genesys-locks-1'];
+    var three = genex.modules['genesys-locks-2'];
+    var four = genex.modules['genesys-locks-3'];
     var active = 0;
     var successful = 0;
     attempt(one);
@@ -198,7 +198,7 @@ describe('Locks', function() {
   });
 
   it('with promises: should flunk a second lock by the same module', function() {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return Promise.try(function() {
       return locks.lock('test');
     }).then(function() {
@@ -219,7 +219,7 @@ describe('Locks', function() {
   });
 
   it('withLock method should run a function inside a lock', function() {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return locks.withLock('test-lock', function() {
       return Promise.delay(50).then(function() {
         return 'result';
@@ -230,7 +230,7 @@ describe('Locks', function() {
   });
 
   it('withLock method should be able to run again (lock released)', function() {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return locks.withLock('test-lock', function() {
       return Promise.delay(50).then(function() {
         return 'result';
@@ -241,7 +241,7 @@ describe('Locks', function() {
   });
 
   it('withLock method should hold the lock (cannot relock within fn)', function() {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return locks.withLock('test-lock', function() {
       return Promise.delay(50).then(function() {
         return locks.lock('test-lock').then(function() {
@@ -254,7 +254,7 @@ describe('Locks', function() {
   });
 
   it('callbacks: withLock method should run a function inside a lock', function(done) {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return locks.withLock('test-lock', function(callback) {
       return setTimeout(function() {
         return callback(null, 'result');
@@ -267,7 +267,7 @@ describe('Locks', function() {
   });
 
   it('all locks should be gone from the database', function() {
-    var locks = apos.modules['apostrophe-locks'];
+    var locks = genex.modules['genesys-locks'];
     return locks.db.find({}).toArray().then(function(locks) {
       assert(!locks.length);
       assert(!_.keys(locks.intervals).length);

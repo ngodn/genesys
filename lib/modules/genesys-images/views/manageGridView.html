@@ -1,0 +1,12 @@
+{%- import "apostrophe-ui:components/fields.html" as fields -%}
+
+<div class="genex-manage-grid-view">
+  {# We might want to bring back the shift to table view, but currently it's not functional #}
+  {#% include "manageViewChoices.html" %#}
+  <div class="genex-manage-showing" data-result-label>
+    {% include "manageResultLabel.html" %}
+  </div>
+  <div data-items class="genex-manage-grid-page">
+    {% include "manageGridPage.html" %}
+  </div>
+</div>

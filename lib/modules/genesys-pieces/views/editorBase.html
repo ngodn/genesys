@@ -1,0 +1,34 @@
+{%- extends "apostrophe-modal:baseSlideable.html" -%}
+{%- import "piecesMacros.html" as pieces with context -%}
+{%- import "apostrophe-schemas:macros.html" as schemas -%}
+
+{%- block modalClass -%}
+  genex-pieces-editor {{ data.options.name | css }}-editor genex-ui-modal-no-sidebar genex-ui-modal-has-tabs genex-modal-slideable
+{%- endblock -%}
+
+{%- block controls -%}
+  {{ module.editControls() }}
+{%- endblock -%}
+
+{%- block label -%}
+  {{ __('Edit %s', (data.options.label | d(''))) }}
+{%- endblock -%}
+
+{%- block filters -%}
+  {# ajax populates me #}
+  <div class="genex-clearfix genex-modal-filters-inner" data-filters>
+  </div>
+{%- endblock -%}
+
+{%- block body -%}
+  <form class="genex-form" data-genex-form>
+    {{ schemas.fields(data.schema) }}
+  </form>
+{%- endblock -%}
+
+{%- block instructions -%}
+  {{ __('Fill out the fields to edit an existing %s.', (data.options.label | d(''))) }}
+{%- endblock -%}
+
+{% block footerContainer %}
+{% endblock %}

@@ -1,0 +1,120 @@
+.genex-modal.genex-versions-modal
+.genex-versions
+{
+  margin: 0 auto;
+  width: 50%;
+  min-width: 400px;
+
+  .genex-version
+  {
+    display: block;
+    width: 100%;
+    margin: 1em 0 3em;
+
+    .genex-author
+    {
+      width: 60px;
+      .genex-inline-block(top);
+      .genex-avatar-wrapper
+      {
+        width: 46px;
+        height: 46px;
+        background: @genex-mid;
+        border-radius: 100%;
+      }
+    }
+    .genex-changes-meta
+    {
+      width: ~'calc(100% - 225px)';
+      .genex-inline-block(top);
+    }
+
+    // date
+    h4
+    {
+      font-size: 16px;
+      font-weight: bold;
+      .genex-inline-block(top);
+    }
+    cite
+    {
+      margin-right: 0.2em;
+      font-weight: bold;
+      .genex-inline-block(top);
+    }
+    a[data-genex-revert]
+    {
+      float: right;
+      .genex-inline-block(top);
+      margin-right: 1em;
+    }
+    h5[data-open-changes]
+    {
+      .genex-inline-block(top);
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      color: @genex-gold;
+
+      &:hover
+      {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+
+  }
+
+  // Current revision disabled button
+  .genex-version-current .genex-button.genex-button--disabled {
+    color: @genex-primary;
+    cursor: default;
+    font-size: 16px;
+    padding: 1em 3em;
+    opacity: 1;
+    background: transparent;
+  }
+
+}
+
+// Changes Diff Container
+.genex-modal.genex-versions-modal
+.genex-versions .genex-version >
+.genex-changes
+{
+  width: 100%;
+  padding-left: 60px;
+}
+
+// Each Change, can be multiple per version
+.genex-modal.genex-versions-modal
+.genex-versions
+.genex-change
+{
+  display: block;
+  &.genex-change-action-change h5 {
+    color: @genex-blue;
+  }
+  &.genex-change-action-add h5 {
+    margin-left: 1.5em;
+    color: @genex-green;
+  }
+  &.genex-change-action-remove h5 {
+    margin-left: 1.5em;
+    color: @genex-red;
+    text-decoration: line-through;
+  }
+  h5 {
+    .genex-inline-block(top);
+    margin: 0;
+    margin-bottom: 2px;
+  }
+  h6 {
+    .genex-inline-block(top);
+  }
+  // &.genex-change-action-move-up::before {
+  //   content: "▲ ";
+  // }
+  // &.genex-change-action-move-down::before {
+  //   content: "▼ ";
+  // }
+}

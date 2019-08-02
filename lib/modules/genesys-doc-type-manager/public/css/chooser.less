@@ -1,0 +1,106 @@
+.genex-ui
+{
+  .genex-chooser-manage-view-wrapper
+  {
+    .genex-inline-block;
+    float: right;
+    width: 80%;
+    .genex-table { padding-left: @genex-padding-2; }
+  }
+
+  .genex-chooser
+  {
+    position: fixed;
+    .genex-inline-block;
+    height: 100%;
+    overflow: auto;
+    width: 20%;
+    background-color: @genex-light;
+  }
+
+  .genex-chooser-tabs-wrapper
+  {
+    position: fixed;
+    .genex-inline-block;
+    width: 80%;
+    height: 100%;
+  }
+
+  .genex-chooser-choice
+  {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid @genex-dark;
+    padding: (@genex-padding-1 * 1.5) @genex-padding-1;
+    @media @genex-breakpoint-desktop-xl { padding: @genex-padding-2; }
+    background-color: @genex-mid;
+    &:hover
+    {
+      background-color: @genex-primary;
+      color: @genex-white;
+      .genex-button { opacity: 1; }
+    }
+    &.genex-chooser-choice--removed .genex-text-normal
+    {
+      text-decoration: line-through;
+    }
+    img { width: 100%; }
+  }
+
+  .genex-chooser-choice--stacked {
+    flex-direction: column;
+    align-items: unset;
+    .genex-chooser-controls {
+      margin-bottom: 10px;
+      .genex-button { opacity: 1; }
+    }
+  }
+
+  .genex-chooser-limit-reached
+  {
+    position: fixed;
+    width: 20%;
+    background: @genex-gold;
+    color: @genex-white;
+    z-index: @genex-z-index-1;
+    bottom: 0;
+    display: none;
+    padding: @genex-padding-3;
+    text-align: center;
+  }
+
+  .genex-chooser-controls
+  {
+    margin-right: 10px;
+    .genex-button
+    {
+      z-index: 1;
+      opacity: 0.5;
+    }
+  }
+
+  .genex-button--small.genex-chooser-controls {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+
+  .genex-chooser-choice:hover .genex-chooser-controls
+  {
+    display: block;
+  }
+
+  .genex-chooser-full
+  {
+    .genex-chooser-limit-reached { display: block; }
+    .genex-field-input { display: none; }
+
+  }
+
+  [data-chooser][data-read-only="true"] .genex-chooser-controls {
+    display: none;
+  }
+}
+
+.genex-manage-pager { float: right; }

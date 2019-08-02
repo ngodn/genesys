@@ -1,0 +1,172 @@
+.genex-modal.genex-reorganize-modal
+{
+  overflow: hidden;
+}
+
+.genex-modal ul.jqtree-tree .jqtree-toggler {
+  font-size: 9px;
+  margin-right: 0;
+  display: inline-block;
+  margin-right: 2%;
+}
+
+.genex-reorganize-published {
+  display: inline-block;
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+}
+
+.genex-reorganize-published--true { background-color: @genex-green; }
+.genex-reorganize-published--false { background-color: @genex-red; }
+
+
+
+.genex-modal .genex-reorganize-tree-header {
+  padding: 20px 40px;
+  border-bottom: @genex-mid;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.genex-modal .genex-reorganize-tree
+{
+  padding-top: @genex-padding-2;
+  background-color: @genex-white;
+  overflow: auto;
+  .genex-scrollbar;
+  input[type="checkbox"] {
+    display: inline-block;
+    margin-right: 16px;
+  }
+}
+
+.genex-modal .genex-reorganize-tree--chooser {
+  width: 80%;
+  float: right;
+  @media @genex-breakpoint-desktop-xl { width: 75%; }
+}
+
+
+.genex-reorganize-generate-depth-indicators(50);
+
+.genex-reorganize-generate-depth-indicators(@n, @i: 1) when (@i =< @n) {
+  [data-genex-reorganize-depth="@{i}"] .jqtree-ghost {
+    margin-left: (@i * 15px);
+  }
+  .genex-reorganize-generate-depth-indicators(@n, (@i + 1));
+}
+
+ul.jqtree-tree ul.jqtree_common { margin-left: 0;}
+ul.jqtree-tree .jqtree-title { margin-left: 0; }
+
+.genex-modal {
+  .genex-reorganize-select-all {
+    display: inline-block;
+    width: 5%;
+  }
+  .genex-reorganize-title {
+    display:inline-block;
+    width: 45%;
+  }
+
+  .genex-reorganize-controls {
+    display: inline-block;
+    width: 12%;
+  }
+  &.genex-separate-trash {
+    .genex-trash {
+      .genex-reorganize-controls--edit {
+        display: none;
+      }
+    }
+  }
+}
+.genex-reorganize-tree .jqtree-tree
+{
+  .jqtree-element
+  {
+    padding: 10px;
+    border-bottom: 1px solid @genex-light;
+    white-space: nowrap;
+    .genex-transition;
+    &:hover {
+      background-color: @genex-light;
+    }
+  }
+
+  .genex-reorganize-title--no-toggle .jqtree-title{
+    padding-left: 18px;
+  }
+  .jqtree-title
+  {
+    color: @genex-black;
+    display:inline-block;
+  }
+
+  .jqtree-tree > .jqtree-folder
+  .jqtree-folder.jqtree-closed>ul.jqtree_common { border-color: @genex-mid; }
+  .genex-reorganize-controls a
+  {
+    display: inline-block;
+    vertical-align: middle;
+    color: @genex-black;
+    padding-left: @genex-padding-1;
+    text-decoration: none;
+    .genex-transition;
+    &:hover { color: @genex-primary; } 
+    &.genex-visit:hover { color: @genex-primary; }
+    &.genex-delete { color: @genex-delete; }
+    &.genex-delete:hover { color: @genex-delete; }
+    &.genex-delete-from-trash:hover { color: @genex-delete; }
+  }
+  .jqtree-selected .genex-reorganize-controls a { color: @genex-dark }
+  li.jqtree-selected > .jqtree_common.jqtree-element,
+  li.jqtree-selected > .jqtree_common.jqtree-element:hover
+  {
+    background: none !important;
+  }
+  li { .genex-transition; }
+  li.jqtree-selected { background: @genex-mid; }
+  .jqtree-moving > .jqtree_common.jqtree-element .jqtree-title { outline: 0; }
+  .jqtree-moving { background: @genex-primary !important; }
+
+  // Delete (move to trash) is visible by default, "empty trash"
+  // (destroy forever) is only visible when already in the trash
+
+  .genex-reorganize-controls .genex-delete-from-trash {
+    display: none;
+  }
+  // Trash and its contents don't show a trash button,
+  // or a visit button
+  .genex-trash .genex-reorganize-controls {
+    .genex-delete, .genex-visit {
+      display: none;
+    }
+  }
+  // Descendants of the trash show a destroy button
+  .genex-trash .jqtree_common .jqtree_common {
+    .genex-reorganize-controls .genex-delete-from-trash {
+      display: inline-block;
+    }
+  }
+}
+
+.genex-schema .genex-field-apply-login-required-to-subpages
+{
+  // Give a sense of hierarchy, since this relates to the previous item
+  margin-left: 20px;
+  margin-top: -10px;
+  // Don't let the LESS compiler mis-compile it, let the browser see it
+  width: calc(~'100% - 20px');
+}
+
+.jqtree-folder.genex-trash,
+.jqtree-element.genex-trash {
+  background-color: fade(@genex-delete, 20%);
+  .jqtree-element:hover {
+    background-color: fade(@genex-delete, 30%);
+  }
+}

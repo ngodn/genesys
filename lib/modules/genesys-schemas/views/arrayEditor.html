@@ -1,0 +1,17 @@
+{%- import "macros.html" as schemas-%}
+{%- extends "apostrophe-modal:baseSlideable.html" -%}
+
+{%- block controls  -%}
+  <div class="genex-array-save-item genex-button genex-button--minor" data-genex-cancel>{{ __('Cancel') }}</div>{#
+#}<button class="genex-array-save-item genex-button" data-genex-save-array-items>{{ __('Save Items') }}</button>
+{%- endblock -%}
+{%- block body -%}
+  <div class="genex-array-chooser" data-genex-array-items></div>
+  <div class="genex-array-add-item genex-button genex-button--major genex-button--square" data-genex-add-array-item>{{ __('+ Add Item') }}</div>
+  <div data-genex-array-limit-reached class="genex-array-limit-reached genex-button genex-button--major genex-button--square genex-button--disabled">{{ __("Limit Reached") }}</div>
+  <div class="genex-array-editor" data-genex-array-item></div>
+  </div>
+{%- endblock -%}
+
+{%- block footerContainer -%}
+{%- endblock -%}

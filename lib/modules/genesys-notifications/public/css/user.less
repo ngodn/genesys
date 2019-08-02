@@ -1,0 +1,63 @@
+.genex-notification-container {
+  position: fixed;
+  width: 33vw;
+  bottom: @genex-padding-2;
+  right: @genex-padding-2;
+  z-index: @genex-z-index-8;
+
+  @media @genex-breakpoint-desktop-xl
+  {
+    bottom: @genex-padding-4;
+    right: @genex-padding-4;
+  }
+}
+
+// With and without scoping so these styles
+// beat out the defaults inside modals too. -Tom
+
+.genex-notification,
+.genex-ui .genex-notification {
+  background-color: @genex-white;
+  color: @genex-dark;
+  .genex-button-border(@genex-dark);
+  .genex-rounded();
+  .genex-drop-shadow();
+  overflow: hidden;
+  margin-bottom: @genex-padding-2;
+  position: relative;
+  .genex-transition;
+
+  &-message {
+    font-size: 16px;
+    margin-right: 32px;
+    padding: @genex-padding-1 @genex-padding-2 !important;
+  }
+
+  &--hidden {
+    opacity: 0;
+  }
+}
+
+.genex-notification.genex-notification--error {
+  .genex-button-border(@genex-white);
+  background-color: @genex-red;
+  color: @genex-white;
+}
+
+.genex-notification.genex-notification--warn {
+  .genex-button-border(@genex-white);
+  background-color: @genex-gold;
+  color: @genex-white;
+}
+
+.genex-notification.genex-notification--success {
+  .genex-button-border(@genex-white);
+  background-color: @genex-green;
+  color: @genex-white;
+}
+
+.genex-notification--pulse {
+  animation: aposPulse 2s infinite;
+}
+
+// .genex-drop-shadow(@x-axis: 0, @y-axis: 2px, @blur: 7px, @spread:2px, @color: fade(@genex-black, 23%))

@@ -1,32 +1,32 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
 
-var apos;
+var genex;
 
 describe('Pages', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
-  it('should be a property of the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should be a property of the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
-        'apostrophe-docs': {
+        'genesys-docs': {
           trashInSchema: true
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           park: [],
           types: [
             {
@@ -41,8 +41,8 @@ describe('Pages', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.pages);
-        apos.argv._ = [];
+        assert(genex.pages);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -53,7 +53,7 @@ describe('Pages', function() {
   });
 
   it('parked homepage exists', function(done) {
-    return apos.pages.find(apos.tasks.getAnonReq(), { level: 0 }).toObject(function(err, home) {
+    return genex.pages.find(genex.tasks.getAnonReq(), { level: 0 }).toObject(function(err, home) {
       assert(!err);
       assert(home);
       assert(home.slug === '/');
@@ -87,7 +87,7 @@ describe('Pages', function() {
       }
     ];
 
-    apos.docs.db.insert(testItems, function(err) {
+    genex.docs.db.insert(testItems, function(err) {
       assert(!err);
       done();
     });
@@ -95,12 +95,12 @@ describe('Pages', function() {
   });
 
   it('should be able to move second page above first page in tree without changing its trash status', function(done) {
-    apos.pages.move(apos.tasks.getReq(), 'two', 'one', 'before', function(err) {
+    genex.pages.move(genex.tasks.getReq(), 'two', 'one', 'before', function(err) {
       if (err) {
         console.log(err);
       }
       assert(!err);
-      var cursor = apos.pages.find(apos.tasks.getAnonReq(), { _id: 'two' }).trash(true);
+      var cursor = genex.pages.find(genex.tasks.getAnonReq(), { _id: 'two' }).trash(true);
       cursor.toObject(function(err, page) {
         if (err) {
           console.log(err);

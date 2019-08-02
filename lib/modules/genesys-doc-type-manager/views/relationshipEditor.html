@@ -1,0 +1,24 @@
+{%- extends "apostrophe-modal:baseSlideable.html" -%}
+{%- import 'apostrophe-ui:components/buttons.html' as buttons with context -%}
+{%- import "apostrophe-schemas:macros.html" as schemas -%}
+
+{%- block modalClass -%}
+  genex-docs-relationship-editor genex-ui-modal-no-sidebar genex-ui-modal-has-tabs genex-modal-slideable
+{%- endblock -%}
+
+{%- block controls -%}
+  {{ buttons.minor('Cancel', { action: 'cancel' }) }}
+  {{ buttons.major('Save Relationship', { action: 'save' }) }}
+{%- endblock -%}
+
+{%- block label -%}
+  {# TODO what is a better label to put here? #}
+  {{ __('Edit Relationship') }}
+{%- endblock -%}
+
+{%- block body -%}
+  {{ schemas.fields(genex.utils.filterEmpty(data.field.relationship, 'inline')) }}
+{%- endblock -%}
+
+{%- block instructions -%}
+{%- endblock -%}

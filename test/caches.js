@@ -4,21 +4,21 @@ var assert = require('assert');
 describe('Caches', function() {
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   this.timeout(t.timeout);
 
-  var apos;
+  var genex;
   var cache;
-  it('should exist on the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should exist on the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       afterInit: function(callback) {
-        assert(apos.caches);
-        apos.argv._ = [];
+        assert(genex.caches);
+        genex.argv._ = [];
         return callback(null);
       },
 
@@ -30,7 +30,7 @@ describe('Caches', function() {
     });
   });
   it('should give us a cache object', function() {
-    cache = apos.caches.get('testMonkeys');
+    cache = genex.caches.get('testMonkeys');
   });
   it('should not crash on clear', function(done) {
     cache.clear(done);

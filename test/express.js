@@ -1,18 +1,18 @@
 var t = require('../test-lib/test.js');
 var assert = require('assert');
 var _ = require('@sailshq/lodash');
-var apos;
+var genex;
 
 describe('Express', function() {
 
   this.timeout(t.timeout);
 
-  it('express should exist on the apos object', function(done) {
-    apos = require('../index.js')({
+  it('express should exist on the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
@@ -25,11 +25,11 @@ describe('Express', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.express);
+        assert(genex.express);
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -39,16 +39,16 @@ describe('Express', function() {
     });
   });
 
-  it('app should exist on the apos object', function() {
-    assert(apos.app);
+  it('app should exist on the genex object', function() {
+    assert(genex.app);
   });
 
-  it('baseApp should exist on the apos object', function() {
-    assert(apos.baseApp);
+  it('baseApp should exist on the genex object', function() {
+    assert(genex.baseApp);
   });
 
   it('app and baseApp should be the same in the absence of a prefix', function() {
-    assert(apos.baseApp === apos.app);
+    assert(genex.baseApp === genex.app);
   });
 
   var request = require('request');
@@ -56,7 +56,7 @@ describe('Express', function() {
   var jar;
 
   function getCsrfToken(jar) {
-    var csrfCookie = _.find(jar.getCookies('http://localhost:7900/'), { key: apos.csrfCookieName });
+    var csrfCookie = _.find(jar.getCookies('http://localhost:7900/'), { key: genex.csrfCookieName });
     if (!csrfCookie) {
       return null;
     }
@@ -180,7 +180,7 @@ describe('Express', function() {
     });
   });
 
-  it('should be able to implement a route with apostrophe-module.route', function(done) {
+  it('should be able to implement a route with genesys-module.route', function(done) {
     var csrfToken = getCsrfToken(jar);
     request({
       method: 'POST',
@@ -197,20 +197,20 @@ describe('Express', function() {
     }, function(err, response, body) {
       assert(!err);
       assert(body.toString() === '30');
-      // Last one before a new apos object
-      return t.destroy(apos, done);
+      // Last one before a new genex object
+      return t.destroy(genex, done);
     });
   });
 
   // PREFIX STUFF
 
-  it('should set prefix on the apos object if passed in', function(done) {
-    apos = require('../index.js')({
+  it('should set prefix on the genex object if passed in', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       prefix: '/prefix',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900,
           csrf: false
         },
@@ -223,12 +223,12 @@ describe('Express', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.prefix);
-        assert(apos.prefix === '/prefix');
+        assert(genex.prefix);
+        assert(genex.prefix === '/prefix');
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -239,7 +239,7 @@ describe('Express', function() {
   });
 
   it('should have different baseApp and app properties with a prefix', function() {
-    assert(apos.app !== apos.baseApp);
+    assert(genex.app !== genex.baseApp);
   });
 
   it('should take same requests at the prefix', function(done) {
@@ -254,19 +254,19 @@ describe('Express', function() {
     }, function(err, response, body) {
       assert(!err);
       assert(body.toString() === '30');
-      // Last one before a new apos object
-      return t.destroy(apos, done);
+      // Last one before a new genex object
+      return t.destroy(genex, done);
     });
   });
 
-  it('should provide reasonable absolute and base URLs in tasks reqs if baseUrl option is set on apos object', function(done) {
+  it('should provide reasonable absolute and base URLs in tasks reqs if baseUrl option is set on genex object', function(done) {
 
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       baseUrl: 'https://example.com',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900,
           csrf: false
         },
@@ -279,34 +279,34 @@ describe('Express', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.baseUrl);
-        assert(apos.baseUrl === 'https://example.com');
+        assert(genex.baseUrl);
+        assert(genex.baseUrl === 'https://example.com');
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
         assert(!err);
-        var req = apos.tasks.getReq({ url: '/test' });
+        var req = genex.tasks.getReq({ url: '/test' });
         assert(req.baseUrl === 'https://example.com');
         assert(req.absoluteUrl === 'https://example.com/test');
-        // Last one before a new apos object
-        return t.destroy(apos, done);
+        // Last one before a new genex object
+        return t.destroy(genex, done);
       }
     });
   });
 
-  it('should provide reasonable absolute and base URLs in tasks reqs if baseUrl and prefix options are set on apos object', function(done) {
+  it('should provide reasonable absolute and base URLs in tasks reqs if baseUrl and prefix options are set on genex object', function(done) {
 
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       baseUrl: 'https://example.com',
       prefix: '/subdir',
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           port: 7900,
           csrf: false
         },
@@ -319,23 +319,23 @@ describe('Express', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.baseUrl);
-        assert(apos.baseUrl === 'https://example.com');
-        assert(apos.prefix === '/subdir');
+        assert(genex.baseUrl);
+        assert(genex.baseUrl === 'https://example.com');
+        assert(genex.prefix === '/subdir');
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
         assert(!err);
-        var req = apos.tasks.getReq({ url: '/test' });
+        var req = genex.tasks.getReq({ url: '/test' });
         assert(req.baseUrl === 'https://example.com');
         assert(req.baseUrlWithPrefix === 'https://example.com/subdir');
         assert(req.absoluteUrl === 'https://example.com/subdir/test');
-        // Last use of this apos object
-        return t.destroy(apos, done);
+        // Last use of this genex object
+        return t.destroy(genex, done);
       }
     });
   });

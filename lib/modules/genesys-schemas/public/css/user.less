@@ -1,0 +1,50 @@
+@import 'components/array-editor.less';
+@import 'components/array-field.less';
+@import 'components/help.less';
+
+.genex-required {
+  label:first-of-type::after {
+    content: ' *';
+    color: @genex-base;
+  }
+}
+
+/////////////////////////////
+// generic state styles
+/////////////////////////////
+.genex-error
+{
+  input {
+    &:first-of-type:not(.genex-field-input-radio) {
+      .genex-glow(@genex-red);
+    }
+  }
+  label {
+    &:first-of-type {
+      color: @genex-red;
+    }
+    &:first-of-type::after {
+      margin-left: 10px;
+      content: "(" attr(data-genex-error-message) ")";
+      color: inherit;
+    }
+  }
+}
+
+.genex-warning
+{
+  input { .genex-glow(@genex-gold); }
+  label { color: @genex-gold; }
+}
+
+/////////////////////////////
+// specific states
+/////////////////////////////
+
+.genex-error--required
+{
+  label:first-of-type::after
+  {
+    color: @genex-red;
+  }
+}

@@ -1,0 +1,13 @@
+{% macro base(items, choice) -%}
+  <div class="genex-pill">
+    {%- for item in items -%}
+      {%- if not choice and item.default -%}
+        {{ buttons.base(item.label, { action: item.action, value: item.value }, 'genex-button--pill') }}
+      {%- elif item.value == choice -%}
+        {{ buttons.base(item.label, { action: item.action, value: item.value }, 'genex-button--pill') }}
+      {%- else -%}
+        {{ buttons.base(item.label, { action: item.action, value: item.value }, 'genex-button--pill genex-button--pill-inactive ') }}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endmacro -%}

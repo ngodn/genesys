@@ -3,7 +3,7 @@ var t = require('../test-lib/test.js');
 var assert = require('assert');
 var async = require('async');
 
-var apos;
+var genex;
 
 var mockImages = [
   {
@@ -51,14 +51,14 @@ describe('Images', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
-  it('should be a property of the apos object', function(done) {
+  it('should be a property of the genex object', function(done) {
     this.timeout(t.timeout);
     this.slow(2000);
 
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
       modules: {
@@ -67,11 +67,11 @@ describe('Images', function() {
         }
       },
       afterInit: function(callback) {
-        assert(apos.images);
+        assert(genex.images);
         // In tests this will be the name of the test file,
         // so override that in order to get apostrophe to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -85,16 +85,16 @@ describe('Images', function() {
   it('should clean up any existing images for testing', function(done) {
     // Newer mongo returns a promise from remove even if there's a callback,
     // which in turn confuses mocha if we use a return statement here. So don't. -Tom
-    apos.docs.db.remove({ type: 'apostrophe-image' }, function(err) {
+    genex.docs.db.remove({ type: 'apostrophe-image' }, function(err) {
       assert(!err);
       done();
     });
   });
 
   it('should add images for testing', function(done) {
-    assert(apos.images.insert);
+    assert(genex.images.insert);
     return async.each(mockImages, function(image, callback) {
-      return apos.images.insert(apos.tasks.getReq(), image, callback);
+      return genex.images.insert(genex.tasks.getReq(), image, callback);
     }, function(err) {
       assert(!err);
       done();
@@ -102,8 +102,8 @@ describe('Images', function() {
   });
 
   it('should respect minSize filter (svg is always OK)', function(done) {
-    var req = apos.tasks.getAnonReq();
-    return apos.images.find(req).minSize([ 200, 200 ]).toArray(function(err, images) {
+    var req = genex.tasks.getAnonReq();
+    return genex.images.find(req).minSize([ 200, 200 ]).toArray(function(err, images) {
       assert(!err);
       assert(images.length === 3);
       return done();
@@ -111,8 +111,8 @@ describe('Images', function() {
   });
 
   it('should respect minSize filter in toCount, which uses a cloned cursor', function(done) {
-    var req = apos.tasks.getAnonReq();
-    return apos.images.find(req).minSize([ 200, 200 ]).toCount(function(err, count) {
+    var req = genex.tasks.getAnonReq();
+    return genex.images.find(req).minSize([ 200, 200 ]).toCount(function(err, count) {
       assert(!err);
       assert(count === 3);
       return done();
@@ -120,7 +120,7 @@ describe('Images', function() {
   });
 
   it('should generate a srcset string for an image', function() {
-    var srcset = apos.images.srcset({
+    var srcset = genex.images.srcset({
       name: 'test',
       _id: 'test',
       extension: 'jpg',
@@ -136,7 +136,7 @@ describe('Images', function() {
   });
 
   it('should not generate a srcset string for an SVG image', function() {
-    var srcset = apos.images.srcset({
+    var srcset = genex.images.srcset({
       name: 'test',
       _id: 'test',
       extension: 'svg',

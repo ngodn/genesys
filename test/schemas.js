@@ -2,7 +2,7 @@ var t = require('../test-lib/test.js');
 var assert = require('assert');
 var _ = require('@sailshq/lodash');
 
-var apos;
+var genex;
 
 var simpleFields = [
   {
@@ -127,7 +127,7 @@ var realWorldCase = {
     {
       "name": "_newPage",
       "type": "joinByOne",
-      "withType": "apostrophe-page",
+      "withType": "genesys-page",
       "label": "Page Title",
       "idField": "pageId"
     }
@@ -194,7 +194,7 @@ var hasArea = {
       name: 'body',
       label: 'Body',
       widgets: {
-        'apostrophe-rich-text': {}
+        'genesys-rich-text': {}
       }
     }
   ]
@@ -205,27 +205,27 @@ describe('Schemas', function() {
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   /// ///
   // EXISTENCE
   /// ///
 
-  it('should be a property of the apos object', function(done) {
-    apos = require('../index.js')({
+  it('should be a property of the genex object', function(done) {
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         }
       },
       afterInit: function(callback) {
-        assert(apos.schemas);
-        apos.argv._ = [];
+        assert(genex.schemas);
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
@@ -275,7 +275,7 @@ describe('Schemas', function() {
         });
       }
     };
-    var schema = apos.schemas.compose(options);
+    var schema = genex.schemas.compose(options);
     assert(schema.length === 2);
     assert(schema[0].name === 'name');
     assert(schema[1].name === 'variety');
@@ -283,7 +283,7 @@ describe('Schemas', function() {
   });
 
   it('should compose a schema for a complex real world case correctly', function() {
-    var schema = apos.schemas.compose(realWorldCase);
+    var schema = genex.schemas.compose(realWorldCase);
     assert(schema);
     var externalUrl = _.find(schema, { name: 'externalUrl' });
     assert(externalUrl);
@@ -294,7 +294,7 @@ describe('Schemas', function() {
   });
 
   it('should error if a field is required and an empty value is submitted for a string field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'string',
@@ -308,16 +308,16 @@ describe('Schemas', function() {
     var input = {
       name: ''
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err === 'name.required');
       done();
     });
   });
 
   it('should error if the value submitted is less than min length for a string field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'string',
@@ -331,16 +331,16 @@ describe('Schemas', function() {
     var input = {
       name: 'Cow'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err === 'name.min');
       done();
     });
   });
 
   it('should convert and keep the correct value for a field which is required for a string field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'string',
@@ -354,9 +354,9 @@ describe('Schemas', function() {
     var input = {
       name: 'Apostrophe^CMS'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(result.name === 'Apostrophe^CMS');
       done();
@@ -364,7 +364,7 @@ describe('Schemas', function() {
   });
 
   it('should error if an email address is improperly formed', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'email',
@@ -377,16 +377,16 @@ describe('Schemas', function() {
     var input = {
       email: 'testguy1%oopsbad'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err === 'email.invalid');
       done();
     });
   });
 
   it('should tolerate no email value if field not required', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'email',
@@ -399,16 +399,16 @@ describe('Schemas', function() {
     var input = {
       email: ''
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       done();
     });
   });
 
   it('should reject no email value if field required', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'email',
@@ -422,9 +422,9 @@ describe('Schemas', function() {
     var input = {
       email: ''
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       assert(err === 'email.required');
       done();
@@ -432,7 +432,7 @@ describe('Schemas', function() {
   });
 
   it('should accept a well formed email address with a + sign', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'email',
@@ -445,16 +445,16 @@ describe('Schemas', function() {
     var input = {
       email: 'testguy1+cool@yaygreat.com'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       done();
     });
   });
 
   it('should keep an empty submitted field value null when there is a min / max configuration for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -469,9 +469,9 @@ describe('Schemas', function() {
     var input = {
       price: ''
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === null);
@@ -480,7 +480,7 @@ describe('Schemas', function() {
   });
 
   it('should keep an empty submitted field value null when there is a min / max configuration for a float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -495,9 +495,9 @@ describe('Schemas', function() {
     var input = {
       price: ''
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === null);
@@ -506,7 +506,7 @@ describe('Schemas', function() {
   });
 
   it('should ensure a max value is being trimmed to the max length for a string field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'string',
@@ -520,9 +520,9 @@ describe('Schemas', function() {
     var input = {
       name: 'Apostrophe'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.name === 'Apost');
@@ -531,7 +531,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a number if a field is required for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -545,9 +545,9 @@ describe('Schemas', function() {
     var input = {
       price: 0
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 0);
@@ -556,7 +556,7 @@ describe('Schemas', function() {
   });
 
   it('should gracefully reject null provided as a number if a field is required for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -570,9 +570,9 @@ describe('Schemas', function() {
     var input = {
       price: null
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       assert.equal(err, 'price.required');
       done();
@@ -580,7 +580,7 @@ describe('Schemas', function() {
   });
 
   it('should gracefully reject undefined provided as a number if a field is required for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -594,9 +594,9 @@ describe('Schemas', function() {
     var input = {
       price: undefined
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       assert.equal(err, 'price.required');
       done();
@@ -604,7 +604,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a float if a field is required for an float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -618,9 +618,9 @@ describe('Schemas', function() {
     var input = {
       price: 0.00
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 0.00);
@@ -629,7 +629,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a number if a field is required for an float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -643,9 +643,9 @@ describe('Schemas', function() {
     var input = {
       price: 0
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 0);
@@ -654,7 +654,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a number if a field is required for an string field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'string',
@@ -668,9 +668,9 @@ describe('Schemas', function() {
     var input = {
       price: 0
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === '0');
@@ -679,7 +679,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a string if a field is required for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -693,9 +693,9 @@ describe('Schemas', function() {
     var input = {
       price: '0'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 0);
@@ -704,7 +704,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a string if a field is required for an string field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'string',
@@ -718,9 +718,9 @@ describe('Schemas', function() {
     var input = {
       price: '0'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === '0');
@@ -729,7 +729,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a string if a field is required for an float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -743,9 +743,9 @@ describe('Schemas', function() {
     var input = {
       price: '0'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 0);
@@ -754,7 +754,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a string if there is no min value set for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -767,9 +767,9 @@ describe('Schemas', function() {
     var input = {
       price: '0'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 0);
@@ -778,7 +778,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a 0 value provided as a string if there is no min value set for a float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -791,9 +791,9 @@ describe('Schemas', function() {
     var input = {
       price: '0'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 0);
@@ -802,7 +802,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a negative value provided as a number for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -815,9 +815,9 @@ describe('Schemas', function() {
     var input = {
       price: -1
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === -1);
@@ -826,7 +826,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a negative value provided as a float for an float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -839,9 +839,9 @@ describe('Schemas', function() {
     var input = {
       price: -1.3
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === -1.3);
@@ -850,7 +850,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a negative value provided as a float for an string field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'string',
@@ -863,9 +863,9 @@ describe('Schemas', function() {
     var input = {
       price: -1.3
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === '-1.3');
@@ -874,7 +874,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a negative value provided as a number if a field is required for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -888,9 +888,9 @@ describe('Schemas', function() {
     var input = {
       price: -1
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === -1);
@@ -899,7 +899,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a negative value provided as a number if a field is required for an float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -913,9 +913,9 @@ describe('Schemas', function() {
     var input = {
       price: -1.3
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === -1.3);
@@ -924,7 +924,7 @@ describe('Schemas', function() {
   });
 
   it('should allow saving a negative value provided as a string if a field is required for an float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -938,9 +938,9 @@ describe('Schemas', function() {
     var input = {
       price: '-1.3'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === -1.3);
@@ -949,7 +949,7 @@ describe('Schemas', function() {
   });
 
   it('should override the saved value if min and max value has been set and the submitted value is out of range for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -964,9 +964,9 @@ describe('Schemas', function() {
     var input = {
       price: '3'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 5);
@@ -975,7 +975,7 @@ describe('Schemas', function() {
   });
 
   it('should override the saved value if min and max value has been set and the submitted value is out of range for a float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -990,9 +990,9 @@ describe('Schemas', function() {
     var input = {
       price: '3.2'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 5.1);
@@ -1001,7 +1001,7 @@ describe('Schemas', function() {
   });
 
   it('should ensure a min value is being set to the configured min value if a lower value is submitted for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1015,9 +1015,9 @@ describe('Schemas', function() {
     var input = {
       price: '1'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 5);
@@ -1026,7 +1026,7 @@ describe('Schemas', function() {
   });
 
   it('should ensure a min value is being set to the configured min value if a lower value is submitted for a float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1040,9 +1040,9 @@ describe('Schemas', function() {
     var input = {
       price: '1.2'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 5.3);
@@ -1051,7 +1051,7 @@ describe('Schemas', function() {
   });
 
   it('should ensure a max value is being set to the max if a higher value is submitted for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1065,9 +1065,9 @@ describe('Schemas', function() {
     var input = {
       price: '8'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 5);
@@ -1076,7 +1076,7 @@ describe('Schemas', function() {
   });
 
   it('should ensure a max value is being set to the max if a higher value is submitted for a float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1090,9 +1090,9 @@ describe('Schemas', function() {
     var input = {
       price: '8'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 5.9);
@@ -1101,7 +1101,7 @@ describe('Schemas', function() {
   });
 
   it('should not modify a value if the submitted value is within min and max for an integer field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1116,9 +1116,9 @@ describe('Schemas', function() {
     var input = {
       price: '5'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 5);
@@ -1127,7 +1127,7 @@ describe('Schemas', function() {
   });
 
   it('should not modify a value if the submitted value is within min and max for a float field type', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1142,9 +1142,9 @@ describe('Schemas', function() {
     var input = {
       price: '4.3'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(result.price === 4.3);
@@ -1153,7 +1153,7 @@ describe('Schemas', function() {
   });
 
   it('should not allow a text value to be submitted for a required integer field', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1167,16 +1167,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should not allow a text value to be submitted for a required float field', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1190,16 +1190,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should not allow a text value to be submitted for a non required integer field with min and max', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1214,16 +1214,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should not allow a text value to be submitted for a non required float field with min and max', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1238,16 +1238,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should not allow a text value to be submitted for a non required integer field with a default value set', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1261,16 +1261,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should not allow a text value to be submitted for a non required float field with a default value set', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1284,16 +1284,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should not allow a text value to be submitted for a non required integer field', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1306,16 +1306,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should not allow a text value to be submitted for a non required float field', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1328,16 +1328,16 @@ describe('Schemas', function() {
     var input = {
       price: 'A'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(err);
       done();
     });
   });
 
   it('should allow a parsable string/integer value to be submitted for a non required integer field', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'integer',
@@ -1350,9 +1350,9 @@ describe('Schemas', function() {
     var input = {
       price: '22a'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(result.price === 22);
       done();
@@ -1360,7 +1360,7 @@ describe('Schemas', function() {
   });
 
   it('should allow a parsable string/float value to be submitted for a non required float field', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'float',
@@ -1373,9 +1373,9 @@ describe('Schemas', function() {
     var input = {
       price: '11.4b'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(result.price === 11.4);
       done();
@@ -1383,7 +1383,7 @@ describe('Schemas', function() {
   });
 
   it('should convert simple data correctly', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: simpleFields
     });
     assert(schema.length === 5);
@@ -1393,9 +1393,9 @@ describe('Schemas', function() {
       irrelevant: 'Irrelevant',
       slug: 'This Is Cool'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       // no irrelevant or missing fields
       assert(_.keys(result).length === 5);
@@ -1411,16 +1411,16 @@ describe('Schemas', function() {
   });
 
   it('should convert tags correctly', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: simpleFields
     });
     assert(schema.length === 5);
     var input = {
       tags: [ 4, 5, 'Seven' ]
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       // without def, the default is undefined, so this is right
       assert(_.keys(result.tags).length === 3);
@@ -1435,7 +1435,7 @@ describe('Schemas', function() {
   });
 
   it('should update a password if provided', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'password',
@@ -1448,20 +1448,20 @@ describe('Schemas', function() {
     var input = {
       password: 'silly'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = { password: 'serious' };
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       // hashing is not the business of schemas, see the
-      // apostrophe-users module
+      // genesys-users module
       assert(result.password === 'silly');
       done();
     });
   });
 
   it('should leave a password alone if not provided', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'password',
@@ -1474,20 +1474,20 @@ describe('Schemas', function() {
     var input = {
       password: ''
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = { password: 'serious' };
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       // hashing is not the business of schemas, see the
-      // apostrophe-users module
+      // genesys-users module
       assert(result.password === 'serious');
       done();
     });
   });
 
   it('should handle array schemas', function(done) {
-    var schema = apos.schemas.compose({
+    var schema = genex.schemas.compose({
       addFields: [
         {
           type: 'array',
@@ -1514,9 +1514,9 @@ describe('Schemas', function() {
         }
       ]
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'form', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'form', input, result, function(err) {
       assert(!err);
       assert(_.keys(result).length === 1);
       assert(Array.isArray(result.addresses));
@@ -1530,16 +1530,16 @@ describe('Schemas', function() {
   });
 
   it('should convert string areas correctly', function(done) {
-    var schema = apos.schemas.compose(hasArea);
+    var schema = genex.schemas.compose(hasArea);
     assert(schema.length === 1);
     var input = {
       irrelevant: 'Irrelevant',
       // Should get escaped, not be treated as HTML
       body: 'This is the greatest <h1>thing</h1>'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'string', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'string', input, result, function(err) {
       assert(!err);
       // no irrelevant or missing fields
       assert(_.keys(result).length === 1);
@@ -1548,23 +1548,23 @@ describe('Schemas', function() {
       assert(result.body.type === 'area');
       assert(result.body.items);
       assert(result.body.items[0]);
-      assert(result.body.items[0].type === 'apostrophe-rich-text');
-      assert(result.body.items[0].content === apos.utils.escapeHtml(input.body));
+      assert(result.body.items[0].type === 'genesys-rich-text');
+      assert(result.body.items[0].content === genex.utils.escapeHtml(input.body));
       done();
     });
   });
 
   it('should convert string areas gracefully when they are undefined', function(done) {
-    var schema = apos.schemas.compose(hasArea);
+    var schema = genex.schemas.compose(hasArea);
     assert(schema.length === 1);
     var input = {
       irrelevant: 'Irrelevant',
       // Should get escaped, not be treated as HTML
       body: undefined
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'string', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'string', input, result, function(err) {
       assert(!err);
       // no irrelevant or missing fields
       assert(_.keys(result).length === 1);
@@ -1578,16 +1578,16 @@ describe('Schemas', function() {
   });
 
   it('should accept csv as a bc equivalent for string in convert', function(done) {
-    var schema = apos.schemas.compose(hasArea);
+    var schema = genex.schemas.compose(hasArea);
     assert(schema.length === 1);
     var input = {
       irrelevant: 'Irrelevant',
       // Should get escaped, not be treated as HTML
       body: 'This is the greatest <h1>thing</h1>'
     };
-    var req = apos.tasks.getReq();
+    var req = genex.tasks.getReq();
     var result = {};
-    return apos.schemas.convert(req, schema, 'string', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'string', input, result, function(err) {
       assert(!err);
       // no irrelevant or missing fields
       assert(_.keys(result).length === 1);
@@ -1596,21 +1596,21 @@ describe('Schemas', function() {
       assert(result.body.type === 'area');
       assert(result.body.items);
       assert(result.body.items[0]);
-      assert(result.body.items[0].type === 'apostrophe-rich-text');
-      assert(result.body.items[0].content === apos.utils.escapeHtml(input.body));
+      assert(result.body.items[0].type === 'genesys-rich-text');
+      assert(result.body.items[0].content === genex.utils.escapeHtml(input.body));
       done();
     });
   });
 
   it('should clean up extra slashes in page slugs', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({ addFields: pageSlug });
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({ addFields: pageSlug });
     assert(schema.length === 1);
     var input = {
       slug: '/wiggy//wacky///wobbly////whizzle/////'
     };
     var result = {};
-    return apos.schemas.convert(req, schema, 'string', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'string', input, result, function(err) {
       assert(!err);
       assert(result.slug === '/wiggy/wacky/wobbly/whizzle');
       done();
@@ -1618,14 +1618,14 @@ describe('Schemas', function() {
   });
 
   it('retains trailing / on the home page', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({ addFields: pageSlug });
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({ addFields: pageSlug });
     assert(schema.length === 1);
     var input = {
       slug: '/'
     };
     var result = {};
-    return apos.schemas.convert(req, schema, 'string', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'string', input, result, function(err) {
       assert(!err);
       assert(result.slug === '/');
       done();
@@ -1633,14 +1633,14 @@ describe('Schemas', function() {
   });
 
   it('does not keep slashes when page: true not present for slug', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({ addFields: regularSlug });
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({ addFields: regularSlug });
     assert(schema.length === 1);
     var input = {
       slug: '/wiggy//wacky///wobbly////whizzle/////'
     };
     var result = {};
-    return apos.schemas.convert(req, schema, 'string', input, result, function(err) {
+    return genex.schemas.convert(req, schema, 'string', input, result, function(err) {
       assert(!err);
       assert(result.slug === 'wiggy-wacky-wobbly-whizzle');
       done();
@@ -1648,8 +1648,8 @@ describe('Schemas', function() {
   });
 
   it('enforces required property for ordinary field', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -1660,7 +1660,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { age: '' }, output, function(err) {
       assert(err);
       assert(err === 'age.required');
       done();
@@ -1668,8 +1668,8 @@ describe('Schemas', function() {
   });
 
   it('ignores required property for hidden field', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -1700,7 +1700,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'shoeSize', age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'shoeSize', age: '' }, output, function(err) {
       assert(!err);
       assert(output.ageOrShoeSize === 'shoeSize');
       done();
@@ -1708,8 +1708,8 @@ describe('Schemas', function() {
   });
 
   it('enforces required property for shown field', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -1740,7 +1740,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', age: '' }, output, function(err) {
       assert(err);
       assert(err === 'age.required');
       done();
@@ -1748,8 +1748,8 @@ describe('Schemas', function() {
   });
 
   it('ignores required property for recursively hidden field', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -1796,7 +1796,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', doWeCare: '0', age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', doWeCare: '0', age: '' }, output, function(err) {
       assert(!err);
       assert(output.ageOrShoeSize === 'age');
       done();
@@ -1804,8 +1804,8 @@ describe('Schemas', function() {
   });
 
   it('enforces required property for recursively shown field', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -1852,7 +1852,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', doWeCare: '1', age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', doWeCare: '1', age: '' }, output, function(err) {
       assert(err);
       assert(err === 'age.required');
       done();
@@ -1860,8 +1860,8 @@ describe('Schemas', function() {
   });
 
   it('ignores required property for recursively hidden field with checkboxes', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -1908,7 +1908,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: ['age'], doWeCare: ['0'], age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: ['age'], doWeCare: ['0'], age: '' }, output, function(err) {
       assert(!err);
       assert.deepEqual(output.ageOrShoeSize, ['age']);
       done();
@@ -1916,8 +1916,8 @@ describe('Schemas', function() {
   });
 
   it('enforces required property for recursively shown field with checkboxes', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -1964,7 +1964,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: ['age', 'shoeSize'], doWeCare: ['1'], age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: ['age', 'shoeSize'], doWeCare: ['1'], age: '' }, output, function(err) {
       assert(err);
       assert(err === 'age.required');
       done();
@@ -1972,8 +1972,8 @@ describe('Schemas', function() {
   });
 
   it('ignores required property for recursively hidden field with boolean', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -2018,7 +2018,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', doWeCare: false, age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: 'age', doWeCare: false, age: '' }, output, function(err) {
       assert(!err);
       assert(output.ageOrShoeSize === 'age');
       done();
@@ -2026,8 +2026,8 @@ describe('Schemas', function() {
   });
 
   it('enforces required property for recursively shown field with boolean', function(done) {
-    var req = apos.tasks.getReq();
-    var schema = apos.schemas.compose({
+    var req = genex.tasks.getReq();
+    var schema = genex.schemas.compose({
       addFields: [
         {
           name: 'age',
@@ -2072,7 +2072,7 @@ describe('Schemas', function() {
       ]
     });
     var output = {};
-    apos.schemas.convert(req, schema, 'form', { ageOrShoeSize: ['age', 'shoeSize'], doWeCare: true, age: '' }, output, function(err) {
+    genex.schemas.convert(req, schema, 'form', { ageOrShoeSize: ['age', 'shoeSize'], doWeCare: true, age: '' }, output, function(err) {
       assert(err);
       assert(err === 'age.required');
       done();

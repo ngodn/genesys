@@ -1,0 +1,66 @@
+.genex-modal
+{
+  .genex-schema-tabs
+  {
+    position: fixed;
+    top: 0;
+    float: left;
+    height: 100%;
+    width: 25%;
+    background-color: @genex-light;
+    // If tab number exceeds viewport allow scroll
+    overflow: auto;
+    border-right: 2px solid @genex-mid;
+    p {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    @media @genex-breakpoint-desktop-xl { width: 25%; }
+  }
+
+  .genex-schema--with-tabs .genex-schema-tabs {}
+
+  .genex-schema-tab
+  {
+    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    padding: @genex-padding-2 @genex-padding-1;
+    border-bottom: 1px solid @genex-mid;
+    font-size: 14px;
+    cursor: pointer;
+    @media @genex-breakpoint-desktop-xl { font-size: 16px; }
+    &.genex-active
+    {
+      background-color: @genex-white;
+      cursor: default;
+    }
+  }
+
+  .genex-schema-group
+  {
+    display: none;
+    float: right;
+    width: 75%;
+    @media @genex-breakpoint-desktop-xl { width: 75%; }
+    height: 100%;
+    overflow: auto;
+    .genex-scrollbar;
+  }
+
+  .genex-schema-group.genex-active
+  {
+    display: block;
+  }
+
+  .genex-schema-group-inner
+  {
+    width: 100%;
+    min-height: 100%;
+    padding: @genex-padding-2;
+    background-color: @genex-white;
+  }
+}

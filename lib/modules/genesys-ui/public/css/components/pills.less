@@ -1,0 +1,37 @@
+.genex-pill
+{
+  .genex-inline-block;
+  
+  .genex-button--pill
+  {
+    border: none;
+    background-color: @genex-light;
+    .genex-rounded(0);
+    
+    &:first-child
+    {
+      .genex-rounded;
+      .genex-rounded-left;      
+    }
+
+    &:last-child
+    {
+      .genex-rounded;
+      .genex-rounded-right;
+    }
+
+    &:hover
+    {
+      box-shadow: none;
+    }
+  }
+
+  .genex-button--pill-inactive
+  {
+    color: fade(@genex-dark, 30%);
+    &:hover
+    {
+      color: @genex-dark;
+    }
+  }
+}

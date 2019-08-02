@@ -1,0 +1,52 @@
+.genex-login-wrapper
+{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: @genex-primary;
+}
+.genex-login-content
+{
+  background-color: @genex-primary;
+  position: relative;
+  top: @genex-margin-5;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+.genex-login-logo
+{
+  text-align: center;
+  margin-bottom: @genex-margin-5;
+  svg { width: 84px; height: 84px; }
+}
+.genex-login.genex-ui
+{
+  margin: 0 auto;
+  max-width: 300px;
+  background-color: @genex-light;
+  padding: @genex-padding-2;
+  .genex-drop-shadow;
+
+  .genex-login-title
+  {
+    margin-bottom: @genex-margin-2;
+  }
+
+  .genex-field-input
+  {
+    background-color: @genex-white;
+  }
+
+  .genex-login-submit .genex-button
+  {
+    width: 100%;
+  }
+  .genex-login-reset, .genex-login-reset-cancel, .genex-login-password-reset-help
+  {
+    margin-top: 1em;
+  }
+  .genex-login-warning {
+    margin-bottom: 1em;
+  }
+}

@@ -1,0 +1,44 @@
+.genex-slideshow
+{
+  .genex-slideshow-item
+  {
+    display: none;
+
+    width: 100%;
+    height: auto;
+
+    background-position: top center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    // .genex-center-vertical;
+
+    &.genex-current
+    {
+      display: block;
+    }
+    img
+    {
+      // a11y problem: visibility: hidden removes it from screen readers,
+      // making the alt attribute unavailable. But, we need to take up
+      // the height naturally, so we can't just do genex-visually-hide.
+      // Consider other approaches, such as opacity: 0 with styles that
+      // allow clicks through.
+      visibility: hidden;
+      width: 100%;
+      height: auto;
+    }
+  }
+  &.genex-slideshow--aspect-ratio
+  {
+    .genex-slideshow-item.genex-slideshow-item--svg
+    {
+      background-position: center;
+      img
+      {
+        // We will crop and take up space via the slideshow item div inline styles.
+        // Use a mixin that hides it visually but not for a11y.
+        .genex-visually-hide;
+      }
+    }
+  }
+}

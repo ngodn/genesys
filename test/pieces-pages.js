@@ -2,43 +2,43 @@ var t = require('../test-lib/test.js');
 var assert = require('assert');
 var request = require('request');
 var Promise = require('bluebird');
-var apos;
+var genex;
 
 describe('Pieces Pages', function() {
 
   this.timeout(t.timeout);
 
   after(function(done) {
-    return t.destroy(apos, done);
+    return t.destroy(genex, done);
   });
 
   // EXISTENCE
 
   it('should initialize', function(done) {
-    apos = require('../index.js')({
+    genex = require('../index.js')({
       root: module,
       shortName: 'test',
 
       modules: {
-        'apostrophe-express': {
+        'genesys-express': {
           secret: 'xxx',
           port: 7900
         },
         'events': {
-          extend: 'apostrophe-pieces',
+          extend: 'genesys-pieces',
           name: 'event',
           label: 'Event',
           alias: 'events',
           sort: { title: 1 }
         },
         'events-pages': {
-          extend: 'apostrophe-pieces-pages',
+          extend: 'genesys-pieces-pages',
           name: 'events',
           label: 'Events',
           alias: 'eventsPages',
           perPage: 10
         },
-        'apostrophe-pages': {
+        'genesys-pages': {
           park: [
             {
               title: 'Events',
@@ -51,14 +51,14 @@ describe('Pieces Pages', function() {
       },
       afterInit: function(callback) {
         // In tests this will be the name of the test file,
-        // so override that in order to get apostrophe to
+        // so override that in order to get genesys to
         // listen normally and not try to run a task. -Tom
-        apos.argv._ = [];
+        genex.argv._ = [];
         return callback(null);
       },
       afterListen: function(err) {
         assert(!err);
-        assert(apos.modules['events-pages']);
+        assert(genex.modules['events-pages']);
         done();
       }
     });
@@ -68,7 +68,7 @@ describe('Pieces Pages', function() {
     var testItems = [];
     var total = 100;
     for (var i = 1; (i <= total); i++) {
-      var paddedInt = apos.launder.padInteger(i, 3);
+      var paddedInt = genex.launder.padInteger(i, 3);
 
       testItems.push({
         _id: 'event' + paddedInt,
@@ -81,7 +81,7 @@ describe('Pieces Pages', function() {
           type: 'area',
           items: [
             {
-              type: 'apostrophe-rich-text',
+              type: 'genesys-rich-text',
               content: '<p>This is some content.</p>'
             }
           ]
@@ -89,14 +89,14 @@ describe('Pieces Pages', function() {
       });
     }
 
-    apos.docs.db.insert(testItems, function(err) {
+    genex.docs.db.insert(testItems, function(err) {
       assert(!err);
       done();
     });
   });
 
   it('should populate the ._url property of pieces in any docs query', function(done) {
-    return apos.docs.find(apos.tasks.getAnonReq(), { type: 'event', title: 'Event 001' }).toObject(function(err, piece) {
+    return genex.docs.find(genex.tasks.getAnonReq(), { type: 'event', title: 'Event 001' }).toObject(function(err, piece) {
       assert(!err);
       assert(piece);
       assert(piece._url);
@@ -106,7 +106,7 @@ describe('Pieces Pages', function() {
   });
 
   it('should not correctly populate the ._url property of pieces in a docs query with an inadequate projection', function(done) {
-    return apos.docs.find(apos.tasks.getAnonReq(), { type: 'event', title: 'Event 001' }, { type: 1 }).toObject(function(err, piece) {
+    return genex.docs.find(genex.tasks.getAnonReq(), { type: 'event', title: 'Event 001' }, { type: 1 }).toObject(function(err, piece) {
       assert(!err);
       assert(piece);
       assert((!piece._url) || (piece._url.match(/undefined/)));
@@ -115,7 +115,7 @@ describe('Pieces Pages', function() {
   });
 
   it('should correctly populate the ._url property of pieces in a docs query if _url itself is "projected"', function(done) {
-    return apos.docs.find(apos.tasks.getAnonReq(), { type: 'event', title: 'Event 001' }, { _url: 1 }).toObject(function(err, piece) {
+    return genex.docs.find(genex.tasks.getAnonReq(), { type: 'event', title: 'Event 001' }, { _url: 1 }).toObject(function(err, piece) {
       assert(!err);
       assert(piece);
       assert(piece._url);
@@ -164,7 +164,7 @@ describe('Pieces Pages', function() {
 
   it('pieces-page as home page: switch page types', function() {
     return Promise.try(function() {
-      return apos.docs.db.update({
+      return genex.docs.db.update({
         slug: '/'
       }, {
         $set: {
@@ -172,7 +172,7 @@ describe('Pieces Pages', function() {
         }
       });
     }).then(function() {
-      return apos.docs.db.update({
+      return genex.docs.db.update({
         slug: '/events'
       }, {
         $set: {
